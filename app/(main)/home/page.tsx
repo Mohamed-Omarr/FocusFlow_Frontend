@@ -1,0 +1,35 @@
+"use client";
+
+import { TaskListSidebar } from "../component/task-list-sidebar";
+
+export default function HomePage() {
+  return (
+    <div className="flex flex-col min-h-screen px-6 py-12 max-w-3xl mx-auto gap-8">
+      {/* Greeting */}
+      <div className="text-center">
+        <div className="text-5xl mb-4">🌘</div>
+        <h2 className="text-4xl font-semibold text-foreground mb-2">
+          Start a Focus Session
+        </h2>
+        <p className="text-muted-foreground mt-2">
+          Select a task below to begin
+        </p>
+      </div>
+
+      {/* Task List Sidebar */}
+      <div className="w-full">
+        <TaskListSidebar />
+      </div>
+
+      {/* Tip of the Day */}
+      <div className="w-full bg-card rounded-3xl p-8 border border-border shadow-sm">
+        <h3 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+          Tip of the day
+        </h3>
+        <p className="text-lg text-foreground leading-relaxed">
+          Short sessions lead to long-term consistency.
+        </p>
+      </div>
+    </div>
+  );
+}

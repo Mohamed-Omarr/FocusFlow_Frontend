@@ -1,17 +1,7 @@
-import "./styles/global.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import type React from "react";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Navbar } from "./component/navbar";
+import { SupportButton } from "./component/support-button";
 
 export const metadata: Metadata = {
   title: "FocusFlow - Stay Present, Stay Focused",
@@ -27,18 +17,18 @@ export const metadata: Metadata = {
   // },
 };
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistMono.variable} ${geistSans.variable} antialiased  `}
-      >
+    <>
+      <Navbar />
+      <main className="structure-layout-style ">
         {children}
-      </body>
-    </html>
+        <SupportButton />
+      </main>
+    </>
   );
 }
