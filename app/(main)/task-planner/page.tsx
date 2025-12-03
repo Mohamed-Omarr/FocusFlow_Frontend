@@ -34,14 +34,12 @@ const TaskCard = ({
         {task.category}
       </span>
     )}
-    {task.startDate &&
-      task.endDate &&
-      task.startDate !== task.endDate && (
-        <p className="text-xs text-muted-foreground mt-2">
-          {new Date(task.startDate + "T00:00:00").toLocaleDateString()} -{" "}
-          {new Date(task.endDate + "T00:00:00").toLocaleDateString()}
-        </p>
-      )}
+    {task.startDate && task.endDate && task.startDate !== task.endDate && (
+      <p className="text-xs text-muted-foreground mt-2">
+        {new Date(task.startDate + "T00:00:00").toLocaleDateString()} -{" "}
+        {new Date(task.endDate + "T00:00:00").toLocaleDateString()}
+      </p>
+    )}
     {task.reminders && task.reminders.times.length > 0 && (
       <div className="mt-2">
         <p className="text-xs text-muted-foreground font-medium mb-1">
@@ -77,10 +75,11 @@ const CalendarDay = ({
 }) => {
   const isSelected = selectedDate === dateStr;
   const isToday =
-    new Date().toDateString() === new Date(dateStr + "T00:00:00").toDateString();
+    new Date().toDateString() ===
+    new Date(dateStr + "T00:00:00").toDateString();
 
   const classes = isSelected
-    ? "bg-primary text-primary-foreground shadow-md scale-105"
+    ? "bg-primary btn-text shadow-md scale-105"
     : isToday
     ? "bg-primary/10 text-primary border-2 border-primary"
     : "bg-elevated text-foreground hover:bg-elevated/80 hover:scale-105";
@@ -88,7 +87,7 @@ const CalendarDay = ({
   return (
     <button
       onClick={() => onSelect(dateStr)}
-      className={`h-12 rounded-xl p-2 text-center transition-all relative flex flex-col items-center justify-center ${classes}`}
+      className={`h-12 rounded-xl p-2 text-center transition-all relative  flex-col flex-center-all ${classes}`}
     >
       <span className="text-sm font-medium">{day}</span>
       {tasksForDay.length > 0 && (
@@ -225,11 +224,11 @@ const Index = () => {
   return (
     <>
       <main className="flex-1 px-4 py-6 max-w-7xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex-center-between mb-6">
           <h1 className="text-2xl font-bold text-foreground">Task Planner</h1>
           <button
             onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 text-sm shadow-sm hover:shadow-md"
+            className="flex flex-center gap-2 px-4 py-2 bg-primary btn-text rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 text-sm shadow-sm hover:shadow-md"
           >
             <Plus className="w-4 h-4" /> Create Task
           </button>
@@ -238,7 +237,7 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar */}
           <div className="lg:col-span-2 bg-card rounded-2xl p-5 border border-border shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex-center-between mb-4">
               <button
                 onClick={previousMonth}
                 className="p-2 hover:bg-elevated rounded-xl transition-colors"
@@ -313,11 +312,9 @@ const Index = () => {
                 ))}
               </div>
             ) : selectedDate ? (
-              <p className="text-sm text-muted-foreground">No tasks for this date</p>
+              <p className="small-muted-text">No tasks for this date</p>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                Click on a date to view tasks
-              </p>
+              <p className="small-muted-text">Click on a date to view tasks</p>
             )}
           </div>
         </div>
@@ -325,10 +322,12 @@ const Index = () => {
 
       {/* Create Task Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm  flex-center-all z-50 p-4">
           <div className="bg-card rounded-2xl p-5 border border-border max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-foreground">Create New Task</h2>
+            <div className="flex-center-between mb-4">
+              <h2 className="text-lg font-bold text-foreground">
+                Create New Task
+              </h2>
               <button
                 onClick={() => setShowCreateForm(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -381,7 +380,7 @@ const Index = () => {
                       onClick={() => setDateType(type as any)}
                       className={`flex-1 px-3 py-2 rounded-xl border transition-all text-sm font-medium ${
                         dateType === type
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                          ? "bg-primary btn-text border-primary shadow-sm"
                           : "bg-elevated border-border text-foreground hover:border-primary/50"
                       }`}
                     >
@@ -470,7 +469,7 @@ const Index = () => {
 
               <button
                 onClick={handleCreateTask}
-                className="w-full px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
+                className="w-full px-4 py-2.5 bg-primary btn-text rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Create Task
               </button>

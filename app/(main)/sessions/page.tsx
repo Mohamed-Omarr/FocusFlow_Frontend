@@ -134,12 +134,10 @@ function SessionCard({ session }: { session: Session }) {
 
   return (
     <>
-      <div
-        className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer"
-      >
+      <div className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer">
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-medium text-base">{session.name}</h3>
-          <span className="text-sm px-2 py-1 rounded font-medium bg-primary text-primary-foreground">
+          <span className="text-sm px-2 py-1 rounded font-medium bg-primary btn-text">
             {session.score}
           </span>
         </div>
@@ -147,13 +145,13 @@ function SessionCard({ session }: { session: Session }) {
         {(session.cancelReason || session.pauseReason) && (
           <div className="mb-3 flex flex-wrap gap-2">
             {session.cancelReason && (
-              <div className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-red-500/10 text-red-500">
+              <div className="flex flex-center gap-1 text-xs px-2 py-1 rounded bg-red-500/10 text-red-500">
                 <XCircle className="w-3 h-3" />
                 <span>Canceled</span>
               </div>
             )}
             {session.pauseReason && (
-              <div className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-orange-500/10 text-orange-500">
+              <div className="flex flex-center gap-1 text-xs px-2 py-1 rounded bg-orange-500/10 text-orange-500">
                 <PauseCircle className="w-3 h-3" />
                 <span>Paused</span>
               </div>
@@ -161,13 +159,13 @@ function SessionCard({ session }: { session: Session }) {
           </div>
         )}
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
+        <div className=" flex-center-between">
+          <div className="flex flex-center gap-4 small-muted-text">
+            <div className="flex flex-center gap-1.5">
               <Clock className="w-4 h-4" />
               <span>{session.duration}</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex flex-center gap-1.5">
               <Target className="w-4 h-4" />
               <span>Score</span>
             </div>
@@ -182,7 +180,7 @@ function SessionCard({ session }: { session: Session }) {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50  flex-center-all z-50 p-4">
           <div className="rounded-lg shadow-lg max-w-md w-full p-6 relative bg-popover text-popover-foreground">
             <button
               onClick={() => setIsOpen(false)}
@@ -193,16 +191,16 @@ function SessionCard({ session }: { session: Session }) {
 
             <h2 className="text-2xl font-semibold mb-4">{session.name}</h2>
 
-            <div className="grid grid-cols-2 gap-4 mb-4 text-sm text-muted-foreground">
+            <div className="grid grid-cols-2 gap-4 mb-4 small-muted-text">
               <div>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-center gap-1">
                   <Calendar className="w-4 h-4" />
                   <span>Date</span>
                 </div>
                 <p className="font-medium">{session.date}</p>
               </div>
               <div>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-center gap-1">
                   <Clock className="w-4 h-4" />
                   <span>Duration</span>
                 </div>
@@ -210,30 +208,34 @@ function SessionCard({ session }: { session: Session }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4 text-sm text-muted-foreground">
+            <div className="grid grid-cols-2 gap-4 mb-4 small-muted-text">
               <div>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-center gap-1">
                   <Timer className="w-4 h-4" />
                   <span>Time Range</span>
                 </div>
-                <p className="font-medium">{session.startTime} - {session.endTime}</p>
+                <p className="font-medium">
+                  {session.startTime} - {session.endTime}
+                </p>
               </div>
               <div>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-center gap-1">
                   <Coffee className="w-4 h-4" />
                   <span>Breaks</span>
                 </div>
-                <p className="font-medium">{session.breaks} {session.breaks === 1 ? "break" : "breaks"}</p>
+                <p className="font-medium">
+                  {session.breaks} {session.breaks === 1 ? "break" : "breaks"}
+                </p>
               </div>
             </div>
 
             <div className="mb-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex flex-center gap-2 small-muted-text">
                 <Target className="w-4 h-4" />
                 <span>Score</span>
               </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-lg px-3 py-1 rounded font-medium bg-primary text-primary-foreground">
+              <div className="flex flex-center gap-2 mt-1">
+                <span className="text-lg px-3 py-1 rounded font-medium bg-primary btn-text">
                   {session.score}
                 </span>
                 <span className="text-muted-foreground text-sm">/ 100</span>
@@ -242,7 +244,7 @@ function SessionCard({ session }: { session: Session }) {
 
             {session.cancelReason && (
               <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                <div className="flex items-center gap-2 text-sm font-medium text-red-500 mb-1">
+                <div className="flex flex-center gap-2 text-sm font-medium text-red-500 mb-1">
                   <XCircle className="w-4 h-4" />
                   <span>Cancel Reason</span>
                 </div>
@@ -252,7 +254,7 @@ function SessionCard({ session }: { session: Session }) {
 
             {session.pauseReason && (
               <div className="mb-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                <div className="flex items-center gap-2 text-sm font-medium text-orange-500 mb-1">
+                <div className="flex flex-center gap-2 text-sm font-medium text-orange-500 mb-1">
                   <PauseCircle className="w-4 h-4" />
                   <span>Pause Reason</span>
                 </div>
@@ -272,32 +274,53 @@ function SessionCard({ session }: { session: Session }) {
 }
 
 export default function SessionsPage() {
-  const [activeCategory, setActiveCategory] = useState<"work" | "study" | "personal">("work");
+  const [activeCategory, setActiveCategory] = useState<
+    "work" | "study" | "personal"
+  >("work");
   const [searchQuery, setSearchQuery] = useState("");
-  const [dateFilter, setDateFilter] = useState<"all" | "2weeks" | "4weeks" | "1month+">("all");
+  const [dateFilter, setDateFilter] = useState<
+    "all" | "2weeks" | "4weeks" | "1month+"
+  >("all");
 
   const categories = [
-    { id: "work" as const, label: "Work", sessions: workSessions, color: "var(--chart-1)" },
-    { id: "study" as const, label: "Study", sessions: studySessions, color: "var(--chart-2)" },
-    { id: "personal" as const, label: "Personal", sessions: personalSessions, color: "var(--chart-3)" },
+    {
+      id: "work" as const,
+      label: "Work",
+      sessions: workSessions,
+      color: "var(--chart-1)",
+    },
+    {
+      id: "study" as const,
+      label: "Study",
+      sessions: studySessions,
+      color: "var(--chart-2)",
+    },
+    {
+      id: "personal" as const,
+      label: "Personal",
+      sessions: personalSessions,
+      color: "var(--chart-3)",
+    },
   ];
 
-  const activeData = categories.find(cat => cat.id === activeCategory);
+  const activeData = categories.find((cat) => cat.id === activeCategory);
 
   const filteredAndSortedSessions = useMemo(() => {
     let sessions = activeData?.sessions || [];
 
     if (searchQuery) {
-      sessions = sessions.filter(session =>
+      sessions = sessions.filter((session) =>
         session.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (dateFilter !== "all") {
       const now = new Date();
-      sessions = sessions.filter(session => {
+      sessions = sessions.filter((session) => {
         const sessionDate = new Date(session.date);
-        const diffInDays = Math.floor((now.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
+        const diffInDays = Math.floor(
+          (now.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         if (dateFilter === "2weeks") return diffInDays <= 14;
         if (dateFilter === "4weeks") return diffInDays <= 28;
@@ -306,13 +329,17 @@ export default function SessionsPage() {
       });
     }
 
-    return [...sessions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return [...sessions].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
   }, [activeData, searchQuery, dateFilter]);
 
   return (
     <main className="min-h-screen bg-background text-foreground p-6">
       <h1 className="text-4xl font-bold mb-3">Sessions</h1>
-      <p className="text-lg text-muted-foreground mb-6">Track your productivity across categories</p>
+      <p className="text-lg text-muted-foreground mb-6">
+        Track your productivity across categories
+      </p>
 
       <div className="border border-border rounded-2xl shadow-lg p-6 bg-card">
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">
@@ -322,14 +349,16 @@ export default function SessionsPage() {
               Categories
             </h2>
             <div className="flex flex-col gap-2">
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   className="px-4 py-3 rounded-lg text-left font-medium transition-all hover:opacity-90"
                   style={{
-                    backgroundColor: activeCategory === cat.id ? cat.color : "transparent",
-                    color: activeCategory === cat.id ? "white" : "var(--foreground)",
+                    backgroundColor:
+                      activeCategory === cat.id ? cat.color : "transparent",
+                    color:
+                      activeCategory === cat.id ? "white" : "var(--foreground)",
                     opacity: activeCategory === cat.id ? 1 : 0.7,
                   }}
                 >
@@ -348,13 +377,13 @@ export default function SessionsPage() {
                   type="text"
                   placeholder="Search sessions..."
                   value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <select
                 value={dateFilter}
-                onChange={e => setDateFilter(e.target.value as any)}
+                onChange={(e) => setDateFilter(e.target.value as any)}
                 className="px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 <option value="all">All Time</option>

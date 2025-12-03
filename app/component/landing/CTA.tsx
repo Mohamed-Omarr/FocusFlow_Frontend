@@ -3,9 +3,9 @@ import { ArrowRight, Globe } from "lucide-react";
 
 export function CTA() {
   return (
-    <section className="py-24 px-6 relative overflow-hidden">
+    <section className="section-wrapper">
       {/* Background decorations */}
-      <div className="absolute inset-0">
+      <div className="absolute-inset">
         <motion.div
           className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]"
           animate={{
@@ -33,9 +33,9 @@ export function CTA() {
         />
       </div>
 
-      <div className="container mx-auto relative z-10">
+      <div className="container-wrapper">
         <motion.div
-          className="max-w-4xl mx-auto"
+          className="max-container"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -43,7 +43,7 @@ export function CTA() {
         >
           <div className="relative bg-gradient-to-br from-card to-muted border border-border rounded-3xl p-12 md:p-16 overflow-hidden shadow-2xl">
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
+            <div className="absolute-inset bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
 
             <div className="relative z-10 text-center">
               <motion.h2
@@ -71,21 +71,21 @@ export function CTA() {
               </motion.p>
 
               <motion.div
-                className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
+                className=" flex-col sm:flex-row flex-center-all gap-4 mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
                 <motion.button
-                  className="group px-8 py-4 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-xl shadow-lg shadow-primary/30"
+                  className="group px-8 py-4 bg-gradient-to-r from-primary to-secondary btn-text rounded-xl shadow-lg shadow-primary/30"
                   whileHover={{
                     scale: 1.05,
                     boxShadow: "0 20px 40px rgba(60, 130, 246, 0.4)",
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span className="flex items-center gap-2">
+                  <span className="flex flex-center gap-2">
                     Get Started
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -101,7 +101,7 @@ export function CTA() {
               </motion.div>
 
               <motion.div
-                className="flex items-center justify-center gap-2 text-muted-foreground"
+                className=" flex-center-all gap-2 text-muted-foreground"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}

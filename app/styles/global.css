@@ -50,48 +50,49 @@
 ------------------------------------------------------ */
 :root {
   /* --- Base Colors (Soft, Warm, Non-White) --- */
-  --background: oklch(0.93 0.01 95);         /* Soft warm ivory (much less bright) */
-  --foreground: oklch(0.28 0.02 285);        /* Dark warm charcoal (gentle, readable) */
+  --background: oklch(0.93 0.01 95); /* Soft warm ivory (much less bright) */
+  --foreground: oklch(
+    0.28 0.02 285
+  ); /* Dark warm charcoal (gentle, readable) */
 
-  --card: oklch(0.96 0.008 95);              /* Slightly lifted from bg */
+  --card: oklch(0.96 0.008 95); /* Slightly lifted from bg */
   --card-foreground: var(--foreground);
 
   --popover: oklch(0.97 0.008 95);
   --popover-foreground: var(--foreground);
 
   /* --- Primary (Comforting Pastel Blue) --- */
-  --primary: oklch(0.70 0.12 245);           /* Soft gentle blue */
+  --primary: oklch(0.7 0.12 245); /* Soft gentle blue */
   --primary-foreground: oklch(0.98 0 0);
 
   /* --- Secondary (Soft Beige Neutral) --- */
-  --secondary: oklch(0.90 0.01 95);
-  --secondary-foreground: oklch(0.30 0.02 285);
+  --secondary: oklch(0.9 0.01 95);
+  --secondary-foreground: oklch(0.3 0.02 285);
 
   /* --- Muted (Low-Contrast Neutrals) --- */
   --muted: oklch(0.88 0.01 95);
   --muted-foreground: oklch(0.48 0.015 285);
 
   /* --- Accent (Warm, Positive, Gentle) --- */
-  --accent: oklch(0.82 0.04 240);             /* Soft pastel sky-blue */
+  --accent: oklch(0.82 0.04 240); /* Soft pastel sky-blue */
   --accent-foreground: oklch(0.26 0.02 285);
 
   /* --- Destructive (Calm red, not alarming) --- */
   --destructive: oklch(0.65 0.09 25);
-  --destructive-foreground: oklch(0.20 0 0);
+  --destructive-foreground: oklch(0.2 0 0);
 
   /* --- UI Lines & Inputs --- */
-  --border: oklch(0.85 0.008 95);             /* SUPER soft border */
-  --input: oklch(0.90 0.01 95);
+  --border: oklch(0.85 0.008 95); /* SUPER soft border */
+  --input: oklch(0.9 0.01 95);
   --ring: oklch(0.58 0.05 250);
 
   /* --- Charts (Keep flexible) --- */
   --chart-1: var(--primary);
   --chart-2: var(--accent);
-  --chart-3: oklch(0.70 0.08 310);
+  --chart-3: oklch(0.7 0.08 310);
   --chart-4: oklch(0.75 0.09 30);
-  --chart-5: oklch(0.78 0.10 140);
+  --chart-5: oklch(0.78 0.1 140);
 }
-
 
 /* ------------------------------------------------------
    DARK THEME (use tokens + dark variants)
@@ -225,9 +226,64 @@
       0 0 80px rgba(76, 201, 167, 0.15);
   }
 
-
   /* structure of the layout  */
   .structure-layout-style {
     @apply pt-24 px-6 max-w-7xl mx-auto w-full flex-1 flex flex-col gap-8;
+  }
+
+  /* section wrapper */
+  .section-wrapper {
+    @apply py-24 px-6 relative overflow-hidden;
+  }
+  /* Hero Section Wrapper */
+
+  .hero-section {
+    @apply relative min-h-screen rounded-xl items-center justify-center py-10 px-8 overflow-hidden;
+  }
+
+  /* .container-wrapper */
+  .container-wrapper {
+    @apply container mx-auto relative z-10;
+  }
+  .max-container {
+    @apply max-w-4xl mx-auto;
+  }
+
+  .max-container-lg {
+    @apply max-w-6xl mx-auto;
+  }
+
+  .flex-center {
+    @apply items-center;
+  }
+
+  .flex-between {
+    @apply justify-between;
+  }
+
+  .flex-center-between {
+    @apply flex items-center justify-between;
+  }
+  .flex-center-all {
+    @apply flex items-center justify-center;
+  }
+
+  .section-heading-two {
+    @apply text-4xl md:text-5xl font-bold text-foreground mb-4;
+  }
+
+  .small-muted-text {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .btn-text {
+    @apply text-primary-foreground;
+  }
+  .absolute-inset {
+    @apply absolute inset-0;
+  }
+
+  .logo-icon {
+    @apply w-8 h-8 rounded-lg bg-gradient-to-br;
   }
 }

@@ -21,11 +21,11 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <motion.div
-              className="flex items-center gap-2 mb-4"
+              className="flex-center gap-2 mb-4"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#3C82F6] to-[#9B8AFB] flex items-center justify-center">
+              <div className="logo-icon from-[#3C82F6] to-[#9B8AFB]  flex-center-all">
                 <Target className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">FocusFlow</span>
@@ -39,7 +39,7 @@ export function Footer() {
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-[#A7A7B0] hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
+                  className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg  flex-center-all text-[#A7A7B0] hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   aria-label={social.label}
@@ -72,19 +72,16 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground text-center mt-6">
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between flex-center gap-4">
+          <p className="small-muted-text text-center mt-6">
             © {new Date().getFullYear()}{" "}
             <span className="font-semibold text-primary">FocusFlow</span>. made
             by{" "}
-            <a
-              href="https://bytelab.com"
-              target="_blank"
-              rel="noopener noreferrer"
+            <div
               className="font-medium text-accent  hover:text-primary/80 transition-colors duration-200"
             >
               ByteLab
-            </a>
+            </div>
             . All rights reserved.
           </p>
 

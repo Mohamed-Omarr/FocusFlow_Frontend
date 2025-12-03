@@ -14,7 +14,9 @@ interface Task {
 export function TaskListSidebar() {
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [timerDuration, setTimerDuration] = useState<"1" | "60" | "custom">("1");
+  const [timerDuration, setTimerDuration] = useState<"1" | "60" | "custom">(
+    "1"
+  );
   const [customMinutes, setCustomMinutes] = useState("");
   const [breakTime, setBreakTime] = useState("");
   const [selectedTask, setSelectedTask] = useState<string>("");
@@ -84,7 +86,7 @@ export function TaskListSidebar() {
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between gap-4"
+        className=" flex-center-between gap-4"
         onClick={() => setIsOpen(!isOpen)}
       >
         <h2 className="text-2xl font-semibold text-foreground dark:text-white">
@@ -173,14 +175,17 @@ export function TaskListSidebar() {
               value={breakTime}
               onChange={(e) => {
                 const value = Number.parseInt(e.target.value);
-                if (value <= 15 || e.target.value === "") setBreakTime(e.target.value);
+                if (value <= 15 || e.target.value === "")
+                  setBreakTime(e.target.value);
               }}
               placeholder="e.g., 5"
               className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-primary/50 focus:outline-none transition-colors duration-500"
               min={0}
               max={15}
             />
-            <p className="text-xs text-gray-400 mt-1">Break occurs every 30 minutes</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Break occurs every 30 minutes
+            </p>
           </div>
         )}
 

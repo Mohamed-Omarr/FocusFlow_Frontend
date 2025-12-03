@@ -56,7 +56,8 @@ export function InterruptionDialog({
   const [customReason, setCustomReason] = useState("");
 
   const reasons = type === "pause" ? PAUSE_REASONS : CANCEL_REASONS;
-  const title = type === "pause" ? "Why are you pausing?" : "Why are you stopping?";
+  const title =
+    type === "pause" ? "Why are you pausing?" : "Why are you stopping?";
   const description =
     type === "pause"
       ? "Help us understand your break patterns to improve your focus sessions."
@@ -100,11 +101,11 @@ export function InterruptionDialog({
             className="space-y-3"
           >
             {reasons.map(({ value, label, icon: Icon }) => (
-              <div key={value} className="flex items-center space-x-3">
+              <div key={value} className="flex flex-center space-x-3">
                 <RadioGroupItem value={value} id={value} />
                 <Label
                   htmlFor={value}
-                  className="flex items-center gap-3 cursor-pointer flex-1 p-3 rounded-lg hover:bg-muted transition-colors"
+                  className="flex flex-center gap-3 cursor-pointer flex-1 p-3 rounded-lg hover:bg-muted transition-colors"
                 >
                   <Icon className="h-4 w-4 text-muted-foreground" />
                   <span>{label}</span>
@@ -132,8 +133,10 @@ export function InterruptionDialog({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={!selectedReason || (selectedReason === "other" && !customReason)}
-            className="bg-primary text-primary-foreground"
+            disabled={
+              !selectedReason || (selectedReason === "other" && !customReason)
+            }
+            className="bg-primary btn-text"
           >
             {type === "pause" ? "Pause Session" : "Stop Session"}
           </Button>

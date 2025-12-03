@@ -1,10 +1,10 @@
-import { motion } from 'motion/react';
-import { Play } from 'lucide-react';
+import { motion } from "motion/react";
+import { Play } from "lucide-react";
 
 export function VideoSection() {
   return (
-    <section className="py-24 px-6 relative overflow-hidden">
-      <div className="container mx-auto relative z-10">
+    <section className="section-wrapper">
+      <div className="container-wrapper">
         <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 30 }}
@@ -12,8 +12,8 @@ export function VideoSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Watch how FocusFlow{' '}
+          <h2 className="section-heading-two">
+            Watch how FocusFlow{" "}
             <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
               transforms your focus
             </span>
@@ -24,7 +24,7 @@ export function VideoSection() {
         </motion.div>
 
         <motion.div
-          className="max-w-4xl mx-auto"
+          className="max-container"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -32,20 +32,23 @@ export function VideoSection() {
         >
           <div className="relative aspect-video rounded-3xl overflow-hidden bg-gradient-to-br from-card to-muted border border-border shadow-2xl shadow-primary/20">
             {/* Video Thumbnail Placeholder */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" />
-              
+            <div className="absolute-inset  flex-center-all">
+              <div className="absolute-inset bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" />
+
               {/* Play Button */}
               <motion.button
-                className="relative z-10 w-20 h-20 bg-foreground/10 backdrop-blur-md rounded-full flex items-center justify-center border border-border group"
+                className="relative z-10 w-20 h-20 bg-foreground/10 backdrop-blur-md rounded-full  flex-center-all border border-border group"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Play className="w-8 h-8 text-foreground ml-1 group-hover:text-primary transition-colors" fill="currentColor" />
+                <Play
+                  className="w-8 h-8 text-foreground ml-1 group-hover:text-primary transition-colors"
+                  fill="currentColor"
+                />
               </motion.button>
 
               {/* Decorative elements */}
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute-inset  flex-center-all">
                 <motion.div
                   className="w-32 h-32 border-2 border-border rounded-full"
                   animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
@@ -70,12 +73,12 @@ export function VideoSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             {[
-              { value: '10K+', label: 'Active Users' },
-              { value: '4.8★', label: 'Average Rating' },
-              { value: '50M+', label: 'Focus Minutes' }
+              { value: "10K+", label: "Active Users" },
+              { value: "4.8★", label: "Average Rating" },
+              { value: "50M+", label: "Focus Minutes" },
             ].map((stat, index) => (
               <div key={stat.label} className="text-center">
-                <motion.p 
+                <motion.p
                   className="text-3xl font-bold text-foreground mb-1"
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileInView={{ opacity: 1, scale: 1 }}

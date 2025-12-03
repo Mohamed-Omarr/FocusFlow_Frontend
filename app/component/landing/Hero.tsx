@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen rounded-xl flex items-center justify-center py-10 px-8 overflow-hidden">
+    <section className="hero-section">
       {/* Gradient Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -34,7 +34,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="container mx-auto relative z-10">
+      <div className="container-wrapper">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
@@ -74,7 +74,7 @@ export function Hero() {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 flex items-center gap-2">
+                <span className="relative z-10 flex flex-center gap-2">
                   Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
@@ -107,8 +107,8 @@ export function Hero() {
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+              <div className="flex flex-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-primary flex-center-all">
                   <span className="text-2xl">🎯</span>
                 </div>
                 <div>
@@ -128,8 +128,8 @@ export function Hero() {
                 delay: 0.5,
               }}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary to-accent flex items-center justify-center">
+              <div className="flex flex-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary to-accent  flex-center-all">
                   <span className="text-2xl">🔥</span>
                 </div>
                 <div>

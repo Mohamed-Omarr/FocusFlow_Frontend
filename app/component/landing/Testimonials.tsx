@@ -1,37 +1,40 @@
-import { motion } from 'motion/react';
-import { Star } from 'lucide-react';
+import { motion } from "motion/react";
+import { Star } from "lucide-react";
 
 const testimonials = [
   {
-    name: 'Sarah Chen',
-    role: 'Software Developer',
-    content: 'FocusFlow helped me achieve 3+ hours of deep work daily. The AI insights are game-changing for understanding my productivity patterns.',
-    avatar: '👩‍💻',
-    rating: 5
+    name: "Sarah Chen",
+    role: "Software Developer",
+    content:
+      "FocusFlow helped me achieve 3+ hours of deep work daily. The AI insights are game-changing for understanding my productivity patterns.",
+    avatar: "👩‍💻",
+    rating: 5,
   },
   {
-    name: 'Ahmed Hassan',
-    role: 'Graduate Student',
-    content: 'Finally, a productivity app that doesn\'t stress me out. The gentle reminders and streak system keep me motivated without pressure.',
-    avatar: '👨‍🎓',
-    rating: 5
+    name: "Ahmed Hassan",
+    role: "Graduate Student",
+    content:
+      "Finally, a productivity app that doesn't stress me out. The gentle reminders and streak system keep me motivated without pressure.",
+    avatar: "👨‍🎓",
+    rating: 5,
   },
   {
-    name: 'Emma Rodriguez',
-    role: 'Content Creator',
-    content: 'The focus sessions feature is amazing! I\'ve built a consistent writing habit and my productivity has doubled in just 2 months.',
-    avatar: '✍️',
-    rating: 5
-  }
+    name: "Emma Rodriguez",
+    role: "Content Creator",
+    content:
+      "The focus sessions feature is amazing! I've built a consistent writing habit and my productivity has doubled in just 2 months.",
+    avatar: "✍️",
+    rating: 5,
+  },
 ];
 
 export function Testimonials() {
   return (
-    <section id="testimonials" className="py-24 px-6 relative overflow-hidden">
+    <section id="testimonials" className="section-wrapper">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-[120px]" />
-      
-      <div className="container mx-auto relative z-10">
+
+      <div className="container-wrapper">
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
@@ -39,8 +42,8 @@ export function Testimonials() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Loved by{' '}
+          <h2 className="section-heading-two">
+            Loved by{" "}
             <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
               productivity enthusiasts
             </span>
@@ -50,7 +53,7 @@ export function Testimonials() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-container-lg">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
@@ -75,13 +78,13 @@ export function Testimonials() {
                 </p>
 
                 {/* Author */}
-                <div className="flex items-center gap-3 pt-4 border-t border-border">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-2xl">
+                <div className="flex flex-center gap-3 pt-4 border-t border-border">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary  flex-center-all text-2xl">
                     {testimonial.avatar}
                   </div>
                   <div>
                     <p className="text-foreground">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    <p className="small-muted-text">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
