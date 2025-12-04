@@ -96,7 +96,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20">
-              <Image src={"/file.svg"} alt="image" height={100} width={100} />
+              <Image src={"/team.jpg"} alt="image" height={500} width={500} className="w-full h-full" />
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
             </div>

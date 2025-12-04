@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { TrendingUp, Award, Calendar,  Lightbulb } from "lucide-react";
+import { TrendingUp, Award, Calendar, Lightbulb } from "lucide-react";
 
 export default function StreaksPage() {
   const [currentStreak] = useState(5);
@@ -61,13 +61,24 @@ export default function StreaksPage() {
 
   return (
     <main className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full">
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold text-foreground mb-2">
+      <div
+        className="
+    mb-8
+    border border-border/50
+    backdrop-blur-xl
+    bg-background/60
+    rounded-full
+    px-6
+    py-3
+  "
+      >
+        <h1 className="text-2xl font-bold text-foreground">
           Your Progress
+          <br />
+          <span className="text-sm font-normal text-muted-foreground">
+            Track your focus journey and celebrate your achievements
+          </span>
         </h1>
-        <p className="text-muted-foreground">
-          Track your focus journey and celebrate your achievements
-        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

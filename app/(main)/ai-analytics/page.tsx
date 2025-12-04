@@ -252,12 +252,25 @@ export default function AIAnalyticsPage() {
     <div>
       <main>
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Analytics</h1>
-          <p className="text-muted-foreground text-lg">
-            Calm, meaningful insights into your focus patterns and productivity
-            habits
-          </p>
+        <div
+          className="
+    mb-8
+    border border-border/50
+    backdrop-blur-xl
+    bg-background/60
+    rounded-full
+    px-6
+    py-3
+  "
+        >
+          <h1 className="text-2xl font-bold text-foreground">
+            Analytics
+            <br />
+            <span className="text-sm font-normal text-muted-foreground">
+              Calm, meaningful insights into your focus patterns and
+              productivity habits
+            </span>
+          </h1>
         </div>
 
         {/* Focus Scores Grid */}

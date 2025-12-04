@@ -135,7 +135,7 @@ function SessionCard({ session }: { session: Session }) {
   return (
     <>
       <div className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer">
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-start justify-between mb-3 ">
           <h3 className="font-medium text-base">{session.name}</h3>
           <span className="text-sm px-2 py-1 rounded font-medium bg-primary btn-text">
             {session.score}
@@ -336,10 +336,25 @@ export default function SessionsPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground p-6">
-      <h1 className="text-4xl font-bold mb-3">Sessions</h1>
-      <p className="text-lg text-muted-foreground mb-6">
-        Track your productivity across categories
-      </p>
+      <div
+        className="
+    mb-6
+    border border-border/50
+    backdrop-blur-xl
+    bg-background/60
+    rounded-full
+    px-6
+    py-3
+  "
+      >
+        <h1 className="text-2xl font-bold text-foreground">
+          Sessions
+          <br />
+          <span className="text-sm font-normal text-muted-foreground">
+            Track your productivity across categories
+          </span>
+        </h1>
+      </div>
 
       <div className="border border-border rounded-2xl shadow-lg p-6 bg-card">
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">

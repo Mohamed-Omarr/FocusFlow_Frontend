@@ -73,16 +73,14 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between flex-center gap-4">
-          <p className="small-muted-text text-center mt-6">
-            © {new Date().getFullYear()}{" "}
-            <span className="font-semibold text-primary">FocusFlow</span>. made
-            by{" "}
-            <div
-              className="font-medium text-accent  hover:text-primary/80 transition-colors duration-200"
-            >
+          <p className="small-muted-text flex flex-center gap-1 mt-6">
+            © {new Date().getFullYear()}
+            <span className="font-semibold text-primary">FocusFlow</span> made
+            by
+            <div className="font-medium text-accent  hover:text-primary/80 transition-colors duration-200">
               ByteLab
             </div>
-            . All rights reserved.
+            , All rights reserved.
           </p>
 
           <div className="flex gap-6">

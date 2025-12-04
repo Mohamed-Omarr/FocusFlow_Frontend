@@ -35,7 +35,25 @@ export default function SettingsPage() {
 
   return (
     <main className="flex flex-col gap-8 p-6">
-      <h1 className="text-3xl font-bold">Settings</h1>
+      <div
+        className="
+    mb-8
+    border border-border/50
+    backdrop-blur-xl
+    bg-background/60
+    rounded-full
+    px-6
+    py-3
+  "
+      >
+        <h1 className="text-2xl font-bold text-foreground">
+          Settings
+          <br />
+          <span className="text-sm font-normal text-muted-foreground">
+            Control your settings Track your productivity across categories
+          </span>
+        </h1>
+      </div>
 
       <Tabs defaultValue="profile" className="flex flex-col md:flex-row gap-6">
         {/* Tabs List */}

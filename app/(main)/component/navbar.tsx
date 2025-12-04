@@ -18,11 +18,15 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
+
+  // 🌟 Enable hover-expand only on this route
+  const isSessionActive = pathname === "/active-session";
+
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [language, setLanguage] = useState("EN");
   const [darkMode, setDarkMode] = useState(true);
 
-  // Profile dropdown state
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -35,30 +39,39 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    darkMode
+      ? document.documentElement.classList.add("dark")
+      : document.documentElement.classList.remove("dark");
   }, [darkMode]);
 
-  // Close profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
         setProfileOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
-      <nav
-        className={`border border-border/50 backdrop-blur-xl bg-background/60 rounded-full px-6 py-3 flex items-center gap-8 transition-all duration-300 ${
-          isScrolled ? "bg-white/80 dark:bg-card/80" : "bg-background/60"
-        }`}
+      <motion.nav
+        className={`
+    border border-border/50 backdrop-blur-xl
+    rounded-full px-6 py-3 flex items-center gap-8 
+    transition-all duration-300
+    bg-white/80 dark:bg-card/80
+  `}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        onMouseEnter={() => isSessionActive && setIsExpanded(true)}
+        onMouseLeave={() => isSessionActive && setIsExpanded(false)}
       >
         {/* Logo */}
         <motion.div
@@ -66,104 +79,206 @@ export function Navbar() {
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          <div className="logo-icon from-primary to-secondary flex items-center justify-center">
-            <Target className="w-5 h-5 text-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+            <Target className="w-5 h-5 text-primary-foreground" />
           </div>
           <span className="text-lg font-bold text-foreground">FocusFlow</span>
         </motion.div>
 
-        {/* Navigation Links */}
-        <div className="hidden md:flex gap-6">
-          {NAV_LINKS.map((link) => (
-            <motion.a
-              key={link.href}
-              href={link.href}
-              className={`font-medium transition-colors cursor-pointer ${
-                isActive(link.href)
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              whileHover={{ y: -2 }}
-            >
-              {link.label}
-            </motion.a>
-          ))}
-        </div>
+        {/** ---------------------------
+         *  DESKTOP NAVIGATION — 2 MODES
+         * --------------------------- */}
 
-        {/* Right Side Controls */}
-        <div className="flex items-center gap-2 md:gap-4 ml-auto relative">
-          <LanguageSelector selected={language} onChange={setLanguage} />
+        {!isSessionActive && (
+          /* Regular navbar */
+          <div className="hidden md:flex gap-6">
+            {NAV_LINKS.map((link) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                className={`font-medium transition-colors ${
+                  isActive(link.href)
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                whileHover={{ y: -2 }}
+              >
+                {link.label}
+              </motion.a>
+            ))}
+          </div>
+        )}
 
-          {/* Dark/Light Mode Toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full hover:bg-accent/20 transition-colors"
+        {isSessionActive && (
+          /* Hover-expand navbar */
+          <motion.div
+            className="hidden md:flex items-center overflow-hidden"
+            initial={false}
+            animate={{
+              width: isExpanded ? "auto" : 0,
+              opacity: isExpanded ? 1 : 0,
+              marginLeft: isExpanded ? 16 : 0,
+            }}
+            transition={{
+              duration: 0.5,
+              ease: [0.4, 0, 0.2, 1],
+              opacity: { duration: 0.3, delay: isExpanded ? 0.1 : 0 },
+            }}
           >
-            {darkMode ? (
-              <Sun className="w-5 h-5 text-yellow-400" />
-            ) : (
-              <Moon className="w-5 h-5 text-gray-700" />
-            )}
-          </button>
+            <div className="flex items-center gap-6">
+              {NAV_LINKS.map((link, index) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  className={`font-medium whitespace-nowrap ${
+                    isActive(link.href)
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{
+                    opacity: isExpanded ? 1 : 0,
+                    x: isExpanded ? 0 : -10,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    delay: isExpanded ? index * 0.05 + 0.15 : 0,
+                  }}
+                  whileHover={{ y: -2 }}
+                >
+                  {link.label}
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
-          {/* Profile Dropdown */}
-          <div className="relative" ref={profileRef}>
+        {/** ------------------------------
+         * RIGHT CONTROLS (LANG, DARK, PROFILE)
+         * ------------------------------ */}
+
+        {/* If not active session → always visible */}
+        {!isSessionActive && (
+          <div className="flex items-center gap-2 md:gap-4 ml-auto relative">
+            <LanguageSelector selected={language} onChange={setLanguage} />
+
             <button
-              onClick={() => setProfileOpen(!profileOpen)}
-              className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-full hover:bg-accent/20 transition-colors"
             >
-              <User className="w-5 h-5 text-white" />
+              {darkMode ? (
+                <Sun className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
             </button>
 
-            {profileOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-36 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50"
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
               >
-                <Link
-                  href="/settings"
-                  className="px-4 py-2 text-sm text-foreground hover:bg-primary/5 transition-colors"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  Settings
-                </Link>
-                <button
-                  className="px-4 py-2 text-sm text-foreground hover:bg-primary/5 w-full text-left transition-colors"
-                  onClick={() => {
-                    setProfileOpen(false);
-                    alert("Logging out...");
-                  }}
-                >
-                  Logout
-                </button>
-              </motion.div>
-            )}
-          </div>
+                <User className="w-5 h-5 text-white" />
+              </button>
 
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="md:hidden text-foreground"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+              {profileOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-0 mt-2 w-36 bg-card border border-border rounded-lg shadow-lg overflow-hidden"
+                >
+                  <Link
+                    href="/settings"
+                    className="px-4 py-2 text-sm hover:bg-primary/5 block"
+                  >
+                    Settings
+                  </Link>
+
+                  <button className="px-4 py-2 text-sm hover:bg-primary/5 w-full text-left">
+                    Logout
+                  </button>
+                </motion.div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* If active session → hover-expand controls */}
+        {isSessionActive && (
+          <motion.div
+            className="hidden md:flex items-center gap-4 ml-auto overflow-hidden"
+            initial={false}
+            animate={{
+              width: isExpanded ? "auto" : 0,
+              opacity: isExpanded ? 1 : 0,
+              marginLeft: isExpanded ? 16 : 0,
+            }}
+            transition={{ duration: 0.5 }}
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <LanguageSelector selected={language} onChange={setLanguage} />
+
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-full hover:bg-accent/20 transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </motion.button>
-        </div>
-      </nav>
+              {darkMode ? (
+                <Sun className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
+              >
+                <User className="w-5 h-5 text-white" />
+              </button>
+
+              {profileOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-0 mt-2 w-36 bg-card border border-border rounded-lg shadow-lg overflow-hidden"
+                >
+                  <Link
+                    href="/settings"
+                    className="px-4 py-2 text-sm hover:bg-primary/5 block"
+                  >
+                    Settings
+                  </Link>
+
+                  <button className="px-4 py-2 text-sm hover:bg-primary/5 w-full text-left">
+                    Logout
+                  </button>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Mobile menu */}
+        <motion.button
+          className="md:hidden ml-auto text-foreground"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </motion.button>
+      </motion.nav>
     </div>
   );
 }

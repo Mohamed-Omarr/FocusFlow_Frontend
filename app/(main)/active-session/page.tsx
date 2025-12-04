@@ -22,7 +22,6 @@ export default function ActiveSessionPage() {
 
   const [showPostSession, setShowPostSession] = useState(false);
   const [showDistractionLogger, setShowDistractionLogger] = useState(false);
-  const [sessionFinished, setSessionFinished] = useState(false);
 
   const [interruptionOpen, setInterruptionOpen] = useState(false);
   const [interruptionType, setInterruptionType] = useState<"pause" | "cancel">(
@@ -31,6 +30,7 @@ export default function ActiveSessionPage() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Load task from session storage
   useEffect(() => {
     const storedTask = sessionStorage.getItem("currentTask");
     if (storedTask) {
@@ -38,7 +38,7 @@ export default function ActiveSessionPage() {
       setTaskData(task);
       setTimeLeft(task.duration * 60);
     } else {
-      router.push("/");
+      router.push("/home");
     }
   }, [router]);
 
@@ -71,13 +71,14 @@ export default function ActiveSessionPage() {
           if (prev <= 1) {
             clearInterval(interval);
             playAlertSound();
-            setShowPostSession(true);
+            setShowPostSession(true); // ✅ Only natural session end triggers PostSession
             return 0;
           }
 
           const totalSeconds = taskData.duration * 60;
           const elapsed = totalSeconds - prev + 1;
 
+          // Trigger break every 30min if breakDuration > 0
           if (
             taskData.breakDuration > 0 &&
             elapsed % (30 * 60) === 0 &&
@@ -104,22 +105,31 @@ export default function ActiveSessionPage() {
     showDistractionLogger,
   ]);
 
+  // Pause button clicked
   const handlePauseClick = () => {
     setInterruptionType("pause");
     setInterruptionOpen(true);
   };
 
-  const handleStopClick = () => {
+  // Cancel button clicked
+  const handleCancelClick = () => {
     setInterruptionType("cancel");
     setInterruptionOpen(true);
   };
 
+  // Confirm interruption dialog
   const handleInterruptionConfirm = () => {
     setInterruptionOpen(false);
-    if (interruptionType === "pause") setIsPaused(true);
-    else setShowPostSession(true);
+    if (interruptionType === "pause") {
+      setIsPaused(true);
+    } else if (interruptionType === "cancel") {
+      // Cancel session immediately, do NOT show PostSession
+      sessionStorage.removeItem("currentTask");
+      router.push("/home");
+    }
   };
 
+  // Cancel dialog (just close)
   const handleInterruptionCancel = () => setInterruptionOpen(false);
 
   const handleExtendSession = (minutes: number) => {
@@ -134,6 +144,7 @@ export default function ActiveSessionPage() {
     setShowDistractionLogger(true);
   };
 
+  // Step navigation: PostSession
   if (showPostSession) {
     return (
       <PostSession
@@ -148,7 +159,7 @@ export default function ActiveSessionPage() {
     return (
       <DistractionLogger
         sessionId={taskData?.name || "session-1"}
-        onComplete={() => router.push("/")}
+        onComplete={() => router.push("/home")}
       />
     );
   }
@@ -209,21 +220,28 @@ export default function ActiveSessionPage() {
             </div>
           </div>
         </div>
-
         <div className="flex items-center gap-6">
           <button
-            onClick={() => setIsPaused(!isPaused)}
+            onClick={() => {
+              if (isPaused) {
+                // Resume directly, no popup
+                setIsPaused(false);
+              } else {
+                // Immediately pause timer
+                setIsPaused(true);
+
+                // Then show interruption dialog
+                setInterruptionType("pause");
+                setInterruptionOpen(true);
+              }
+            }}
             className="px-8 py-4 bg-card border border-border rounded-2xl text-foreground font-medium hover:border-primary/50 transition-all duration-300"
           >
             {isPaused ? "Resume" : "Pause"}
           </button>
+
           <button
-            onClick={() => {
-              if (confirm("Are you sure you want to cancel this session?")) {
-                sessionStorage.removeItem("currentTask");
-                router.push("/");
-              }
-            }}
+            onClick={handleCancelClick}
             className="px-8 py-4 bg-card border border-destructive/50 rounded-2xl text-destructive font-medium hover:border-destructive hover:bg-destructive/10 transition-all duration-300"
           >
             Cancel

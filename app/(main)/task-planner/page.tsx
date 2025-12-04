@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  X,
+  Calendar,
+  CalendarX,
+} from "lucide-react";
 
 interface Task {
   id: string;
@@ -87,7 +94,7 @@ const CalendarDay = ({
   return (
     <button
       onClick={() => onSelect(dateStr)}
-      className={`h-12 rounded-xl p-2 text-center transition-all relative  flex-col flex-center-all ${classes}`}
+      className={`h-12 rounded-xl p-2 text-center transition-all relative flex-col flex-center-all ${classes}`}
     >
       <span className="text-sm font-medium">{day}</span>
       {tasksForDay.length > 0 && (
@@ -126,7 +133,7 @@ const Index = () => {
     const savedTasks = localStorage.getItem("focusflow-tasks");
     const savedDate = localStorage.getItem("focusflow-selected-date");
     if (savedTasks) setTasks(JSON.parse(savedTasks));
-    if (savedDate) setSelectedDate(savedDate);
+    if (savedDate) setSelectedDate(savedDate || null);
   }, []);
 
   const saveTasks = (newTasks: Task[]) => {
@@ -224,7 +231,10 @@ const Index = () => {
   return (
     <>
       <main className="flex-1 px-4 py-6 max-w-7xl mx-auto w-full">
-        <div className="flex-center-between mb-6">
+        <div
+          className="flex-center-between mb-6 border border-border/50 backdrop-blur-xl bg-background/60 rounded-full px-6 py-3
+"
+        >
           <h1 className="text-2xl font-bold text-foreground">Task Planner</h1>
           <button
             onClick={() => setShowCreateForm(true)}
@@ -301,6 +311,7 @@ const Index = () => {
                 : "Select a date"}
             </h3>
 
+            {/* Selected date tasks */}
             {selectedDate && selectedDateTasks.length > 0 ? (
               <div className="space-y-3">
                 {selectedDateTasks.map((task) => (
@@ -316,6 +327,116 @@ const Index = () => {
             ) : (
               <p className="small-muted-text">Click on a date to view tasks</p>
             )}
+
+            {/* All Tasks List - Scheduled */}
+            <div className="mt-6 pt-4 border-t border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-primary" />
+                <h4 className="text-xs font-medium text-foreground uppercase tracking-wide">
+                  Scheduled Tasks
+                </h4>
+              </div>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                {tasks.filter((task) => task.startDate).length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    No scheduled tasks
+                  </p>
+                ) : (
+                  tasks
+                    .filter((task) => task.startDate)
+                    .map((task) => (
+                      <div
+                        key={task.id}
+                        className="flex items-start justify-between p-2 bg-elevated rounded-lg border border-border"
+                      >
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-foreground">
+                            {task.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {task.startDate &&
+                            task.endDate &&
+                            task.startDate !== task.endDate
+                              ? `${new Date(
+                                  task.startDate + "T00:00:00"
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })} - ${new Date(
+                                  task.endDate + "T00:00:00"
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })}`
+                              : task.startDate
+                              ? new Date(
+                                  task.startDate + "T00:00:00"
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              : ""}
+                          </p>
+                          {task.category && (
+                            <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-primary/20 text-primary text-xs rounded-full">
+                              {task.category}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="text-muted-foreground hover:text-destructive transition-colors ml-2"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                )}
+              </div>
+            </div>
+
+            {/* All Tasks List - Non-Scheduled */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <CalendarX className="w-4 h-4 text-muted-foreground" />
+                <h4 className="text-xs font-medium text-foreground uppercase tracking-wide">
+                  Non-Scheduled Tasks
+                </h4>
+              </div>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                {tasks.filter((task) => !task.startDate).length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    No non-scheduled tasks
+                  </p>
+                ) : (
+                  tasks
+                    .filter((task) => !task.startDate)
+                    .map((task) => (
+                      <div
+                        key={task.id}
+                        className="flex items-start justify-between p-2 bg-elevated rounded-lg border border-border"
+                      >
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-foreground">
+                            {task.name}
+                          </p>
+                          {task.category && (
+                            <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-primary/20 text-primary text-xs rounded-full">
+                              {task.category}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="text-muted-foreground hover:text-destructive transition-colors ml-2"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </main>
