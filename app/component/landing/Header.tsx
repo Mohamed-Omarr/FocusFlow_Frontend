@@ -1,12 +1,10 @@
 "use client";
 import { motion } from "motion/react";
 import { Target } from "lucide-react";
-import { useState } from "react";
 import { LanguageSelector } from "@/app/(main)/component/LanguageSelector";
 
 export function Header() {
-  const navItems = ["Features", "Analytics", "Login", "Register"];
-  const [language, setLanguage] = useState("EN");
+  const navItems = ["Home", "Features", "Analytics"];
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
@@ -34,7 +32,7 @@ export function Header() {
             {navItems.map((item, index) => (
               <motion.a
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                href={`#${item.toLowerCase().trim()}`}
                 className="small-muted-text hover:text-foreground transition-colors cursor-pointer"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -48,8 +46,8 @@ export function Header() {
 
           {/* Mobile Menu + Language Selector */}
           <div className="flex flex-center gap-2 md:gap-4">
-            {/* Language Selector as normal button */}
-            <LanguageSelector selected={language} onChange={setLanguage} />
+            {/* Language Selector */}
+            <LanguageSelector />
 
             {/* Mobile Menu Button */}
             <motion.button

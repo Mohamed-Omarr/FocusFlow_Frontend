@@ -3,7 +3,7 @@ import { Play } from "lucide-react";
 
 export function VideoSection() {
   return (
-    <section className="section-wrapper">
+    <section id="analytics" className="section-wrapper">
       <div className="container-wrapper">
         <motion.div
           className="text-center mb-12"

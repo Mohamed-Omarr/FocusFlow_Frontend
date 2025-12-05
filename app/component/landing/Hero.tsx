@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export function Hero() {
   return (
-    <section className="hero-section">
+    <section id="home" className="hero-section">
       {/* Gradient Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -44,7 +44,10 @@ export function Hero() {
               transition={{ duration: 0.6 }}
             >
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
-                FocusFlow — Your Calm{" "}
+                FocusFlow
+                <br />
+                Your Calm
+                <br />
                 <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                   Productivity Companion
                 </span>
@@ -96,7 +99,13 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20">
-              <Image src={"/team.jpg"} alt="image" height={500} width={500} className="w-full h-full" />
+              <Image
+                src={"/team.jpg"}
+                alt="image"
+                height={500}
+                width={500}
+                className="w-full h-full"
+              />
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
             </div>
