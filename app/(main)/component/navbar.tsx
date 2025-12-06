@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { Target, User } from "lucide-react";
 import { LanguageSelector } from "./LanguageSelector";
-import { ThemeModeToggle } from "./ThemeModeToggle"; // <-- import new component
+import { ThemeModeToggle } from "./ThemeModeToggle";
 
 const NAV_LINKS = [
   { href: "/home", label: "Home" },
@@ -19,55 +19,44 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const pathname = usePathname();
-
   const isSessionActive = pathname === "/active-session";
 
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => pathname === path;
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handler = (e: MouseEvent) => {
       if (
         profileRef.current &&
-        !profileRef.current.contains(event.target as Node)
+        !profileRef.current.contains(e.target as Node)
       ) {
         setProfileOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
       <motion.nav
         className="
-          border border-border/50 backdrop-blur-xl
-          rounded-full px-6 py-3 flex items-center gap-8 
-          transition-all duration-300
-          bg-white/80 dark:bg-card/80
+          border border-border/50 backdrop-blur-xl rounded-full
+          px-6 py-3 flex items-center gap-6
+          bg-white/80 dark:bg-card/80 transition-all duration-300
         "
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
         onMouseEnter={() => isSessionActive && setIsExpanded(true)}
         onMouseLeave={() => isSessionActive && setIsExpanded(false)}
       >
-        {/* Logo */}
+        {/* Brand */}
         <motion.div
           className="flex items-center gap-2"
           whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
             <Target className="w-5 h-5 text-primary-foreground" />
@@ -75,30 +64,41 @@ export function Navbar() {
           <span className="text-lg font-bold text-foreground">FocusFlow</span>
         </motion.div>
 
-        {/* Desktop nav links */}
-        {!isSessionActive && (
-          <div className="hidden md:flex gap-6">
-            {NAV_LINKS.map((link) => (
-              <motion.a
-                key={link.href}
-                href={link.href}
-                className={`font-medium transition-colors ${
-                  isActive(link.href)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-                whileHover={{ y: -2 }}
-              >
-                {link.label}
-              </motion.a>
-            ))}
-          </div>
-        )}
+        {/* EXPANDABLE LINKS */}
+        <motion.div
+          className="hidden md:flex items-center overflow-hidden"
+          animate={
+            !isSessionActive
+              ? { width: "auto", opacity: 1, gap: "1.5rem" }
+              : isExpanded
+              ? { width: "auto", opacity: 1, gap: "1.5rem" }
+              : { width: 0, opacity: 0, gap: 0 }
+          }
+          transition={{
+            duration: 0.45,
+            ease: "easeInOut",
+          }}
+        >
+          {NAV_LINKS.map((link) => (
+            <motion.a
+              key={link.href}
+              href={link.href}
+              className={`font-medium whitespace-nowrap transition-colors ${
+                isActive(link.href)
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              whileHover={{ y: -2 }}
+            >
+              {link.label}
+            </motion.a>
+          ))}
+        </motion.div>
 
-        {/* Right controls */}
-        <div className="flex items-center gap-2 md:gap-4 ml-auto relative">
+        {/* Right Controls */}
+        <div className="flex items-center gap-3 ml-auto relative">
           <LanguageSelector />
-          <ThemeModeToggle /> {/* <-- new component for dark/light mode */}
+          <ThemeModeToggle />
 
           <div className="relative" ref={profileRef}>
             <button
@@ -120,6 +120,7 @@ export function Navbar() {
                 >
                   Settings
                 </Link>
+
                 <button className="px-4 py-2 text-sm hover:bg-primary/5 w-full text-left">
                   Logout
                 </button>

@@ -1,7 +1,4 @@
 "use client";
-
-import type React from "react";
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -10,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Sparkles } from "lucide-react";
 import axiosClient from "@/lib/axios/axiosClient";
 
-// react-hook-form + zod
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -37,13 +33,14 @@ export default function LoginPage() {
   // SUBMIT HANDLER
   const onSubmit = async (data: LoginFormInterface) => {
     try {
-      const res = await axiosClient.post("/users/login", {
+      const res: LoginResponse = await axiosClient.post("/users/login", {
         email: data.email,
         password: data.password,
       });
+      localStorage.setItem("accessToken", res.data.token);
       toasting.success(res.data.message, () => router.push("/home"));
     } catch (err: any) {
-      toasting.error(err.message || `Login error:${err}`);
+      toasting.error(err.response.data.message || `Login error:${err}`);
     } finally {
       reset();
     }

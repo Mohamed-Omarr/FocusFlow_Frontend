@@ -2,7 +2,8 @@ import "./styles/global.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import type React from "react";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import { useLanguageStore } from "@/store/language/lang";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,7 +39,7 @@ export default function RootLayout({
         className={`${geistMono.variable} ${geistSans.variable} antialiased  `}
       >
         {children}
-        <Toaster position="top-center"/>
+        <Toaster position="top-center" />
       </body>
     </html>
   );

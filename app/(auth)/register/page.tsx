@@ -37,7 +37,7 @@ export default function RegisterPage() {
   // SUBMIT HANDLER
   const onSubmit = async (data: RegisterFormInterface) => {
     try {
-      const res = await axiosClient.post("/users/register", {
+      const res:RegisterResponse = await axiosClient.post("/users/register", {
         email: data.email,
         name: data.name,
         password: data.password,
@@ -45,7 +45,7 @@ export default function RegisterPage() {
       });
       toasting.success(res.data.message, () => router.push("/login"));
     } catch (err: any) {
-      toasting.error(err.message || `Register error:${err}`);
+      toasting.error(err.response.data.message || `Register error:${err}`);
     } finally {
       reset();
     }

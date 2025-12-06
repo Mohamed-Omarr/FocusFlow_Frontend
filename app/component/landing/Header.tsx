@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import { Target } from "lucide-react";
 import { LanguageSelector } from "@/app/(main)/component/LanguageSelector";
+import { ThemeModeToggle } from "@/app/(main)/component/ThemeModeToggle";
 
 export function Header() {
   const navItems = ["Home", "Features", "Analytics"];
@@ -48,6 +49,7 @@ export function Header() {
           <div className="flex flex-center gap-2 md:gap-4">
             {/* Language Selector */}
             <LanguageSelector />
+            <ThemeModeToggle />
 
             {/* Mobile Menu Button */}
             <motion.button
