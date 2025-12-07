@@ -18,7 +18,7 @@ export default function Error({
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
-      <div className="text-center space-y-6 max-w-md">
+      <div className="text-center space-y-6 ">
         <div className="flex justify-center">
           <div className="relative">
             <div className="rounded-full bg-destructive/10 p-6">

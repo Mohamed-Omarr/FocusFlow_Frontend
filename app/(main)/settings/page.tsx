@@ -19,60 +19,42 @@ export default function SettingsPage() {
   const [profileEmail, setProfileEmail] = useState("user@example.com");
   const [language, setLanguage] = useState("english");
   const [timeFormat, setTimeFormat] = useState("24h");
-  const [defaultSession, setDefaultSession] = useState(25);
-  const [breakDuration, setBreakDuration] = useState(5);
-  const [autoBreak, setAutoBreak] = useState(true);
-  const [adaptiveTimer, setAdaptiveTimer] = useState(false);
-  const [dailyReminder, setDailyReminder] = useState(true);
+
+  // Appearance settings moved internally into General tab
+  const [theme, setTheme] = useState("dark");
+
+  // Notifications
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [volume, setVolume] = useState([70]);
-  const [trackDistractions, setTrackDistractions] = useState(true);
-  const [trackMood, setTrackMood] = useState(true);
-  const [weeklyInsights, setWeeklyInsights] = useState(true);
-  const [theme, setTheme] = useState("dark");
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [uiDensity, setUiDensity] = useState("comfortable");
 
   return (
     <main className="flex flex-col gap-8 p-6">
       <div
         className="
-    mb-8
-    border border-border/50
-    backdrop-blur-xl
-    bg-background/60
-    rounded-full
-    px-6
-    py-3
-  "
+          mb-8 border border-border/50 backdrop-blur-xl
+          bg-background/60 rounded-full px-6 py-3
+        "
       >
         <h1 className="text-2xl font-bold text-foreground">
           Settings
           <br />
           <span className="text-sm font-normal text-muted-foreground">
-            Control your settings Track your productivity across categories
+            Control your settings — Track your productivity across categories
           </span>
         </h1>
       </div>
 
       <Tabs defaultValue="profile" className="flex flex-col md:flex-row gap-6">
-        {/* Tabs List */}
+        {/* LEFT TABS LIST */}
         <TabsList className="flex md:flex-col h-full overflow-x-auto md:w-60 gap-2 p-2 rounded-xl bg-muted/50 border no-scrollbar">
-          {[
-            "profile",
-            "general",
-            "timer",
-            "notifications",
-            "tracking",
-            "appearance",
-          ].map((tab) => (
+          {["profile", "general", "notifications"].map((tab) => (
             <TabsTrigger key={tab} value={tab} className="w-full justify-start">
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {/* Tabs Content */}
+        {/* RIGHT CONTENT */}
         <div className="flex-1">
           <div className="rounded-xl border bg-card p-6 shadow-sm space-y-10">
             {/* PROFILE */}
@@ -97,10 +79,13 @@ export default function SettingsPage() {
               </div>
             </TabsContent>
 
-            {/* GENERAL */}
-            <TabsContent value="general" className="space-y-6 max-w-md">
+            {/* GENERAL (Now includes Appearance Settings) */}
+            <TabsContent value="general" className="space-y-10 max-w-md">
               <h2 className="text-xl font-semibold">General</h2>
+
+              {/* General Fields */}
               <div className="grid sm:grid-cols-2 gap-6">
+                {/* Language */}
                 <div>
                   <Label>Language</Label>
                   <Select value={language} onValueChange={setLanguage}>
@@ -113,6 +98,8 @@ export default function SettingsPage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Time Format */}
                 <div>
                   <Label>Time Format</Label>
                   <Select value={timeFormat} onValueChange={setTimeFormat}>
@@ -126,101 +113,14 @@ export default function SettingsPage() {
                   </Select>
                 </div>
               </div>
-            </TabsContent>
 
-            {/* TIMER */}
-            <TabsContent value="timer" className="space-y-6 max-w-md">
-              <h2 className="text-xl font-semibold">Focus Timer</h2>
-              <div className="grid gap-4">
-                <div>
-                  <Label>Default Session (minutes)</Label>
-                  <Input
-                    type="number"
-                    value={defaultSession}
-                    onChange={(e) => setDefaultSession(Number(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <Label>Break Duration</Label>
-                  <Input
-                    type="number"
-                    value={breakDuration}
-                    onChange={(e) => setBreakDuration(Number(e.target.value))}
-                  />
-                </div>
-                <div className="flex flex-center-between">
-                  <span>Auto Break</span>
-                  <Switch checked={autoBreak} onCheckedChange={setAutoBreak} />
-                </div>
-                <div className="flex flex-center-between">
-                  <span>Adaptive Timer</span>
-                  <Switch
-                    checked={adaptiveTimer}
-                    onCheckedChange={setAdaptiveTimer}
-                  />
-                </div>
-              </div>
-            </TabsContent>
+              {/* Appearance INTERNALLY placed here */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium opacity-80">
+                  Appearance (Device Mode)
+                </h3>
 
-            {/* NOTIFICATIONS */}
-            <TabsContent value="notifications" className="space-y-6 max-w-md">
-              <h2 className="text-xl font-semibold">Notifications</h2>
-              <div className="grid gap-4">
-                <div className="flex flex-center-between">
-                  <span>Daily Reminder</span>
-                  <Switch
-                    checked={dailyReminder}
-                    onCheckedChange={setDailyReminder}
-                  />
-                </div>
-                <div className="flex flex-center-between">
-                  <span>Email Notifications</span>
-                  <Switch
-                    checked={emailNotifications}
-                    onCheckedChange={setEmailNotifications}
-                  />
-                </div>
-                <div>
-                  <Label>Sound Volume</Label>
-                  <Slider
-                    value={volume}
-                    onValueChange={setVolume}
-                    max={100}
-                    step={1}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* TRACKING */}
-            <TabsContent value="tracking" className="space-y-6 max-w-md">
-              <h2 className="text-xl font-semibold">Tracking & Insights</h2>
-              <div className="grid gap-4">
-                <div className="flex flex-center-between">
-                  <span>Track Distractions</span>
-                  <Switch
-                    checked={trackDistractions}
-                    onCheckedChange={setTrackDistractions}
-                  />
-                </div>
-                <div className="flex flex-center-between">
-                  <span>Track Mood</span>
-                  <Switch checked={trackMood} onCheckedChange={setTrackMood} />
-                </div>
-                <div className="flex flex-center-between">
-                  <span>Weekly Insights</span>
-                  <Switch
-                    checked={weeklyInsights}
-                    onCheckedChange={setWeeklyInsights}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* APPEARANCE */}
-            <TabsContent value="appearance" className="space-y-6 max-w-md">
-              <h2 className="text-xl font-semibold">Appearance</h2>
-              <div className="grid gap-4">
+                {/* Theme */}
                 <div>
                   <Label>Theme</Label>
                   <Select value={theme} onValueChange={setTheme}>
@@ -230,27 +130,32 @@ export default function SettingsPage() {
                     <SelectContent>
                       <SelectItem value="dark">Dark</SelectItem>
                       <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
+                      <SelectItem value="system">System (Device)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label>UI Density</Label>
-                  <Select value={uiDensity} onValueChange={setUiDensity}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="comfortable">Comfortable</SelectItem>
-                      <SelectItem value="compact">Compact</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex-center-between">
-                  <span>Reduce Motion</span>
+              </div>
+            </TabsContent>
+
+            {/* NOTIFICATIONS */}
+            <TabsContent value="notifications" className="space-y-6 max-w-md">
+              <h2 className="text-xl font-semibold">Notifications</h2>
+              <div className="grid gap-4">
+                <div className="flex justify-between items-center">
+                  <span>Email Notifications</span>
                   <Switch
-                    checked={reduceMotion}
-                    onCheckedChange={setReduceMotion}
+                    checked={emailNotifications}
+                    onCheckedChange={setEmailNotifications}
+                  />
+                </div>
+
+                <div>
+                  <Label>Sound Volume</Label>
+                  <Slider
+                    value={volume}
+                    onValueChange={setVolume}
+                    max={100}
+                    step={1}
                   />
                 </div>
               </div>

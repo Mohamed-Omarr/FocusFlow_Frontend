@@ -38,10 +38,13 @@ const distractionIcons: Record<DistractionType, any> = {
 };
 
 export function PostSession({ onExtend, onEnd }: PostSessionProps) {
+  const [showDistractionModal,setShowDistractionModal] = useState(false)
+  
+  
   const [currentStep, setCurrentStep] = useState<Step>("extend");
 
   // Extend Session
-  const [extendMinutes, setExtendMinutes] = useState(25);
+  const [extendMinutes, setExtendMinutes] = useState(1);
 
   // Distraction Logger
   const [selectedDistractions, setSelectedDistractions] = useState<
@@ -123,7 +126,6 @@ export function PostSession({ onExtend, onEnd }: PostSessionProps) {
         </div>
       )}
 
-      {/* --- Step 2: Distraction Logger --- */}
       {/* --- Step 2: Distraction Logger (Improved / Smaller) --- */}
       {currentStep === "distraction" && (
         <div className="w-full max-w-lg mx-auto">
@@ -247,7 +249,6 @@ export function PostSession({ onExtend, onEnd }: PostSessionProps) {
         </div>
       )}
 
-      {/* --- Step 3: Mood & Energy --- */}
       {/* --- Step 3: Mood & Energy --- */}
       {currentStep === "mood" && (
         <div className="w-full max-w-lg bg-card rounded-3xl p-8 shadow-2xl border border-border">

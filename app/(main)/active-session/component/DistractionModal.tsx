@@ -23,7 +23,7 @@ type Props = {
   onComplete: () => void
 }
 
-export function DistractionLogger({ sessionId, onComplete }: Props) {
+export function DistractionModal({ sessionId, onComplete }: Props) {
   const [distractions, setDistractions] = useState([])
   const [customType, setCustomType] = useState("")
   const [showCustom, setShowCustom] = useState(false)

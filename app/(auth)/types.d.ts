@@ -18,7 +18,7 @@ type LoginResponse = {
         status: boolean;
         message: string;
         user:User,
-        token:string;
+        accessToken:string;
     }
 }
 

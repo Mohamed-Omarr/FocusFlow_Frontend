@@ -15,6 +15,7 @@ import {
 } from "@/lib/zod/auth/validation/auth";
 import { useState } from "react";
 import { toasting } from "@/lib/toast/toast";
+import axios from "axios";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -37,12 +38,15 @@ export default function RegisterPage() {
   // SUBMIT HANDLER
   const onSubmit = async (data: RegisterFormInterface) => {
     try {
-      const res:RegisterResponse = await axiosClient.post("/users/register", {
-        email: data.email,
-        name: data.name,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      });
+      const res: RegisterResponse = await axios.post(
+        "https://focusbackend.vercel.app/api/v1/users/register",
+        {
+          email: data.email,
+          name: data.name,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+        }
+      );
       toasting.success(res.data.message, () => router.push("/login"));
     } catch (err: any) {
       toasting.error(err.response.data.message || `Register error:${err}`);

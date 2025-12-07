@@ -1,6 +1,6 @@
 "use client";
 
-import { TaskListSidebar } from "../component/task-list-sidebar";
+import { TaskListSection } from "./component/TaskListSection";
 
 export default function HomePage() {
   return (
@@ -16,9 +16,9 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* Task List Sidebar */}
+      {/* Task List Section */}
       <div className="w-full">
-        <TaskListSidebar />
+        <TaskListSection />
       </div>
 
       {/* Tip of the Day */}

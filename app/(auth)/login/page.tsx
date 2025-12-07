@@ -14,6 +14,7 @@ import {
   ValidateUserLogin,
 } from "@/lib/zod/auth/validation/auth";
 import { toasting } from "@/lib/toast/toast";
+import axios from "axios";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,11 +34,14 @@ export default function LoginPage() {
   // SUBMIT HANDLER
   const onSubmit = async (data: LoginFormInterface) => {
     try {
-      const res: LoginResponse = await axiosClient.post("/users/login", {
-        email: data.email,
-        password: data.password,
-      });
-      localStorage.setItem("accessToken", res.data.token);
+      const res: LoginResponse = await axios.post(
+        "https://focusbackend.vercel.app/api/v1/users/login",
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+      localStorage.setItem("accessToken", res.data.accessToken);
       toasting.success(res.data.message, () => router.push("/home"));
     } catch (err: any) {
       toasting.error(err.response.data.message || `Login error:${err}`);

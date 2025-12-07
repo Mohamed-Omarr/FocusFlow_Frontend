@@ -44,7 +44,7 @@ const CANCEL_REASONS = [
   { value: "other", label: "Other reason", icon: HelpCircle },
 ];
 
-export function InterruptionDialog({
+export function InterruptionModal({
   open,
   onOpenChange,
   type,

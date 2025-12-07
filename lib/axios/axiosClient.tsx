@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 const axiosClient = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}`,
@@ -9,19 +9,51 @@ const axiosClient = axios.create({
   },
 });
 
-axiosClient.interceptors.request.use(
-  async (config) => {
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Token verification function
+const verifyToken = async (token: string) => {
+  try {
+    const res = await axios.get(
+      `https://focusbackend.vercel.app/api/v1/users/refreshToken`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+    console.log(res);
+    return true;
+  } catch {
+    return false;
+  }
+};
 
-axiosClient.interceptors.response.use(
-  (res) => res,
-  async (err) => {
-    if (err.response?.status === 401) {
+// Request interceptor — verify token and attach if valid
+axiosClient.interceptors.request.use(async (config) => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  if (accessToken) {
+    const isValid = await verifyToken(accessToken);
+    if (!isValid) {
+      window.location.href = "/login";
+      return Promise.reject("Token invalid or expired");
     }
-    return Promise.reject(err);
+
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
+});
+
+// Response interceptor — handle unauthorized globally
+axiosClient.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("accessToken");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
   }
 );
 
