@@ -1,0 +1,9 @@
+{
+  "Home": {
+    "title": "Hello World!",
+    "description": "This is the English homepage"
+  },
+  "About": {
+    "title": "About us"
+  }
+}

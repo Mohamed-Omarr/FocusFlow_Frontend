@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { Target, User } from "lucide-react";
-import { LanguageSelector } from "./LanguageSelector";
 import { ThemeModeToggle } from "./ThemeModeToggle";
+import LangSwitcher from "@/app/component/LangSwitcher";
 
 const NAV_LINKS = [
   { href: "/home", label: "Home" },
@@ -97,7 +97,7 @@ export function Navbar() {
 
         {/* Right Controls */}
         <div className="flex items-center gap-3 ml-auto relative">
-          <LanguageSelector />
+          <LangSwitcher />
           <ThemeModeToggle />
 
           <div className="relative" ref={profileRef}>

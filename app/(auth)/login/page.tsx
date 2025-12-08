@@ -39,7 +39,8 @@ export default function LoginPage() {
         {
           email: data.email,
           password: data.password,
-        }
+        },
+        { withCredentials: true }
       );
       localStorage.setItem("accessToken", res.data.accessToken);
       toasting.success(res.data.message, () => router.push("/home"));
