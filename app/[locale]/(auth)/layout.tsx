@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type React from "react";
-import { SupportButton } from "../(main)/component/support-button";
-import { Header } from "../component/landing/Header";
+import { SupportButton } from "../(main)/component/Support-Button";
+import { Header } from "@/app/component/landing/Header";
 
 export const metadata: Metadata = {
   title: "FocusFlow - Stay Present, Stay Focused",
@@ -16,9 +16,7 @@ export default function AuthLayout({
   return (
     <>
       <Header />
-      <main className="structure-layout-auth-style ">
-        {children}
-      </main>
+      <main className="structure-layout-auth-style ">{children}</main>
     </>
   );
 }

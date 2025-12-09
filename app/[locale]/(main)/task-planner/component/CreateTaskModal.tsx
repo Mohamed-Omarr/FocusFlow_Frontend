@@ -5,6 +5,11 @@ import { useReducer } from "react";
 
 export function CreateTaskModal({ setShowCreateForm }) {
   // ------------------------------
+  // Helpers
+  // ------------------------------
+  const today = new Date().toISOString().split("T")[0];
+
+  // ------------------------------
   // Reducer + Initial State
   // ------------------------------
   const initialState = {
@@ -41,7 +46,9 @@ export function CreateTaskModal({ setShowCreateForm }) {
 
   const [task, dispatch] = useReducer(reducer, initialState);
 
+  // ------------------------------
   // Create Task Handler
+  // ------------------------------
   function handleCreateTask() {
     console.log("Created Task:", task);
     localStorage.setItem("focusflow-tasks", JSON.stringify(task));
@@ -142,6 +149,7 @@ export function CreateTaskModal({ setShowCreateForm }) {
             {task.dateType === "single" && (
               <input
                 type="date"
+                min={today}
                 value={task.startDate}
                 onChange={(e) =>
                   dispatch({
@@ -157,20 +165,36 @@ export function CreateTaskModal({ setShowCreateForm }) {
             {/* Range */}
             {task.dateType === "range" && (
               <div className="space-y-1.5">
+                {/* Start Date */}
                 <input
                   type="date"
+                  min={today}
                   value={task.startDate}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newStart = e.target.value;
+
                     dispatch({
                       type: "SET_FIELD",
                       field: "startDate",
-                      value: e.target.value,
-                    })
-                  }
+                      value: newStart,
+                    });
+
+                    // Auto-fix end date if invalid
+                    if (task.endDate && task.endDate < newStart) {
+                      dispatch({
+                        type: "SET_FIELD",
+                        field: "endDate",
+                        value: newStart,
+                      });
+                    }
+                  }}
                   className="w-full px-3 py-2 bg-elevated border border-border rounded-xl text-sm"
                 />
+
+                {/* End Date */}
                 <input
                   type="date"
+                  min={task.startDate || today}
                   value={task.endDate}
                   onChange={(e) =>
                     dispatch({

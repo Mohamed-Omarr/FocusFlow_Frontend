@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type React from "react";
-import { Navbar } from "./component/navbar";
-import { SupportButton } from "./component/support-button";
+import { Navbar } from "./component/Navbar";
+import { SupportButton } from "./component/Support-Button";
 
 export const metadata: Metadata = {
   title: "FocusFlow - Stay Present, Stay Focused",

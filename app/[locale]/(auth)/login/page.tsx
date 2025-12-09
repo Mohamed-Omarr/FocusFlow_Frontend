@@ -1,11 +1,9 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Sparkles } from "lucide-react";
-import axiosClient from "@/lib/axios/axiosClient";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +13,7 @@ import {
 } from "@/lib/zod/auth/validation/auth";
 import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
+import { Link } from "@/i18n/navigation";
 
 export default function LoginPage() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 interface SessionData {
   taskName: string;

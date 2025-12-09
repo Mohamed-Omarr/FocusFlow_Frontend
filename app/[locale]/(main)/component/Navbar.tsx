@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { Target, User } from "lucide-react";
 import { ThemeModeToggle } from "./ThemeModeToggle";
 import LangSwitcher from "@/app/component/LangSwitcher";
+import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 
-const NAV_LINKS = [
+const BASE_NAV_LINKS = [
   { href: "/home", label: "Home" },
   { href: "/task-planner", label: "Task Planner" },
   { href: "/sessions", label: "Sessions" },
@@ -18,12 +19,19 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
+  const locale = useLocale();
   const pathname = usePathname();
-  const isSessionActive = pathname === "/active-session";
+  const isSessionActive = pathname === `/${locale}/active-session`;
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  // Option 1: build locale links inside the component
+  const NAV_LINKS = BASE_NAV_LINKS.map((item) => ({
+    ...item,
+    href: `/${locale}${item.href}`,
+  }));
 
   const isActive = (path: string) => pathname === path;
 
@@ -64,7 +72,7 @@ export function Navbar() {
           <span className="text-lg font-bold text-foreground">FocusFlow</span>
         </motion.div>
 
-        {/* EXPANDABLE LINKS */}
+        {/* Navigation Links */}
         <motion.div
           className="hidden md:flex items-center overflow-hidden"
           animate={
@@ -74,10 +82,7 @@ export function Navbar() {
               ? { width: "auto", opacity: 1, gap: "1.5rem" }
               : { width: 0, opacity: 0, gap: 0 }
           }
-          transition={{
-            duration: 0.45,
-            ease: "easeInOut",
-          }}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
         >
           {NAV_LINKS.map((link) => (
             <motion.a

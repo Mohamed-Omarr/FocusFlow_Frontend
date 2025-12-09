@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 import { Target } from "lucide-react";
-import { ThemeModeToggle } from "@/app/(main)/component/ThemeModeToggle";
+import { ThemeModeToggle } from "@/app/[locale]/(main)/component/ThemeModeToggle";
 import LangSwitcher from "../LangSwitcher";
 
 export function Header() {

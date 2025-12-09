@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PostSession } from "../component/SessionCheckinForm";
+import { PostSession } from "../../[locale]/(main)/component/SessionCheckinForm";
 import { DistractionModal } from "./component/DistractionModal";
 import { InterruptionModal } from "./component/InterruptionModal";
 import { Button } from "@/components/ui/button"; // shadcn Button
@@ -129,7 +129,8 @@ export default function ActiveSessionPage() {
               setNextBreakIn(newNextBreak);
 
               // Show heads-up 1 minute before break
-              if (newNextBreak <= 60 && newNextBreak > 0) setShowBreakHeadsUp(true);
+              if (newNextBreak <= 60 && newNextBreak > 0)
+                setShowBreakHeadsUp(true);
               else setShowBreakHeadsUp(false);
             }
           }
@@ -142,7 +143,8 @@ export default function ActiveSessionPage() {
     const updateNextBreak = () => {
       const elapsed = taskData.duration * 60 - timeLeft;
       const remainingBreaks = scheduledBreaks.filter((b) => b > elapsed);
-      if (remainingBreaks.length > 0) setNextBreakIn(remainingBreaks[0] - elapsed);
+      if (remainingBreaks.length > 0)
+        setNextBreakIn(remainingBreaks[0] - elapsed);
       else {
         setNextBreakIn(null);
         setShowBreakHeadsUp(false);
@@ -372,4 +374,3 @@ export default function ActiveSessionPage() {
     </>
   );
 }
-

@@ -1,21 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Sparkles, User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axiosClient from "@/lib/axios/axiosClient";
 import {
   ValidateUserRegister,
   RegisterFormInterface,
 } from "@/lib/zod/auth/validation/auth";
-import { useState } from "react";
 import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
+import { Link } from "@/i18n/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
