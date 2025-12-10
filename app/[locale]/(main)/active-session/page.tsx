@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PostSession } from "../../[locale]/(main)/component/SessionCheckinForm";
 import { DistractionModal } from "./component/DistractionModal";
 import { InterruptionModal } from "./component/InterruptionModal";
-import { Button } from "@/components/ui/button"; // shadcn Button
+import { Button } from "@/components/ui/button";
+import { PostSession } from "../component/SessionCheckinForm";
 
 export default function ActiveSessionPage() {
   const router = useRouter();
@@ -34,30 +34,6 @@ export default function ActiveSessionPage() {
   );
   const [manualConfirmOpen, setManualConfirmOpen] = useState(false);
 
-  useEffect(() => {
-    const storedTask = sessionStorage.getItem("currentTask");
-    if (storedTask) {
-      const task = JSON.parse(storedTask);
-      setTaskData(task);
-      setTimeLeft(task.duration * 60);
-
-      const { duration } = task;
-      const { numBreaks } = getBreakInfo(duration);
-      const breaks: number[] =
-        numBreaks > 0
-          ? Array.from({ length: numBreaks }, (_, i) =>
-              Math.round(((i + 1) / (numBreaks + 1)) * duration * 60)
-            )
-          : [];
-
-      setScheduledBreaks(breaks);
-
-      if (task.breakMode === "manual") setManualBreaksLeft(numBreaks);
-    } else {
-      router.push("/home");
-    }
-  }, [router]);
-
   const getBreakInfo = (duration: number) => {
     let breakDuration = 0;
     let numBreaks = 0;
@@ -85,6 +61,29 @@ export default function ActiveSessionPage() {
 
     return { breakDuration, numBreaks };
   };
+  useEffect(() => {
+    const storedTask = sessionStorage.getItem("currentTask");
+    if (storedTask) {
+      const task = JSON.parse(storedTask);
+      setTaskData(task);
+      setTimeLeft(task.duration * 60);
+
+      const { duration } = task;
+      const { numBreaks } = getBreakInfo(duration);
+      const breaks: number[] =
+        numBreaks > 0
+          ? Array.from({ length: numBreaks }, (_, i) =>
+              Math.round(((i + 1) / (numBreaks + 1)) * duration * 60)
+            )
+          : [];
+
+      setScheduledBreaks(breaks);
+
+      if (task.breakMode === "manual") setManualBreaksLeft(numBreaks);
+    } else {
+      router.push("/home");
+    }
+  }, [router]);
 
   useEffect(() => {
     if (!taskData || isPaused || showPostSession || showDistractionLogger)
