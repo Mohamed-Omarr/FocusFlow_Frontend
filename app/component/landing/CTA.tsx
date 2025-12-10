@@ -1,5 +1,8 @@
+"use client";
+
 import { motion } from "motion/react";
 import { ArrowRight, Globe } from "lucide-react";
+import { WaitlistForm } from "./WaitingList";
 
 export function CTA() {
   return (
@@ -59,7 +62,7 @@ export function CTA() {
                 </span>
               </motion.h2>
 
-              <motion.p
+              {/* <motion.p
                 className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -68,10 +71,11 @@ export function CTA() {
               >
                 Start your focus journey today and join thousands of users
                 building better habits
-              </motion.p>
+              </motion.p> */}
 
-              <motion.div
-                className=" flex-col sm:flex-row flex-center-all gap-4 mb-8"
+              {/* BUTTONS */}
+              {/* <motion.div
+                className="flex-col sm:flex-row flex-center-all gap-4 mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -81,7 +85,8 @@ export function CTA() {
                   className="group px-8 py-4 bg-gradient-to-r from-primary to-secondary btn-text rounded-xl shadow-lg shadow-primary/30"
                   whileHover={{
                     scale: 1.05,
-                    boxShadow: "0 20px 40px rgba(60, 130, 246, 0.4)",
+                    boxShadow:
+                      "0 20px 40px rgba(60, 130, 246, 0.4)",
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -98,10 +103,21 @@ export function CTA() {
                 >
                   Learn More
                 </motion.button>
+              </motion.div> */}
+
+              {/* WAITLIST INSERTED HERE */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="mt-12"
+              >
+                <WaitlistForm />
               </motion.div>
 
               <motion.div
-                className=" flex-center-all gap-2 text-muted-foreground"
+                className="flex-center-all gap-2 text-muted-foreground mt-10"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}

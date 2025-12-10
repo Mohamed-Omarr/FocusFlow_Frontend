@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +12,7 @@ import {
 } from "@/lib/zod/auth/validation/auth";
 import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,7 +41,9 @@ export default function LoginPage() {
         { withCredentials: true }
       );
       localStorage.setItem("accessToken", res.data.accessToken);
-      toasting.success(res.data.message, () => router.push("/home"));
+      // if (res.data) {
+      //   toasting.success(res.data.message, () => router.push("/home"));
+      // }
     } catch (err: any) {
       toasting.error(err.response.data.message || `Login error:${err}`);
     } finally {

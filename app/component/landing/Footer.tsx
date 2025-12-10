@@ -20,14 +20,7 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <motion.div
-              className="flex-center gap-2 mb-4"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
-              <div className="logo-icon from-[#3C82F6] to-[#9B8AFB]  flex-center-all">
-                <Target className="w-5 h-5 text-white" />
-              </div>
+            <motion.div>
               <span className="text-xl font-bold text-white">FocusFlow</span>
             </motion.div>
             <p className="text-[#A7A7B0] mb-6 max-w-sm">

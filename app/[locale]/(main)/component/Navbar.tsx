@@ -62,14 +62,15 @@ export function Navbar() {
         onMouseLeave={() => isSessionActive && setIsExpanded(false)}
       >
         {/* Brand */}
-        <motion.div
-          className="flex items-center gap-2"
-          whileHover={{ scale: 1.05 }}
-        >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-            <Target className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <span className="text-lg font-bold text-foreground">FocusFlow</span>
+        <motion.div className="" whileHover={{ scale: 1.05 }}>
+          <span
+            style={{
+              background:
+                "linear-gradient(to right, oklch(0.6 0.18 250) 0%, oklch(0.62 0.16 260) 20%, oklch(0.65 0.14 270) 40%, oklch(0.7 0.13 175) 60%, oklch(0.68 0.15 280) 80%, oklch(0.7 0.14 285) 100%)",
+            }}
+          >
+            FocusFlow
+          </span>
         </motion.div>
 
         {/* Navigation Links */}

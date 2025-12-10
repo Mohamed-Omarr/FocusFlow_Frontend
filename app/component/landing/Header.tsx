@@ -22,9 +22,6 @@ export function Header() {
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <div className="logo-icon from-primary to-secondary  flex-center-all">
-              <Target className="w-5 h-5 btn-text" />
-            </div>
             <span className="text-lg font-bold text-foreground">FocusFlow</span>
           </motion.div>
 
