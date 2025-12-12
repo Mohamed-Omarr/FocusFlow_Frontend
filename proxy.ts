@@ -10,6 +10,7 @@ const PROTECTED_PAGES = ["settings", "home", "sessions"];
 // Pages only for GUEST users (not logged in):
 const AUTH_PAGES = ["login", "register"];
 
+
 export default function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const pathname = url.pathname;
@@ -32,6 +33,11 @@ export default function middleware(req: NextRequest) {
   // if (hasToken && AUTH_PAGES.includes(page)) {
   //   return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
   // }
+
+  // USER LOGGED IN & has token , However still can access "/" Page which is the landing page.
+    // if (hasToken && pathname === "/${locale}") {
+    //   return NextResponse.next();
+    // }
 
   // Finally call next-intl middleware to handle locale
   return intlMiddleware(req);

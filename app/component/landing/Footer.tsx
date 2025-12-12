@@ -1,18 +1,14 @@
 import { motion } from "motion/react";
-import { Target, Twitter, Github, Linkedin } from "lucide-react";
+import { Linkedin } from "lucide-react";
 
 export function Footer() {
   const footerLinks = {
-    Product: ["Features", "Analytics", "Download", "Pricing"],
-    Company: ["About", "Blog", "Careers", "Contact"],
+    Product: ["Features", "Analytics"],
+    Company: ["About", "Contact"],
     Resources: ["Help Center", "Community", "Privacy", "Terms"],
   };
 
-  const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Github, href: "#", label: "GitHub" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-  ];
+  const socialLinks = [{ icon: Linkedin, href: "#", label: "LinkedIn" }];
 
   return (
     <footer className="border-t border-white/5 py-12 px-6">
