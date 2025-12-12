@@ -1,11 +1,10 @@
 "use client";
 import { motion } from "motion/react";
-import { Target } from "lucide-react";
-import { ThemeModeToggle } from "@/app/[locale]/(main)/component/ThemeModeToggle";
 import LangSwitcher from "../LangSwitcher";
+import { ModeToggle } from "@/components/theme-mode/ModeToggle";
 
 export function Header() {
-  const navItems = ["Home", "Features", "Analytics"];
+  const navItems = ["Features", "Analytics"];
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
@@ -46,8 +45,7 @@ export function Header() {
           <div className="flex flex-center gap-2 md:gap-4">
             {/* Language Selector */}
             <LangSwitcher />
-            <ThemeModeToggle />
-
+            <ModeToggle/>
             {/* Mobile Menu Button */}
             <motion.button
               className="md:hidden text-foreground"

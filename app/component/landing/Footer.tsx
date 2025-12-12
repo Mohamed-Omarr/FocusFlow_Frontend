@@ -70,9 +70,9 @@ export function Footer() {
             © {new Date().getFullYear()}
             <span className="font-semibold text-primary">FocusFlow</span> made
             by
-            <div className="font-medium text-accent  hover:text-primary/80 transition-colors duration-200">
+            <span className="font-medium text-accent  hover:text-primary/80 transition-colors duration-200">
               ByteLab
-            </div>
+            </span>
             , All rights reserved.
           </p>
 

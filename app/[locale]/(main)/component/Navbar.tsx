@@ -3,11 +3,11 @@
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
-import { Target, User } from "lucide-react";
-import { ThemeModeToggle } from "./ThemeModeToggle";
+import { User } from "lucide-react";
 import LangSwitcher from "@/app/component/LangSwitcher";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
+import { ModeToggle } from "@/components/theme-mode/ModeToggle";
 
 const BASE_NAV_LINKS = [
   { href: "/home", label: "Home" },
@@ -15,7 +15,6 @@ const BASE_NAV_LINKS = [
   { href: "/sessions", label: "Sessions" },
   { href: "/streak", label: "Streak" },
   { href: "/ai-analytics", label: "AI-Analytics" },
-  { href: "/settings", label: "Settings" },
 ];
 
 export function Navbar() {
@@ -62,15 +61,8 @@ export function Navbar() {
         onMouseLeave={() => isSessionActive && setIsExpanded(false)}
       >
         {/* Brand */}
-        <motion.div className="" whileHover={{ scale: 1.05 }}>
-          <span
-            style={{
-              background:
-                "linear-gradient(to right, oklch(0.6 0.18 250) 0%, oklch(0.62 0.16 260) 20%, oklch(0.65 0.14 270) 40%, oklch(0.7 0.13 175) 60%, oklch(0.68 0.15 280) 80%, oklch(0.7 0.14 285) 100%)",
-            }}
-          >
-            FocusFlow
-          </span>
+        <motion.div whileHover={{ scale: 1.05 }}>
+          <span className="text-lg font-bold text-foreground">FocusFlow</span>
         </motion.div>
 
         {/* Navigation Links */}
@@ -104,8 +96,7 @@ export function Navbar() {
         {/* Right Controls */}
         <div className="flex items-center gap-3 ml-auto relative">
           <LangSwitcher />
-          <ThemeModeToggle />
-
+          <ModeToggle />
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileOpen(!profileOpen)}

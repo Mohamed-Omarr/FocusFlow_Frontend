@@ -23,15 +23,15 @@ export default function middleware(req: NextRequest) {
   // Cookie
   const hasToken = req.cookies.get("jwt")?.value;
 
-  // 1️⃣ USER NOT LOGGED IN trying to access PROTECTED routes
-  if (!hasToken && PROTECTED_PAGES.includes(page)) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
-  }
+  // //  USER NOT LOGGED IN trying to access PROTECTED routes
+  // if (!hasToken && PROTECTED_PAGES.includes(page)) {
+  //   return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+  // }
 
-  // 2️⃣ USER LOGGED IN trying to access AUTH pages
-  if (hasToken && AUTH_PAGES.includes(page)) {
-    return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
-  }
+  // //  USER LOGGED IN trying to access AUTH pages
+  // if (hasToken && AUTH_PAGES.includes(page)) {
+  //   return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
+  // }
 
   // Finally call next-intl middleware to handle locale
   return intlMiddleware(req);

@@ -5,6 +5,7 @@ import type React from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
+import { ThemeProvider } from "@/components/theme-mode/theme-provider";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,14 +34,25 @@ export default async function RootLayout({ children, params }: Prop) {
   const { locale } = await params;
 
   return (
-    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className="dark">
+    <html
+      lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      suppressHydrationWarning
+    >
       <body
         className={`${geistMono.variable} ${geistSans.variable} antialiased`}
       >
-        <NextIntlClientProvider>
-          {children}
-          <Toaster position="top-center" />
-        </NextIntlClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NextIntlClientProvider>
+            {children}
+            <Toaster position="top-center" />
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
