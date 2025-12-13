@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/select";
 
 import { TaskType, CategoryType, DateType } from "../types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ValidateCreateTask } from "@/lib/zod/task/validation/task";
 
 type TaskState = Omit<TaskType, "id" | "postponed" | "completed">;
 
@@ -28,7 +31,8 @@ type TaskAction =
   | { type: "SET_FIELD"; field: keyof TaskState; value: string }
   | { type: "SET_REMINDER_TIME"; value: string };
 
-type CreateTaskModalProps = {
+type CreateTaskProps = {
+  show: boolean;
   setShowCreateForm: (show: boolean) => void;
 };
 
@@ -43,23 +47,30 @@ function taskReducer(state: TaskState, action: TaskAction): TaskState {
   }
 }
 
-export function CreateTaskModal({
-  setShowCreateForm,
-}: {
-  setShowCreateForm: CreateTaskModalProps;
-}) {
+export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<TaskState>({
+    resolver: zodResolver(ValidateCreateTask),
+    defaultValues: {
+      name: "",
+      category: "work" as CategoryType,
+      dateType: "no-date" as DateType,
+      singleDate: "",
+      startDate: "",
+      endDate: "",
+      reminder: "09:00",
+    },
+    mode: "onChange",
+  });
+
   const today = new Date().toISOString().split("T")[0];
 
-  const initialState: TaskState = {
-    name: "",
-    category: "work" as CategoryType,
-    dateType: "no-date" as DateType,
-    startDate: "",
-    endDate: "",
-    reminder: "09:00",
-  };
-
-  const [task, dispatch] = useReducer(taskReducer, initialState);
+  const [task, dispatch] = useReducer(taskReducer, getValues());
 
   const handleCreateTask = () => {
     try {
@@ -67,6 +78,7 @@ export function CreateTaskModal({
         name: task.name,
         category: task.category as CategoryType,
         dateType: task.dateType as DateType,
+        singleDate: task.singleDate || undefined,
         startDate: task.startDate || undefined,
         endDate: task.endDate || undefined,
         reminder: task.reminder || undefined,
@@ -80,24 +92,34 @@ export function CreateTaskModal({
         "focusflow-tasks",
         JSON.stringify([...savedTasks, newTask])
       );
-
+      reset();
       setShowCreateForm(false);
     } catch (err) {}
   };
 
   return (
-    <Dialog open onOpenChange={setShowCreateForm}>
+    <Dialog
+      open={show}
+      onOpenChange={(open) => {
+        if (!open) reset();
+        setShowCreateForm(open);
+      }}
+    >
       <DialogContent className="sm:max-w-md w-full max-h-[85vh] overflow-y-auto">
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 mt-2">
+        <form
+          onSubmit={handleSubmit(handleCreateTask)}
+          className="space-y-4 mt-2"
+        >
           {/* Task Name */}
           <div>
             <Label>Task Name</Label>
             <Input
               value={task.name}
+              {...register("name")}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
@@ -107,12 +129,16 @@ export function CreateTaskModal({
               }
               placeholder="e.g., Study Math"
             />
+            {errors.name && (
+              <p className="text-destructive">{errors.name?.message}</p>
+            )}
           </div>
 
           {/* Category */}
           <div>
             <Label>Category</Label>
             <Select
+              {...register("category")}
               value={task.category}
               onValueChange={(value) =>
                 dispatch({ type: "SET_FIELD", field: "category", value })
@@ -134,6 +160,7 @@ export function CreateTaskModal({
             {["no-date", "single", "range"].map((type) => (
               <Button
                 key={type}
+                {...register("dateType")}
                 variant={task.dateType === type ? "default" : "outline"}
                 className="flex-1"
                 onClick={() =>
@@ -147,6 +174,9 @@ export function CreateTaskModal({
                 {type.replace("-", " ")}
               </Button>
             ))}
+            {errors.category && (
+              <p className="text-destructive">{errors.category?.message}</p>
+            )}
           </div>
 
           {/* Single Date */}
@@ -154,17 +184,21 @@ export function CreateTaskModal({
             <div>
               <Label>Task Date</Label>
               <Input
+                {...register("singleDate")}
                 type="date"
                 min={today}
-                value={task.startDate}
+                value={task.singleDate}
                 onChange={(e) =>
                   dispatch({
                     type: "SET_FIELD",
-                    field: "startDate",
+                    field: "singleDate",
                     value: e.target.value,
                   })
                 }
               />
+              {errors.singleDate && (
+                <p className="text-destructive">{errors.singleDate?.message}</p>
+              )}
             </div>
           )}
 
@@ -176,6 +210,7 @@ export function CreateTaskModal({
                 <Input
                   type="date"
                   min={today}
+                  {...register("startDate")}
                   value={task.startDate}
                   onChange={(e) => {
                     const newStart = e.target.value;
@@ -198,6 +233,7 @@ export function CreateTaskModal({
                 <Label>End Date</Label>
                 <Input
                   type="date"
+                  {...register("endDate")}
                   min={task.startDate || today}
                   value={task.endDate}
                   onChange={(e) =>
@@ -209,6 +245,11 @@ export function CreateTaskModal({
                   }
                 />
               </div>
+              {(errors.startDate || errors.endDate) && (
+                <p className="text-destructive">
+                  {errors.startDate?.message || errors.endDate?.message}
+                </p>
+              )}
             </div>
           )}
 
@@ -223,16 +264,19 @@ export function CreateTaskModal({
                   dispatch({ type: "SET_REMINDER_TIME", value: e.target.value })
                 }
               />
+              {errors.reminder && (
+                <p className="text-destructive">{errors.reminder?.message}</p>
+              )}
             </div>
           )}
 
           {/* Submit Button */}
           <DialogFooter>
-            <Button className="w-full" onClick={handleCreateTask}>
+            <Button disabled={isSubmitting} type="submit" className="w-full">
               Create Task
             </Button>
           </DialogFooter>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

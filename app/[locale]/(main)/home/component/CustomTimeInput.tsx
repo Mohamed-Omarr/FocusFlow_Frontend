@@ -10,7 +10,11 @@ interface CustomTimeInputProps {
   onValidChange: (isValid: boolean) => void;
 }
 
-export function CustomTimeInput({ value, onChange, onValidChange }: CustomTimeInputProps) {
+export function CustomTimeInput({
+  value,
+  onChange,
+  onValidChange,
+}: CustomTimeInputProps) {
   const MIN = 25;
   const MAX = 360;
   const [error, setError] = useState("");
@@ -63,18 +67,22 @@ export function CustomTimeInput({ value, onChange, onValidChange }: CustomTimeIn
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <Label className="mb-2 block">Custom Duration (25–360 min)</Label>
+      <Label className="mb-2 block text-foreground">
+        Custom Duration (25–360 min)
+      </Label>
       <motion.input
         type="number"
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         onBlur={handleBlur}
         placeholder="Enter minutes"
-        className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border rounded-2xl transition ${
-          error ? "border-red-500 dark:border-red-400" : "border-gray-200 dark:border-gray-700"
+        className={`w-full px-4 py-3 bg-input text-foreground border rounded-2xl transition ${
+          error ? "border-destructive" : "border-border"
         }`}
       />
-      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+      {error && (
+        <p className="text-sm text-destructive-foreground mt-1">{error}</p>
+      )}
     </motion.div>
   );
 }

@@ -10,7 +10,11 @@ interface BreakTimeSelectorProps {
   setBreakMode: (mode: "auto" | "manual") => void;
 }
 
-export function BreakTimeSelector({ duration, breakMode, setBreakMode }: BreakTimeSelectorProps) {
+export function BreakTimeSelector({
+  duration,
+  breakMode,
+  setBreakMode,
+}: BreakTimeSelectorProps) {
   const breakInfo = useMemo(() => {
     let breakDuration = 0;
     let numBreaks = 0;
@@ -46,7 +50,12 @@ export function BreakTimeSelector({ duration, breakMode, setBreakMode }: BreakTi
   if (breakInfo.numBreaks === 0) return null;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="mt-4"
+    >
+      {/* Mode buttons */}
       <div className="flex gap-3 mb-2">
         <Button
           variant={breakMode === "auto" ? "default" : "outline"}
@@ -63,15 +72,22 @@ export function BreakTimeSelector({ duration, breakMode, setBreakMode }: BreakTi
           Manual Break
         </Button>
       </div>
-      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
-        <p className="text-sm font-medium">
-          Suggested Breaks: {breakInfo.numBreaks} break{breakInfo.numBreaks > 1 ? "s" : ""}, {breakInfo.breakDuration} min each
+
+      {/* Break info card */}
+      <div className="p-4 bg-card text-card-foreground border border-border rounded-2xl">
+        <p className="text-sm font-medium text-foreground">
+          Suggested Breaks: {breakInfo.numBreaks} break
+          {breakInfo.numBreaks > 1 ? "s" : ""}, {breakInfo.breakDuration} min
+          each
         </p>
-        <p className="text-sm mt-1">
+        <p className="text-sm mt-1 text-foreground">
           Break times (minutes from start): {breakInfo.breakTimes.join(", ")}
         </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Current mode: <span className="font-semibold">{breakMode === "auto" ? "Auto" : "Manual"}</span>
+        <p className="text-xs text-muted-foreground mt-1">
+          Current mode:{" "}
+          <span className="font-semibold text-foreground">
+            {breakMode === "auto" ? "Auto" : "Manual"}
+          </span>
         </p>
       </div>
     </motion.div>

@@ -17,8 +17,8 @@ import { TaskType } from "../types";
 import { handleDeleteTask } from "../helpers";
 
 type ScheduledTask = Omit<TaskType, "completed" | "dateType" | "reminder"> & {
-  dateType: "single" | "range"; 
-  reminder: string; 
+  dateType: "single" | "range";
+  reminder: string;
 };
 
 export default function ScheduledTask({
@@ -73,14 +73,16 @@ export default function ScheduledTask({
                     </span>
                   )}
                 </div>
-
-                {/* Date Range */}
+                {/* Date Range or Single */}
                 <p className="text-[10px] mt-1 text-muted-foreground">
                   <span className="font-medium text-foreground">Date:</span>{" "}
-                  {task.startDate}
-                  {task.endDate && task.endDate !== task.startDate && (
-                    <> / {task.endDate}</>
-                  )}
+                  {task.singleDate
+                    ? task.singleDate
+                    : task.startDate &&
+                      task.endDate &&
+                      task.endDate !== task.startDate
+                    ? `${task.startDate} / ${task.endDate}`
+                    : task.startDate}
                 </p>
 
                 {/* Reminder */}

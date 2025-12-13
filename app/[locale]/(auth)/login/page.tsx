@@ -13,6 +13,7 @@ import {
 import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
 import { Link, useRouter } from "@/i18n/navigation";
+import { LoginResponse } from "../types";
 
 export default function LoginPage() {
   const router = useRouter();

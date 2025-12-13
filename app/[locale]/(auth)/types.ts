@@ -1,4 +1,4 @@
-type User = {
+export type User = {
     name: string;
     email: string;
     _id: string;
@@ -6,14 +6,14 @@ type User = {
     updatedAt: string;
 }
 
-type RegisterResponse = {
+export type RegisterResponse = {
     data:{
         status: number;
         message: string;
     }
 }
 
-type LoginResponse = {
+export type LoginResponse = {
     data:{
         status: boolean;
         message: string;

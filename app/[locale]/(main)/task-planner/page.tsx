@@ -20,8 +20,7 @@ const mockTasks: TaskPage[] = [
     name: "Study Math",
     category: "study",
     dateType: "single",
-    startDate: "2025-12-10",
-    endDate: undefined,
+    singleDate: "2025-12-10",
     reminder: "10:00",
     completed: false,
     postponed: false,
@@ -31,11 +30,8 @@ const mockTasks: TaskPage[] = [
     name: "Gym Workout",
     category: "personal",
     dateType: "no-date",
-    startDate: undefined,
-    endDate: undefined,
-    reminder: undefined,
-    postponed: false,
     completed: false,
+    postponed: false,
   },
   {
     id: "3",
@@ -46,7 +42,6 @@ const mockTasks: TaskPage[] = [
     endDate: "2025-12-20",
     reminder: "10:00",
     completed: false,
-
     postponed: false,
   },
   {
@@ -54,11 +49,9 @@ const mockTasks: TaskPage[] = [
     name: "Read JavaScript Book",
     category: "study",
     dateType: "single",
-    startDate: "2025-12-15",
-    endDate: undefined,
+    singleDate: "2025-12-15",
     reminder: "10:00",
     completed: false,
-
     postponed: false,
   },
   {
@@ -66,11 +59,9 @@ const mockTasks: TaskPage[] = [
     name: "Team Meeting",
     category: "work",
     dateType: "single",
-    startDate: "2025-12-08",
-    endDate: undefined,
+    singleDate: "2025-12-08",
     reminder: "10:00",
     completed: false,
-
     postponed: false,
   },
 ];
@@ -79,7 +70,7 @@ const TaskPlannerPage = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  // Scheduled & Non-scheduled
+  // Scheduled & Non-scheduled (unchanged logic)
   const scheduledTasks = useMemo(
     () =>
       mockTasks.filter(
@@ -89,6 +80,7 @@ const TaskPlannerPage = () => {
       ),
     []
   );
+
   const nonScheduledTasks = useMemo(
     () =>
       mockTasks.filter(
@@ -97,12 +89,28 @@ const TaskPlannerPage = () => {
     []
   );
 
+  const selectedDateTasks = useMemo(() => {
+    if (!selectedDate) return [];
+
+    return mockTasks.filter((task) => {
+      if (task.singleDate) {
+        return task.singleDate === selectedDate;
+      }
+
+      if (!task.startDate) return false;
+      if (!task.endDate) return task.startDate === selectedDate;
+
+      return selectedDate >= task.startDate && selectedDate <= task.endDate;
+    });
+  }, [selectedDate]);
+
   return (
     <>
       <main className="flex-1 px-4 py-6 max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="flex-center-between mb-6 border border-border/50 backdrop-blur-xl bg-background/60 rounded-full px-6 py-3">
           <h1 className="text-2xl font-bold text-foreground">Task Planner</h1>
+
           <button
             onClick={() => setShowCreateForm(true)}
             className="flex flex-center gap-2 px-4 py-2 bg-primary btn-text rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 text-sm shadow-sm hover:shadow-md"
@@ -130,36 +138,32 @@ const TaskPlannerPage = () => {
 
             {/* Selected Date Tasks */}
             {selectedDate ? (
-              <div className="space-y-3">
-                {mockTasks
-                  .filter((task) => {
-                    if (!task.startDate) return false;
-                    if (!task.endDate) return task.startDate === selectedDate;
-                    return (
-                      selectedDate >= task.startDate &&
-                      selectedDate <= task.endDate
-                    );
-                  })
-                  .map((task) => (
+              selectedDateTasks.length > 0 ? (
+                <div className="space-y-3">
+                  {selectedDateTasks.map((task) => (
                     <TaskCard key={task.id} task={task} />
                   ))}
-                {mockTasks.filter((task) => task.startDate === selectedDate)
-                  .length === 0 && (
-                  <p className="small-muted-text">No tasks for this date</p>
-                )}
-              </div>
+                </div>
+              ) : (
+                <p className="small-muted-text">No tasks for this date</p>
+              )
             ) : (
               <p className="small-muted-text">Click on a date to view tasks</p>
             )}
 
+            {/* Always visible sections */}
             <ScheduledTask scheduled={scheduledTasks} />
             <NonScheduledTask nonScheduled={nonScheduledTasks} />
           </div>
         </div>
       </main>
 
+      {/* Create Task Modal (controlled) */}
       {showCreateForm && (
-        <CreateTaskModal setShowCreateForm={setShowCreateForm} />
+        <CreateTaskModal
+          show={showCreateForm}
+          setShowCreateForm={setShowCreateForm}
+        />
       )}
     </>
   );

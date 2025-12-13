@@ -6,7 +6,7 @@ import { CalendarDay } from "./CalendarDay";
 import { TaskType } from "../types";
 
 interface CalendarProps {
-  tasks: Omit<TaskType,"completed">;
+  tasks: Omit<TaskType, "completed">[];
   selectedDate: string | null;
   setSelectedDate: (date: string) => void;
 }
@@ -35,12 +35,30 @@ const Calendar = ({ tasks, selectedDate, setSelectedDate }: CalendarProps) => {
   const formatDate = (y: number, m: number, d: number) =>
     `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-  const getTasksForDate = (date: string) =>
-    tasks.filter((task) => {
-      if (!task.startDate) return false;
-      if (!task.endDate) return task.startDate === date;
-      return date >= task.startDate && date <= task.endDate;
-    });
+  const getTasksForDate = useMemo(
+    () => (date: string) => {
+      const selected = new Date(date + "T00:00:00").getTime();
+
+      return tasks.filter((task) => {
+        if (task.singleDate) {
+          const single = new Date(task.singleDate + "T00:00:00").getTime();
+          return single === selected;
+        }
+
+        if (!task.startDate) return false;
+
+        const start = new Date(task.startDate + "T00:00:00").getTime();
+
+        if (!task.endDate) {
+          return start === selected;
+        }
+
+        const end = new Date(task.endDate + "T00:00:00").getTime();
+        return selected >= start && selected <= end;
+      });
+    },
+    [tasks]
+  );
 
   return (
     <div className="lg:col-span-2 bg-card rounded-2xl p-5 border border-border shadow-sm">

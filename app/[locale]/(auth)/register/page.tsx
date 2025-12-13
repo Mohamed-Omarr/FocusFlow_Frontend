@@ -14,6 +14,7 @@ import {
 import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
 import { Link } from "@/i18n/navigation";
+import { RegisterResponse } from "../types";
 
 export default function RegisterPage() {
   const router = useRouter();

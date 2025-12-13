@@ -1,6 +1,3 @@
-// lib/toast.ts
-"use client";
-
 import { toast } from "sonner";
 
 export const toasting = {

@@ -14,13 +14,17 @@ export type CategoryType = typeof CategoryTypes[keyof typeof CategoryTypes];
 export type DateType = typeof DateTypes[keyof typeof DateTypes];
 
 export type TaskType = {
-  id: string;
+  id: string;// default uuid
   name: string;
   category: CategoryType;  
-  dateType: DateType;      
-  startDate?: string;
-  endDate?: string;
-  reminder?: string;
+  dateType: DateType;
+  // optionals
+  singleDate?: string; //
+  startDate?: string; //
+  endDate?: string; //
+  reminder?: string; //
+  //
+
   postponed: boolean; // default false
   completed: boolean; // default false
 }

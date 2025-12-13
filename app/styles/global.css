@@ -1,4 +1,4 @@
-/* Tailwind v4 imports */
+/* --- Tailwind v4 imports --- */
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -11,19 +11,19 @@
   --color-black: oklch(0.145 0 0);
   --gray-50: oklch(0.97 0 0);
   --gray-100: oklch(0.922 0 0);
-  --gray-700: oklch(0.577 0.245 27.325);
+  --gray-700: oklch(0.577 0 0);
   --gray-800: oklch(0.205 0 0);
 
   /* Brand colors */
-  --brand-primary: oklch(0.646 0.222 41.116);
-  --brand-secondary: oklch(0.6 0.118 184.704);
-  --brand-tertiary: oklch(0.398 0.07 227.392);
-  --brand-quaternary: oklch(0.828 0.189 84.429);
-  --brand-quinary: oklch(0.769 0.188 70.08);
+  --brand-primary: oklch(0.646 0.15 245);
+  --brand-secondary: oklch(0.6 0.12 185);
+  --brand-tertiary: oklch(0.398 0.07 227);
+  --brand-quaternary: oklch(0.828 0.12 85);
+  --brand-quinary: oklch(0.769 0.13 70);
 
   /* Dark variants */
-  --brand-primary-dark: oklch(0.6 0.18 250);
-  --brand-secondary-dark: oklch(0.68 0.15 280);
+  --brand-primary-dark: oklch(0.6 0.15 245);
+  --brand-secondary-dark: oklch(0.68 0.12 280);
   --brand-tertiary-dark: oklch(0.7 0.13 175);
   --brand-quaternary-dark: oklch(0.65 0.16 255);
   --brand-quinary-dark: oklch(0.7 0.14 285);
@@ -43,50 +43,44 @@
 }
 
 /* ------------------------------------------------------
-   LIGHT THEME (use tokens - semantic mappings)
------------------------------------------------------- */
-/* ------------------------------------------------------
-   LIGHT THEME — Warm, Safe, Home, Cozy Environment
+   LIGHT THEME
 ------------------------------------------------------ */
 :root {
-  /* --- Base Colors (Soft, Warm, Non-White) --- */
-  --background: oklch(0.93 0.01 95); /* Soft warm ivory (much less bright) */
-  --foreground: oklch(
-    0.28 0.02 285
-  ); /* Dark warm charcoal (gentle, readable) */
+  /* --- Base Colors --- */
+  --background: oklch(0.93 0.01 95);
+  --foreground: oklch(0.28 0.02 285);
 
-  --card: oklch(0.96 0.008 95); /* Slightly lifted from bg */
+  --card: oklch(0.96 0.008 95);
   --card-foreground: var(--foreground);
 
   --popover: oklch(0.97 0.008 95);
   --popover-foreground: var(--foreground);
 
-  /* --- Primary (Comforting Pastel Blue) --- */
-  --primary: oklch(0.7 0.12 245); /* Soft gentle blue */
+  /* --- Primary / Secondary --- */
+  --primary: oklch(0.7 0.12 245);
   --primary-foreground: oklch(0.98 0 0);
 
-  /* --- Secondary (Soft Beige Neutral) --- */
   --secondary: oklch(0.9 0.01 95);
   --secondary-foreground: oklch(0.3 0.02 285);
 
-  /* --- Muted (Low-Contrast Neutrals) --- */
+  /* --- Muted --- */
   --muted: oklch(0.88 0.01 95);
   --muted-foreground: oklch(0.48 0.015 285);
 
-  /* --- Accent (Warm, Positive, Gentle) --- */
-  --accent: oklch(0.82 0.04 240); /* Soft pastel sky-blue */
+  /* --- Accent --- */
+  --accent: oklch(0.82 0.04 240);
   --accent-foreground: oklch(0.26 0.02 285);
 
-  /* --- Destructive (Calm red, not alarming) --- */
-  --destructive: oklch(0.65 0.09 25);
-  --destructive-foreground: oklch(0.2 0 0);
+  /* --- Destructive (Calm Red) --- */
+  --destructive: oklch(0.65 0.18 29);
+  --destructive-foreground: oklch(0.2 0.02 29);
 
   /* --- UI Lines & Inputs --- */
-  --border: oklch(0.85 0.008 95); /* SUPER soft border */
+  --border: oklch(0.85 0.008 95);
   --input: oklch(0.9 0.01 95);
   --ring: oklch(0.58 0.05 250);
 
-  /* --- Charts (Keep flexible) --- */
+  /* --- Charts --- */
   --chart-1: var(--primary);
   --chart-2: var(--accent);
   --chart-3: oklch(0.7 0.08 310);
@@ -95,7 +89,7 @@
 }
 
 /* ------------------------------------------------------
-   DARK THEME (use tokens + dark variants)
+   DARK THEME
 ------------------------------------------------------ */
 .dark {
   --background: oklch(0.12 0.01 264);
@@ -119,8 +113,9 @@
   --accent: var(--brand-tertiary-dark);
   --accent-foreground: var(--color-white);
 
-  --destructive: var(--gray-700);
-  --destructive-foreground: var(--color-white);
+  /* Destructive - Dark Red */
+  --destructive: oklch(0.35 0.18 29);
+  --destructive-foreground: oklch(0.95 0.02 29);
 
   --border: oklch(0.22 0.01 264);
   --input: oklch(0.18 0.01 264);
@@ -209,8 +204,11 @@
   }
 }
 
+/* ------------------------------------------------------
+    COMPONENTS / UTILITIES
+------------------------------------------------------ */
 @layer components {
-  /* Glow effects  */
+  /* Glow effects */
   .glow-primary {
     box-shadow: 0 0 40px rgba(60, 130, 246, 0.3),
       0 0 80px rgba(60, 130, 246, 0.15);
@@ -226,45 +224,40 @@
       0 0 80px rgba(76, 201, 167, 0.15);
   }
 
-  /* structure of the layout  */
+  /* Layout structure */
   .structure-layout-style {
-    @apply pt-24 px-6 max-w-7xl mx-auto w-full  min-h-screen flex flex-col gap-8;
+    @apply pt-24 px-6 max-w-7xl mx-auto w-full min-h-screen flex flex-col gap-8;
   }
-
   .structure-layout-auth-style {
-    @apply pt-24 px-6 max-w-7xl mx-auto w-full  min-h-screen flex flex-col gap-8 items-center;
+    @apply pt-24 px-6 max-w-7xl mx-auto w-full min-h-screen flex flex-col gap-8 items-center;
   }
 
-  /* section wrapper */
+  /* Section wrapper */
   .section-wrapper {
     @apply py-24 px-6 relative overflow-hidden;
   }
-  /* Hero Section Wrapper */
-
   .hero-section {
     @apply relative min-h-screen rounded-xl items-center justify-center py-10 px-8 overflow-hidden;
   }
 
-  /* .container-wrapper */
+  /* Containers */
   .container-wrapper {
     @apply container mx-auto relative z-10;
   }
   .max-container {
     @apply max-w-4xl mx-auto;
   }
-
   .max-container-lg {
     @apply max-w-6xl mx-auto;
   }
 
+  /* Flex helpers */
   .flex-center {
     @apply items-center;
   }
-
   .flex-between {
     @apply justify-between;
   }
-
   .flex-center-between {
     @apply flex items-center justify-between;
   }
@@ -272,21 +265,21 @@
     @apply flex items-center justify-center;
   }
 
+  /* Text styles */
   .section-heading-two {
     @apply text-4xl md:text-5xl font-bold text-foreground mb-4;
   }
-
   .small-muted-text {
     @apply text-sm text-muted-foreground;
   }
-
   .btn-text {
     @apply text-primary-foreground;
   }
+
+  /* Misc */
   .absolute-inset {
     @apply absolute inset-0;
   }
-
   .logo-icon {
     @apply w-8 h-8 rounded-lg bg-gradient-to-br;
   }

@@ -21,7 +21,6 @@ const verifyToken = async (token: string) => {
         withCredentials: true,
       }
     );
-    console.log(res);
     return true;
   } catch {
     return false;

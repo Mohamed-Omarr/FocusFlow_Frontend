@@ -58,9 +58,13 @@ export function WaitlistForm() {
           Master your day with FocusFlow.
         </h3>
       </div>
-      <p className="text-center text-muted-foreground mb-6 leading-relaxed">
+      <p className="text-center text-muted-foreground mb-3 leading-relaxed">
         Turn distractions into progress. Join the waitlist and be the first to
         experience FocusFlow with exclusive early access.
+      </p>
+
+      <p className="text-center text-muted-foreground mb-3 leading-relaxed">
+        we are coming soon.
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
