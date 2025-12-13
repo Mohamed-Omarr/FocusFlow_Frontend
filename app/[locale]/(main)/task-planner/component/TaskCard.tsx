@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 
 import {
   DropdownMenu,
@@ -35,16 +35,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { MoreVertical, CalendarClock, Trash2 } from "lucide-react";
+import { TaskType } from "../types";
 
-export function TaskCard({ task }: { task: Task }) {
+type TaskCardType = Omit<TaskType, "completed">;
+type DateState = {
+  newSingleDate: string;
+  newStart: string;
+  newEnd: string;
+};
+
+type DateAction =
+  | { type: "SET_NEW_SINGLE_DATE"; payload: string }
+  | { type: "SET_NEW_START"; payload: string }
+  | { type: "SET_NEW_END"; payload: string }
+  | { type: "RESET" };
+
+const dateReducer = (state: DateState, action: DateAction): DateState => {
+  switch (action.type) {
+    case "SET_NEW_SINGLE_DATE":
+      return { ...state, newSingleDate: action.payload };
+    case "SET_NEW_START":
+      return { ...state, newStart: action.payload };
+    case "SET_NEW_END":
+      return { ...state, newEnd: action.payload };
+    case "RESET":
+      return { newSingleDate: "", newStart: "", newEnd: "" };
+    default:
+      return state;
+  }
+};
+
+// -------------------------
+// TaskCard component
+// -------------------------
+export function TaskCard({ task }: { task: TaskCardType }) {
   const [openPostpone, setOpenPostpone] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
-  // new dates
-  const [newDate, setNewDate] = useState("");
-  const [newStart, setNewStart] = useState("");
-  const [newEnd, setNewEnd] = useState("");
+  const [dateState, dispatchDate] = useReducer(dateReducer, {
+    newSingleDate: "",
+    newStart: "",
+    newEnd: "",
+  });
 
   const today = new Date().toISOString().split("T")[0];
   const isRange =
@@ -52,13 +85,18 @@ export function TaskCard({ task }: { task: Task }) {
   const canPostpone = !task.postponed;
 
   // -------------------------
-  // AUTO FIX RANGE VALIDATION
+  // Auto-fix range validation
   // -------------------------
   useEffect(() => {
-    if (isRange && newStart && newEnd && newEnd < newStart) {
-      setNewEnd(newStart); // enforce end >= start
+    if (
+      isRange &&
+      dateState.newStart &&
+      dateState.newEnd &&
+      dateState.newEnd < dateState.newStart
+    ) {
+      dispatchDate({ type: "SET_NEW_END", payload: dateState.newStart });
     }
-  }, [newStart, newEnd, isRange]);
+  }, [dateState.newStart, dateState.newEnd, isRange]);
 
   const handleDeleteTask = (id: string) => {
     console.log("Delete:", id);
@@ -66,16 +104,15 @@ export function TaskCard({ task }: { task: Task }) {
     setOpenDeleteConfirm(false);
   };
 
-  const handlePostponeFinal = () => {
+  const handlePostpone = () => {
     const updated = {
       ...task,
       postponed: true,
-      startDate: isRange ? newStart : newDate,
-      endDate: isRange ? newEnd : newDate,
+      startDate: isRange ? dateState.newStart : dateState.newSingleDate,
+      endDate: isRange ? dateState.newEnd : dateState.newSingleDate,
     };
-
+    dispatchDate({ type: "SET_NEW_END", payload: dateState.newStart });
     console.log("Postponed:", updated);
-
     // backend logic here
 
     setOpenConfirm(false);
@@ -151,7 +188,7 @@ export function TaskCard({ task }: { task: Task }) {
           </p>
           <div className="flex flex-wrap gap-1">
             <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-lg font-medium">
-              {task.reminder.time}
+              {task.reminder}
             </span>
           </div>
         </div>
@@ -177,8 +214,13 @@ export function TaskCard({ task }: { task: Task }) {
               <Input
                 type="date"
                 min={today}
-                value={newDate}
-                onChange={(e) => setNewDate(e.target.value)}
+                value={dateState.newSingleDate}
+                onChange={(e) =>
+                  dispatchDate({
+                    type: "SET_NEW_SINGLE_DATE",
+                    payload: e.target.value,
+                  })
+                }
               />
             </div>
           )}
@@ -195,8 +237,13 @@ export function TaskCard({ task }: { task: Task }) {
                 <Input
                   type="date"
                   min={today}
-                  value={newStart}
-                  onChange={(e) => setNewStart(e.target.value)}
+                  value={dateState.newStart}
+                  onChange={(e) =>
+                    dispatchDate({
+                      type: "SET_NEW_START",
+                      payload: e.target.value,
+                    })
+                  }
                 />
               </div>
 
@@ -208,9 +255,14 @@ export function TaskCard({ task }: { task: Task }) {
                 <Label className="mt-2 block">New End</Label>
                 <Input
                   type="date"
-                  min={newStart || today}
-                  value={newEnd}
-                  onChange={(e) => setNewEnd(e.target.value)}
+                  min={dateState.newStart || today}
+                  value={dateState.newEnd}
+                  onChange={(e) =>
+                    dispatchDate({
+                      type: "SET_NEW_END",
+                      payload: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -219,7 +271,8 @@ export function TaskCard({ task }: { task: Task }) {
           <DialogFooter>
             <Button
               disabled={
-                (!isRange && !newDate) || (isRange && (!newStart || !newEnd))
+                (!isRange && !dateState.newSingleDate) ||
+                (isRange && (!dateState.newStart || !dateState.newEnd))
               }
               onClick={() => setOpenConfirm(true)}
             >
@@ -242,7 +295,7 @@ export function TaskCard({ task }: { task: Task }) {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handlePostponeFinal}>
+            <AlertDialogAction onClick={handlePostpone}>
               Yes, update date
             </AlertDialogAction>
           </AlertDialogFooter>

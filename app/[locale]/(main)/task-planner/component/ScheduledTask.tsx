@@ -13,8 +13,19 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { TaskType } from "../types";
+import { handleDeleteTask } from "../helpers";
 
-export default function ScheduledTask({ scheduled, handleDeleteTask }) {
+type ScheduledTask = Omit<TaskType, "completed" | "dateType" | "reminder"> & {
+  dateType: "single" | "range"; 
+  reminder: string; 
+};
+
+export default function ScheduledTask({
+  scheduled,
+}: {
+  scheduled: ScheduledTask[];
+}) {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -23,9 +34,11 @@ export default function ScheduledTask({ scheduled, handleDeleteTask }) {
     setOpenDelete(true);
   };
 
-  const handleFinalDelete = () => {
-    if (selectedId) handleDeleteTask(selectedId);
-    setOpenDelete(false);
+  const handleFinalDelete = async () => {
+    try {
+      await handleDeleteTask(selectedId);
+      setOpenDelete(false);
+    } catch (err) {}
   };
 
   return (
@@ -71,14 +84,10 @@ export default function ScheduledTask({ scheduled, handleDeleteTask }) {
                 </p>
 
                 {/* Reminder */}
-                {task.reminderTime && (
-                  <p className="text-[10px] mt-1 text-muted-foreground">
-                    <span className="font-medium text-foreground">
-                      Reminder:
-                    </span>{" "}
-                    {task.reminderTime}
-                  </p>
-                )}
+                <p className="text-[10px] mt-1 text-muted-foreground">
+                  <span className="font-medium text-foreground">Reminder:</span>{" "}
+                  {task.reminder}
+                </p>
               </div>
 
               {/* DELETE BUTTON */}
@@ -105,7 +114,9 @@ export default function ScheduledTask({ scheduled, handleDeleteTask }) {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setSelectedId(null)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleFinalDelete}
               className="bg-destructive text-white hover:bg-destructive/90"

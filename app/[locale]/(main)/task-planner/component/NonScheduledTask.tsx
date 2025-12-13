@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { CalendarX, X } from "lucide-react";
 
@@ -13,8 +12,22 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { handleDeleteTask } from "../helpers";
+import { TaskType } from "../types";
 
-export default function NonScheduledTask({ tasks, handleDeleteTask }) {
+type NonScheduledTask = Omit<
+  TaskType,
+  "completed" | "dateType" | "reminder"
+> & {
+  dateType: "no-date";
+  reminder: undefined;
+};
+
+export default function NonScheduledTask({
+  nonScheduled,
+}: {
+  nonScheduled: NonScheduledTask[];
+}) {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -23,9 +36,11 @@ export default function NonScheduledTask({ tasks, handleDeleteTask }) {
     setOpenDelete(true);
   };
 
-  const handleFinalDelete = () => {
-    if (selectedId) handleDeleteTask(selectedId);
-    setOpenDelete(false);
+  const handleFinalDelete = async () => {
+    try {
+      await handleDeleteTask(selectedId);
+      setOpenDelete(false);
+    } catch (err) {}
   };
 
   return (
@@ -40,10 +55,10 @@ export default function NonScheduledTask({ tasks, handleDeleteTask }) {
 
       {/* LIST */}
       <div className="space-y-1.5 max-h-48 overflow-y-auto">
-        {tasks.filter((task) => !task.startDate).length === 0 ? (
+        {nonScheduled.filter((task) => !task.startDate).length === 0 ? (
           <p className="text-xs text-muted-foreground">No tasks found</p>
         ) : (
-          tasks
+          nonScheduled
             .filter((task) => !task.startDate)
             .map((task) => (
               <div
@@ -90,7 +105,9 @@ export default function NonScheduledTask({ tasks, handleDeleteTask }) {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setSelectedId(null)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-white hover:bg-destructive/90"
               onClick={handleFinalDelete}

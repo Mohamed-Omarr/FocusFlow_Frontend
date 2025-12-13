@@ -1,85 +1,102 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useReducer } from "react";
 
-export function CreateTaskModal({ setShowCreateForm }) {
-  // ------------------------------
-  // Helpers
-  // ------------------------------
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { TaskType, CategoryType, DateType } from "../types";
+
+type TaskState = Omit<TaskType, "id" | "postponed" | "completed">;
+
+type TaskAction =
+  | { type: "SET_FIELD"; field: keyof TaskState; value: string }
+  | { type: "SET_REMINDER_TIME"; value: string };
+
+type CreateTaskModalProps = {
+  setShowCreateForm: (show: boolean) => void;
+};
+
+function taskReducer(state: TaskState, action: TaskAction): TaskState {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "SET_REMINDER_TIME":
+      return { ...state, reminder: action.value };
+    default:
+      return state;
+  }
+}
+
+export function CreateTaskModal({
+  setShowCreateForm,
+}: {
+  setShowCreateForm: CreateTaskModalProps;
+}) {
   const today = new Date().toISOString().split("T")[0];
 
-  // ------------------------------
-  // Reducer + Initial State
-  // ------------------------------
-  const initialState = {
+  const initialState: TaskState = {
     name: "",
-    category: "",
-    dateType: "no-date", // no-date | single | range
+    category: "work" as CategoryType,
+    dateType: "no-date" as DateType,
     startDate: "",
     endDate: "",
-    reminderCount: 1,
-    reminderTime: ["09:00"],
+    reminder: "09:00",
   };
 
-  function reducer(state, action) {
-    switch (action.type) {
-      case "SET_FIELD":
-        return { ...state, [action.field]: action.value };
+  const [task, dispatch] = useReducer(taskReducer, initialState);
 
-      case "SET_REMINDER_COUNT":
-        return {
-          ...state,
-          reminderCount: action.value,
-          reminderTime: Array(action.value).fill(""),
-        };
+  const handleCreateTask = () => {
+    try {
+      const newTask: TaskState = {
+        name: task.name,
+        category: task.category as CategoryType,
+        dateType: task.dateType as DateType,
+        startDate: task.startDate || undefined,
+        endDate: task.endDate || undefined,
+        reminder: task.reminder || undefined,
+      };
 
-      case "SET_REMINDER_TIME":
-        const updated = [...state.reminderTime];
-        updated[action.index] = action.value;
-        return { ...state, reminderTime: updated };
+      console.log("Created Task:", newTask);
+      const savedTasks = JSON.parse(
+        localStorage.getItem("focusflow-tasks") || "[]"
+      );
+      localStorage.setItem(
+        "focusflow-tasks",
+        JSON.stringify([...savedTasks, newTask])
+      );
 
-      default:
-        return state;
-    }
-  }
+      setShowCreateForm(false);
+    } catch (err) {}
+  };
 
-  const [task, dispatch] = useReducer(reducer, initialState);
-
-  // ------------------------------
-  // Create Task Handler
-  // ------------------------------
-  function handleCreateTask() {
-    console.log("Created Task:", task);
-    localStorage.setItem("focusflow-tasks", JSON.stringify(task));
-    setShowCreateForm(false);
-  }
-
-  // ------------------------------
-  // Component
-  // ------------------------------
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex-center-all z-50 p-4">
-      <div className="bg-card rounded-2xl p-5 border border-border max-w-md w-full max-h-[85vh] overflow-y-auto shadow-2xl">
-        {/* Header */}
-        <div className="flex-center-between mb-4">
-          <h2 className="text-lg font-bold text-foreground">Create New Task</h2>
-          <button
-            onClick={() => setShowCreateForm(false)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <Dialog open onOpenChange={setShowCreateForm}>
+      <DialogContent className="sm:max-w-md w-full max-h-[85vh] overflow-y-auto">
+        <DialogHeader className="flex justify-between items-center">
+          <DialogTitle>Create New Task</DialogTitle>
+        </DialogHeader>
 
-        <div className="space-y-3">
+        <div className="space-y-4 mt-2">
           {/* Task Name */}
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1.5">
-              Task Name
-            </label>
-            <input
-              type="text"
+            <Label>Task Name</Label>
+            <Input
               value={task.name}
               onChange={(e) =>
                 dispatch({
@@ -89,65 +106,54 @@ export function CreateTaskModal({ setShowCreateForm }) {
                 })
               }
               placeholder="e.g., Study Math"
-              className="w-full px-3 py-2 bg-elevated border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1.5">
-              Category
-            </label>
-            <select
+            <Label>Category</Label>
+            <Select
               value={task.category}
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_FIELD",
-                  field: "category",
-                  value: e.target.value,
-                })
+              onValueChange={(value) =>
+                dispatch({ type: "SET_FIELD", field: "category", value })
               }
-              className="w-full px-3 py-2 border border-border rounded-xl text-sm text-foreground"
             >
-              <option value="">Select category</option>
-              <option value="personal">Personal</option>
-              <option value="work">Work</option>
-              <option value="study">Study</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="personal">Personal</SelectItem>
+                <SelectItem value="work">Work</SelectItem>
+                <SelectItem value="study">Study</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Date Selection */}
-          <div>
-            <label className="block text-xs font-medium text-foreground mb-1.5">
-              Date
-            </label>
+          {/* Date Type Buttons */}
+          <div className="flex gap-2">
+            {["no-date", "single", "range"].map((type) => (
+              <Button
+                key={type}
+                variant={task.dateType === type ? "default" : "outline"}
+                className="flex-1"
+                onClick={() =>
+                  dispatch({
+                    type: "SET_FIELD",
+                    field: "dateType",
+                    value: type,
+                  })
+                }
+              >
+                {type.replace("-", " ")}
+              </Button>
+            ))}
+          </div>
 
-            {/* Date Type Buttons */}
-            <div className="flex gap-2 mb-2">
-              {["no-date", "single", "range"].map((type) => (
-                <button
-                  key={type}
-                  onClick={() =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "dateType",
-                      value: type,
-                    })
-                  }
-                  className={`flex-1 px-3 py-2 rounded-xl border text-sm font-medium ${
-                    task.dateType === type
-                      ? "bg-primary btn-text border-primary shadow-sm"
-                      : "bg-elevated border-border text-foreground"
-                  }`}
-                >
-                  {type.replace("-", " ")}
-                </button>
-              ))}
-            </div>
-
-            {/* Single Date */}
-            {task.dateType === "single" && (
-              <input
+          {/* Single Date */}
+          {task.dateType === "single" && (
+            <div>
+              <Label>Task Date</Label>
+              <Input
                 type="date"
                 min={today}
                 value={task.startDate}
@@ -158,28 +164,26 @@ export function CreateTaskModal({ setShowCreateForm }) {
                     value: e.target.value,
                   })
                 }
-                className="w-full px-3 py-2 bg-elevated border border-border rounded-xl text-sm text-foreground"
               />
-            )}
+            </div>
+          )}
 
-            {/* Range */}
-            {task.dateType === "range" && (
-              <div className="space-y-1.5">
-                {/* Start Date */}
-                <input
+          {/* Range Date */}
+          {task.dateType === "range" && (
+            <div className="space-y-2">
+              <div>
+                <Label>Start Date</Label>
+                <Input
                   type="date"
                   min={today}
                   value={task.startDate}
                   onChange={(e) => {
                     const newStart = e.target.value;
-
                     dispatch({
                       type: "SET_FIELD",
                       field: "startDate",
                       value: newStart,
                     });
-
-                    // Auto-fix end date if invalid
                     if (task.endDate && task.endDate < newStart) {
                       dispatch({
                         type: "SET_FIELD",
@@ -188,11 +192,11 @@ export function CreateTaskModal({ setShowCreateForm }) {
                       });
                     }
                   }}
-                  className="w-full px-3 py-2 bg-elevated border border-border rounded-xl text-sm"
                 />
-
-                {/* End Date */}
-                <input
+              </div>
+              <div>
+                <Label>End Date</Label>
+                <Input
                   type="date"
                   min={task.startDate || today}
                   value={task.endDate}
@@ -203,75 +207,33 @@ export function CreateTaskModal({ setShowCreateForm }) {
                       value: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 bg-elevated border border-border rounded-xl text-sm"
                 />
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Reminder Section */}
+          {/* Reminder */}
           {(task.dateType === "single" || task.dateType === "range") && (
-            <div className="p-3 bg-elevated rounded-xl border border-border">
-              <label className="block text-xs font-medium text-foreground mb-1.5">
-                Reminder
-                {task.dateType === "range" && (
-                  <span className="block text-xs text-muted-foreground mt-0.5">
-                    Will repeat daily in range
-                  </span>
-                )}
-              </label>
-
-              {/* Reminder Count */}
-              <div className="mb-2">
-                <label className="block text-xs text-muted-foreground mb-1">
-                  Count:
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  max={1}
-                  disabled={true}
-                  value={task.reminderCount}
-                  className="w-full px-2 py-1.5 bg-card border border-border rounded-lg text-sm"
-                />
-              </div>
-
-              {/* Reminder Times */}
-              {task.reminderCount > 0 && (
-                <div className="space-y-1.5">
-                  <label className="block text-xs text-muted-foreground">
-                    Times:
-                  </label>
-
-                  {task.reminderTime.map((time, i) => (
-                    <input
-                      key={i}
-                      type="time"
-                      value={time}
-                      onChange={(e) =>
-                        dispatch({
-                          type: "SET_REMINDER_TIME",
-                          index: i,
-                          value: e.target.value,
-                        })
-                      }
-                      className="w-full px-2 py-1.5 bg-card border border-border rounded-lg text-sm"
-                    />
-                  ))}
-                </div>
-              )}
+            <div>
+              <Label>Reminder Time</Label>
+              <Input
+                type="time"
+                value={task.reminder}
+                onChange={(e) =>
+                  dispatch({ type: "SET_REMINDER_TIME", value: e.target.value })
+                }
+              />
             </div>
           )}
 
           {/* Submit Button */}
-          <button
-            onClick={handleCreateTask}
-            className="w-full px-4 py-2.5 bg-primary btn-text rounded-xl text-sm font-semibold"
-          >
-            Create Task
-          </button>
+          <DialogFooter>
+            <Button className="w-full" onClick={handleCreateTask}>
+              Create Task
+            </Button>
+          </DialogFooter>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
