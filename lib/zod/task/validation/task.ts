@@ -7,12 +7,34 @@ export const ValidateCreateTask = z.object({
     startDate: z.iso.date().optional(),
     endDate: z.iso.date().optional(),
     reminder: z.iso.time({ precision: -1 }).optional(),
-})
+    
+}).refine(
+    data => {
+      if (!data.startDate || !data.endDate) return true;
+      return new Date(data.endDate) > new Date(data.startDate);
+    },
+    {
+      message: "End date must be after start date ",
+      path: ["endDate"], 
+    }
+  );
 
-export const ValidatePostponeTask = z.object({
+
+export const ValidatePostponeTask = z
+  .object({
     singleDate: z.iso.date().optional(),
     startDate: z.iso.date().optional(),
     endDate: z.iso.date().optional(),
-})
+  })
+  .refine(
+    data => {
+      if (!data.startDate || !data.endDate) return true;
+      return new Date(data.endDate) > new Date(data.startDate);
+    },
+    {
+      message: "End date must be after start date ",
+      path: ["endDate"], 
+    }
+  );
 
 

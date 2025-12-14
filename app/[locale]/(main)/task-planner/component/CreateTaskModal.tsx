@@ -1,10 +1,8 @@
 "use client";
 
-import { useReducer } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +10,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,81 +21,63 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { TaskType, CategoryType, DateType } from "../types";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ValidateCreateTask } from "@/lib/zod/task/validation/task";
+import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { TaskType, CategoryType, DateType } from "../types";
+import { addOneDay } from "../helper";
 
 type TaskState = Omit<TaskType, "id" | "postponed" | "completed">;
-
-type TaskAction =
-  | { type: "SET_FIELD"; field: keyof TaskState; value: string }
-  | { type: "SET_REMINDER_TIME"; value: string };
 
 type CreateTaskProps = {
   show: boolean;
   setShowCreateForm: (show: boolean) => void;
 };
 
-function taskReducer(state: TaskState, action: TaskAction): TaskState {
-  switch (action.type) {
-    case "SET_FIELD":
-      return { ...state, [action.field]: action.value };
-    case "SET_REMINDER_TIME":
-      return { ...state, reminder: action.value };
-    default:
-      return state;
-  }
-}
-
 export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
+    watch,
     reset,
-    getValues,
-    formState: { errors, isSubmitting },
+    setValue,
+    control,
+    formState: { errors, isSubmitting, isValid },
   } = useForm<TaskState>({
     resolver: zodResolver(ValidateCreateTask),
+    mode: "onChange",
     defaultValues: {
       name: "",
-      category: "work" as CategoryType,
-      dateType: "no-date" as DateType,
-      singleDate: "",
-      startDate: "",
-      endDate: "",
+      category: "work",
+      dateType: "no-date",
       reminder: "09:00",
     },
-    mode: "onChange",
   });
+
+  const dateType = watch("dateType");
+  const startDate = watch("startDate");
 
   const today = new Date().toISOString().split("T")[0];
 
-  const [task, dispatch] = useReducer(taskReducer, getValues());
-
-  const handleCreateTask = () => {
-    try {
-      const newTask: TaskState = {
-        name: task.name,
-        category: task.category as CategoryType,
-        dateType: task.dateType as DateType,
-        singleDate: task.singleDate || undefined,
-        startDate: task.startDate || undefined,
-        endDate: task.endDate || undefined,
-        reminder: task.reminder || undefined,
-      };
-
-      console.log("Created Task:", newTask);
-      const savedTasks = JSON.parse(
-        localStorage.getItem("focusflow-tasks") || "[]"
-      );
-      localStorage.setItem(
-        "focusflow-tasks",
-        JSON.stringify([...savedTasks, newTask])
-      );
+  const { mutate, isPending } = useAxiosMutation("/task", "POST", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
       reset();
       setShowCreateForm(false);
-    } catch (err) {}
+    },
+  });
+
+  const handleCreateTask = (values: TaskState) => {
+    mutate({
+      ...values,
+      singleDate: values.singleDate || undefined,
+      startDate: values.startDate || undefined,
+      endDate: values.endDate || undefined,
+      reminder: values.reminder || undefined,
+    });
   };
 
   return (
@@ -106,174 +89,99 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
       }}
     >
       <DialogContent className="sm:max-w-md w-full max-h-[85vh] overflow-y-auto">
-        <DialogHeader className="flex justify-between items-center">
+        <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit(handleCreateTask)}
-          className="space-y-4 mt-2"
-        >
-          {/* Task Name */}
+        <form onSubmit={handleSubmit(handleCreateTask)} className="space-y-4">
+          {/* Name */}
           <div>
             <Label>Task Name</Label>
-            <Input
-              value={task.name}
-              {...register("name")}
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_FIELD",
-                  field: "name",
-                  value: e.target.value,
-                })
-              }
-              placeholder="e.g., Study Math"
-            />
+            <Input {...register("name")} placeholder="Study Math" />
             {errors.name && (
-              <p className="text-destructive">{errors.name?.message}</p>
+              <p className="text-destructive text-sm">{errors.name.message}</p>
             )}
           </div>
 
           {/* Category */}
           <div>
             <Label>Category</Label>
-            <Select
-              {...register("category")}
-              value={task.category}
-              onValueChange={(value) =>
-                dispatch({ type: "SET_FIELD", field: "category", value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="personal">Personal</SelectItem>
-                <SelectItem value="work">Work</SelectItem>
-                <SelectItem value="study">Study</SelectItem>
-              </SelectContent>
-            </Select>
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="work">Work</SelectItem>
+                    <SelectItem value="study">Study</SelectItem>
+                    <SelectItem value="personal">Personal</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
-          {/* Date Type Buttons */}
+          {/* Date Type */}
           <div className="flex gap-2">
-            {["no-date", "single", "range"].map((type) => (
+            {(["no-date", "single", "range"] as DateType[]).map((type) => (
               <Button
                 key={type}
-                {...register("dateType")}
-                variant={task.dateType === type ? "default" : "outline"}
+                type="button"
+                variant={dateType === type ? "default" : "outline"}
                 className="flex-1"
                 onClick={() =>
-                  dispatch({
-                    type: "SET_FIELD",
-                    field: "dateType",
-                    value: type,
-                  })
+                  setValue("dateType", type, { shouldValidate: true })
                 }
               >
                 {type.replace("-", " ")}
               </Button>
             ))}
-            {errors.category && (
-              <p className="text-destructive">{errors.category?.message}</p>
-            )}
           </div>
 
           {/* Single Date */}
-          {task.dateType === "single" && (
+          {dateType === "single" && (
             <div>
-              <Label>Task Date</Label>
-              <Input
-                {...register("singleDate")}
-                type="date"
-                min={today}
-                value={task.singleDate}
-                onChange={(e) =>
-                  dispatch({
-                    type: "SET_FIELD",
-                    field: "singleDate",
-                    value: e.target.value,
-                  })
-                }
-              />
-              {errors.singleDate && (
-                <p className="text-destructive">{errors.singleDate?.message}</p>
-              )}
+              <Label>Date</Label>
+              <Input type="date" min={today} {...register("singleDate")} />
             </div>
           )}
 
           {/* Range Date */}
-          {task.dateType === "range" && (
+          {dateType === "range" && (
             <div className="space-y-2">
               <div>
                 <Label>Start Date</Label>
-                <Input
-                  type="date"
-                  min={today}
-                  {...register("startDate")}
-                  value={task.startDate}
-                  onChange={(e) => {
-                    const newStart = e.target.value;
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "startDate",
-                      value: newStart,
-                    });
-                    if (task.endDate && task.endDate < newStart) {
-                      dispatch({
-                        type: "SET_FIELD",
-                        field: "endDate",
-                        value: newStart,
-                      });
-                    }
-                  }}
-                />
+                <Input type="date" min={today} {...register("startDate")} />
               </div>
               <div>
                 <Label>End Date</Label>
                 <Input
                   type="date"
+                  min={addOneDay(startDate) || today}
                   {...register("endDate")}
-                  min={task.startDate || today}
-                  value={task.endDate}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_FIELD",
-                      field: "endDate",
-                      value: e.target.value,
-                    })
-                  }
                 />
               </div>
-              {(errors.startDate || errors.endDate) && (
-                <p className="text-destructive">
-                  {errors.startDate?.message || errors.endDate?.message}
-                </p>
-              )}
             </div>
           )}
 
           {/* Reminder */}
-          {(task.dateType === "single" || task.dateType === "range") && (
+          {(dateType === "single" || dateType === "range") && (
             <div>
-              <Label>Reminder Time</Label>
-              <Input
-                type="time"
-                value={task.reminder}
-                onChange={(e) =>
-                  dispatch({ type: "SET_REMINDER_TIME", value: e.target.value })
-                }
-              />
-              {errors.reminder && (
-                <p className="text-destructive">{errors.reminder?.message}</p>
-              )}
+              <Label>Reminder</Label>
+              <Input type="time" {...register("reminder")} />
             </div>
           )}
 
-          {/* Submit Button */}
           <DialogFooter>
-            <Button disabled={isSubmitting} type="submit" className="w-full">
-              Create Task
+            <Button
+              type="submit"
+              disabled={!isValid || isSubmitting}
+              className="w-full"
+            >
+              {isPending ? "Creating..." : "Create Task"}
             </Button>
           </DialogFooter>
         </form>
