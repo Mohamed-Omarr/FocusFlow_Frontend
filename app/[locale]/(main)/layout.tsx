@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type React from "react";
 import { Navbar } from "./component/Navbar";
 import { SupportButton } from "./component/Support-Button";
+import TankQueryProvider from "@/app/component/tankquery/Provider";
 
 export const metadata: Metadata = {
   title: "FocusFlow - Stay Present, Stay Focused",
@@ -26,8 +27,10 @@ export default function MainLayout({
     <>
       <Navbar />
       <main className="structure-layout-style ">
-        {children}
-        <SupportButton />
+        <TankQueryProvider>
+          {children}
+          <SupportButton />
+        </TankQueryProvider>
       </main>
     </>
   );

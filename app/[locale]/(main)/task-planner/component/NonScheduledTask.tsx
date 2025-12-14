@@ -12,7 +12,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { handleDeleteTask } from "../helpers";
+import { handleDeleteTask } from "../helper";
 import { TaskType } from "../types";
 
 type NonScheduledTask = Omit<

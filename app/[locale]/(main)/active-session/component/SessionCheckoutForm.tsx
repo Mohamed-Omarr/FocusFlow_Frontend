@@ -37,7 +37,7 @@ const distractionIcons: Record<DistractionType, any> = {
   Other: HelpCircle,
 };
 
-export function PostSession({ onExtend, onEnd }: PostSessionProps) {
+export function SessionCheckoutForm({ onExtend, onEnd }: PostSessionProps) {
   const [showDistractionModal,setShowDistractionModal] = useState(false)
   
   

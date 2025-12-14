@@ -20,7 +20,7 @@ export const useAxiosGet = <TData>(
 // --- Mutation Hook ---
 export const useAxiosMutation = <TData,TVariables>(
   url: string,
-  method:  "PUT" | "PATCH" | "DELETE" ,
+  method:  "POST" | "PATCH" | "DELETE" ,
   options?: UseMutationOptions<TData, Error, TVariables>
 ) => {
 

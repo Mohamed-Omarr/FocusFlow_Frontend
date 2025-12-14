@@ -14,7 +14,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { TaskType } from "../types";
-import { handleDeleteTask } from "../helpers";
+import { handleDeleteTask } from "../helper";
 
 type ScheduledTask = Omit<TaskType, "completed" | "dateType" | "reminder"> & {
   dateType: "single" | "range";

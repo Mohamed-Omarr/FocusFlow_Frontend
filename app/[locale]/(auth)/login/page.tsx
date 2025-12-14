@@ -41,11 +41,14 @@ export default function LoginPage() {
         },
         { withCredentials: true }
       );
+      console.log(res);
+
       localStorage.setItem("accessToken", res.data.accessToken);
-      // if (res.data) {
-      //   toasting.success(res.data.message, () => router.push("/home"));
-      // }
+      if (res.data) {
+        toasting.success(res.data.message, () => router.push("/home"));
+      }
     } catch (err: any) {
+      console.log(err);
       toasting.error(err.response.data.message || `Login error:${err}`);
     } finally {
       reset();

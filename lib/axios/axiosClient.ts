@@ -12,7 +12,7 @@ const axiosClient = axios.create({
 // Token verification function
 const verifyToken = async (token: string) => {
   try {
-    const res = await axios.get(
+    await axios.get(
       `https://focusbackend.vercel.app/api/v1/users/refreshToken`,
       {
         headers: {
@@ -34,6 +34,7 @@ axiosClient.interceptors.request.use(async (config) => {
   if (accessToken) {
     const isValid = await verifyToken(accessToken);
     if (!isValid) {
+    localStorage.removeItem("accessToken");
       window.location.href = "/login";
       return Promise.reject("Token invalid or expired");
     }
