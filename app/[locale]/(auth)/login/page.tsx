@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Sparkles } from "lucide-react";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,7 +20,7 @@ export default function LoginPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting,isValid},
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormInterface>({
     resolver: zodResolver(ValidateUserLogin),
     defaultValues: {
@@ -41,7 +40,6 @@ export default function LoginPage() {
         },
         { withCredentials: true }
       );
-      console.log(res);
 
       localStorage.setItem("accessToken", res.data.accessToken);
       if (res.data) {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -28,16 +28,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 import { ValidatePostponeTask } from "@/lib/zod/task/validation/task";
 import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
 import { queryClient } from "@/lib/utils";
 import { TaskType } from "../types";
 import { addOneDay } from "../helper";
 
+type DateType = "no-date" | "single" | "range";
+
 type PostponeFormValues = {
   startDate?: string;
   endDate?: string;
   singleDate?: string;
+
+  name?: string;
+  category?: string;
+  reminder?: string;
+  dateType?: DateType;
 };
 
 type PostponeTaskProps = {
@@ -48,6 +63,10 @@ type PostponeTaskProps = {
     startDate?: string;
     endDate?: string;
     singleDate?: string;
+    name?: string;
+    category?: string;
+    reminder?: string;
+    dateType?: DateType;
   };
 };
 
@@ -56,70 +75,136 @@ export function PostponeTaskModal({
   show,
   setShowPostponeForm,
 }: PostponeTaskProps) {
-  const isRange =
-    task.startDate && task.endDate && task.startDate !== task.endDate;
-
   const today = new Date().toISOString().split("T")[0];
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [pendingValues, setPendingValues] = useState<PostponeFormValues | null>(
-    null
-  );
+  const [pendingValues, setPendingValues] =
+    useState<PostponeFormValues | null>(null);
 
   const {
     register,
+    control,
     handleSubmit,
     watch,
+    setValue,
     formState: { isValid, errors },
     reset,
   } = useForm<PostponeFormValues>({
     resolver: zodResolver(ValidatePostponeTask),
     mode: "onChange",
+    defaultValues: {
+      name: task.name,
+      category: task.category,
+      reminder: task.reminder,
+      dateType: task.dateType ?? "no-date",
+    },
   });
 
+  const dateType = watch("dateType");
   const trackStartDate = watch("startDate");
 
-  const { mutate, isPending } = useAxiosMutation("/task/123", "PATCH", {
-    onMutate: async (newData) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+  /* ───────────── CLEAR INVALID STATE WHEN SWITCHING TYPE ───────────── */
+  useEffect(() => {
+    if (dateType === "single") {
+      setValue("startDate", undefined);
+      setValue("endDate", undefined);
+      setValue("reminder", undefined);
+    }
 
-      const previousTasks = queryClient.getQueryData<TaskType[]>(["tasks"]);
+    if (dateType === "range") {
+      setValue("singleDate", undefined);
+    }
 
-      queryClient.setQueryData<TaskType[]>(["tasks"], (old) =>
-        old?.map((task) => (task.id === "123" ? { ...task, ...newData } : task))
-      );
+    if (dateType === "no-date") {
+      setValue("startDate", undefined);
+      setValue("endDate", undefined);
+      setValue("singleDate", undefined);
+      setValue("reminder", undefined);
+    }
+  }, [dateType, setValue]);
 
-      return { previousTasks };
-    },
-    onSuccess: () => {
-      reset();
-      setShowPostponeForm(false);
-    },
-    onError: (_err, context) => {
-      queryClient.setQueryData(["tasks"], context?.previousTasks);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    },
-  });
+  /* ───────────── MUTATION ───────────── */
+  const { mutate, isPending } = useAxiosMutation(
+    `/task/${task.id}`,
+    "PATCH",
+    {
+      onMutate: async (newData) => {
+        await queryClient.cancelQueries({ queryKey: ["tasks"] });
 
-  // Step 1: validate & open confirmation
+        const previousTasks =
+          queryClient.getQueryData<TaskType[]>(["tasks"]);
+
+        queryClient.setQueryData<TaskType[]>(["tasks"], (old) =>
+          old?.map((t) =>
+            t.id === task.id ? { ...t, ...newData } : t
+          )
+        );
+
+        return { previousTasks };
+      },
+      onSuccess: () => {
+        reset();
+        setShowPostponeForm(false);
+      },
+      onError: (_err, context) => {
+        queryClient.setQueryData(["tasks"], context?.previousTasks);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+    }
+  );
+
+  /* ───────────── SUBMIT FLOW ───────────── */
   const onSubmit = (values: PostponeFormValues) => {
     setPendingValues(values);
     setConfirmOpen(true);
   };
 
-  // Step 2: confirm & mutate
   const confirmSubmit = () => {
     if (!pendingValues) return;
 
-    if (pendingValues.startDate && pendingValues.endDate) {
+    const payload: Partial<PostponeFormValues> = {
+      name: pendingValues.name,
+      category: pendingValues.category,
+      dateType: pendingValues.dateType,
+    };
+
+    if (pendingValues.dateType !== "single") {
+      payload.reminder = pendingValues.reminder;
+    }
+
+    if (
+      pendingValues.dateType === "range" &&
+      pendingValues.startDate &&
+      pendingValues.endDate
+    ) {
       mutate({
+        ...payload,
         startDate: pendingValues.startDate,
         endDate: pendingValues.endDate,
+        singleDate: undefined,
       });
-    } else {
-      mutate({ singleDate: pendingValues.singleDate });
+    }
+
+    if (pendingValues.dateType === "single") {
+      mutate({
+        ...payload,
+        singleDate: pendingValues.singleDate,
+        startDate: undefined,
+        endDate: undefined,
+        reminder: undefined,
+      });
+    }
+
+    if (pendingValues.dateType === "no-date") {
+      mutate({
+        ...payload,
+        startDate: undefined,
+        endDate: undefined,
+        singleDate: undefined,
+        reminder: undefined,
+      });
     }
   };
 
@@ -139,15 +224,80 @@ export function PostponeTaskModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* FORM */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {!isRange && (
-            <div className="space-y-3">
-              <Label>Current Date</Label>
-              <Input disabled defaultValue={task.singleDate ?? ""} />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* NAME */}
+          <div>
+            <Label>Task Name</Label>
+            <Input {...register("name")} />
+          </div>
 
+          {/* CATEGORY */}
+          <div>
+            <Label>Category</Label>
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="work">Work</SelectItem>
+                    <SelectItem value="study">Study</SelectItem>
+                    <SelectItem value="personal">Personal</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+
+          {/* DATE TYPE BUTTONS */}
+          <div className="space-y-2">
+            <Label>Date Type</Label>
+            <div className="flex gap-2">
+              {(["no-date", "single", "range"] as DateType[]).map(
+                (type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={
+                      dateType === type ? "default" : "outline"
+                    }
+                    className="flex-1 capitalize"
+                    onClick={() =>
+                      setValue("dateType", type, {
+                        shouldValidate: true,
+                      })
+                    }
+                  >
+                    {type.replace("-", " ")}
+                  </Button>
+                )
+              )}
+            </div>
+          </div>
+
+          {/* REMINDER */}
+          {dateType !== "single" && (
+            <div>
+              <Label>Reminder</Label>
+              <Input type="time" {...register("reminder")} />
+            </div>
+          )}
+
+          {/* SINGLE DATE */}
+          {dateType === "single" && (
+            <div>
               <Label>New Date</Label>
-              <Input type="date" min={today} {...register("singleDate")} />
+              <Input
+                type="date"
+                min={today}
+                {...register("singleDate")}
+              />
               {errors.singleDate && (
                 <p className="text-xs text-destructive">
                   {errors.singleDate.message}
@@ -156,14 +306,16 @@ export function PostponeTaskModal({
             </div>
           )}
 
-          {isRange && (
-            <div className="space-y-4">
+          {/* RANGE */}
+          {dateType === "range" && (
+            <div className="space-y-3">
               <div>
-                <Label>Current Start</Label>
-                <Input disabled defaultValue={task.startDate ?? ""} />
-
-                <Label className="mt-2 block">New Start</Label>
-                <Input type="date" min={today} {...register("startDate")} />
+                <Label>Start Date</Label>
+                <Input
+                  type="date"
+                  min={today}
+                  {...register("startDate")}
+                />
                 {errors.startDate && (
                   <p className="text-xs text-destructive">
                     {errors.startDate.message}
@@ -172,18 +324,12 @@ export function PostponeTaskModal({
               </div>
 
               <div>
-                <Label>Current End</Label>
-                <Input disabled defaultValue={task.endDate ?? ""} />
-
-                <Label className="mt-2 block">New End</Label>
+                <Label>End Date</Label>
                 <Input
                   type="date"
                   min={addOneDay(trackStartDate) || today}
                   {...register("endDate")}
                 />
-                <p className="text-muted-foreground text-sm">
-                  End date cannot be earlier than start date
-                </p>
                 {errors.endDate && (
                   <p className="text-xs text-destructive">
                     {errors.endDate.message}
@@ -200,20 +346,24 @@ export function PostponeTaskModal({
           </DialogFooter>
         </form>
 
-        {/* CONFIRMATION DIALOG */}
+        {/* CONFIRMATION */}
         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                You can postpone this task <strong>only once ever</strong>.
+                You can postpone this task{" "}
+                <strong>only once ever</strong>.
               </AlertDialogDescription>
             </AlertDialogHeader>
 
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction disabled={isPending} onClick={confirmSubmit}>
-                {isPending ? "Updating..." : "Yes, update date"}
+              <AlertDialogAction
+                disabled={isPending}
+                onClick={confirmSubmit}
+              >
+                {isPending ? "Updating..." : "Yes, update task"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

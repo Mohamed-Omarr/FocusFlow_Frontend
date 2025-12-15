@@ -24,6 +24,8 @@ import {
 import { MoreVertical, CalendarClock, Trash2 } from "lucide-react";
 import { PostponeTaskModal } from "./PostponeTaskModal";
 import { TaskType } from "../types";
+import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
+import { queryClient } from "@/lib/utils";
 
 type TaskCardType = Omit<TaskType, "completed">;
 
@@ -36,8 +38,32 @@ export function TaskCard({ task }: { task: TaskCardType }) {
 
   const canPostpone = !task.postponed;
 
+  const { mutate } = useAxiosMutation("/task/123", "DELETE", {
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+
+      const previousTasks = queryClient.getQueryData<TaskType[]>(["tasks"]);
+
+      queryClient.setQueryData<TaskType[]>(["tasks"], (old) =>
+        old?.map((task) => (task.id !== "123" ? { ...task, ...newData } : task))
+      );
+
+      return { previousTasks };
+    },
+    onSuccess: () => {
+      reset();
+      setShowPostponeForm(false);
+    },
+    onError: (_err, context) => {
+      queryClient.setQueryData(["tasks"], context?.previousTasks);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
   const handleDeleteTask = (id: string) => {
-    console.log("Delete:", id);
+    mutate({ id: id });
     setOpenDeleteConfirm(false);
   };
 
