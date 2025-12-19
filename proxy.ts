@@ -1,48 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { getToken } from "next-auth/jwt";
 
 const intlMiddleware = createMiddleware(routing);
 
-// Pages only for AUTHENTICATED users:
-const PROTECTED_PAGES = ["settings", "home", "sessions"];
+// Only authenticated users
+const PROTECTED_PAGES = [
+  "home",
+  "sessions",
+  "settings",
+  "streak",
+  "task-planner",
+];
 
-// Pages only for GUEST users (not logged in):
+// Only guests
 const AUTH_PAGES = ["login", "register"];
 
+export default async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-export default function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-  const pathname = url.pathname;
+  // Skip API & static
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/_next") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
 
-  // Locale segment
-  const locale = pathname.split("/")[1];
+  // Extract locale & page
+  const [, locale, page] = pathname.split("/");
 
-  // Current page segment
-  const page = pathname.split(`/${locale}/`)[1]?.split("/")[0];
+  // 🔐 NextAuth session token
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  // Cookie
-  const hasToken = req.cookies.get("jwt")?.value;
+  const isLoggedIn = !!token;
 
-  // //  USER NOT LOGGED IN trying to access PROTECTED routes
-  // if (!hasToken && PROTECTED_PAGES.includes(page)) {
-  //   return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
-  // }
+  // 🚫 Not logged in → protected page
+  if (!isLoggedIn && PROTECTED_PAGES.includes(page)) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+  }
 
-  // //  USER LOGGED IN trying to access AUTH pages
-  // if (hasToken && AUTH_PAGES.includes(page)) {
-  //   return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
-  // }
+  // 🚫 Logged in → auth pages
+  if (isLoggedIn && AUTH_PAGES.includes(page)) {
+    return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
+  }
 
-  // USER LOGGED IN & has token , However still can access "/" Page which is the landing page.
-    // if (hasToken && pathname === "/${locale}") {
-    //   return NextResponse.next();
-    // }
-
-  // Finally call next-intl middleware to handle locale
+  // 🌍 Let next-intl handle locale routing
   return intlMiddleware(req);
 }
-
 
 export const config = {
   matcher: ["/((?!api|_next|.*\\..*).*)"],

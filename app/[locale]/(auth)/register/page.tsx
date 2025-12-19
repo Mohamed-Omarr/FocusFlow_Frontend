@@ -15,10 +15,17 @@ import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
 import { Link } from "@/i18n/navigation";
 import { RegisterResponse } from "../types";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function RegisterPage() {
   const router = useRouter();
-
+  const { data: session, status } = useSession(); // ✅ session
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/home"); // locale-safe via i18n router
+    }
+  }, [status, router]);
   const {
     register,
     handleSubmit,
