@@ -40,20 +40,20 @@ const Calendar = ({ tasks, selectedDate, setSelectedDate }: CalendarProps) => {
       const selected = new Date(date + "T00:00:00").getTime();
 
       return tasks.filter((task) => {
-        if (task.singleDate) {
-          const single = new Date(task.singleDate + "T00:00:00").getTime();
+        if (task.single_date) {
+          const single = new Date(task.single_date + "T00:00:00").getTime();
           return single === selected;
         }
 
-        if (!task.startDate) return false;
+        if (!task.date_start) return false;
 
-        const start = new Date(task.startDate + "T00:00:00").getTime();
+        const start = new Date(task.date_start + "T00:00:00").getTime();
 
-        if (!task.endDate) {
+        if (!task.date_end) {
           return start === selected;
         }
 
-        const end = new Date(task.endDate + "T00:00:00").getTime();
+        const end = new Date(task.date_end + "T00:00:00").getTime();
         return selected >= start && selected <= end;
       });
     },

@@ -25,7 +25,7 @@ import { ValidateCreateTask } from "@/lib/zod/task/validation/task";
 import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { TaskType, CategoryType, DateType } from "../types";
+import { TaskType, DateType } from "../types";
 import { addOneDay } from "../helper";
 
 type TaskState = Omit<TaskType, "id" | "postponed" | "completed">;
@@ -50,19 +50,17 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
     resolver: zodResolver(ValidateCreateTask),
     mode: "onChange",
     defaultValues: {
-      name: "",
       category: "work",
-      dateType: "no-date",
-      reminder: "09:00",
+      date_type: "no_date",
     },
   });
 
-  const dateType = watch("dateType");
-  const startDate = watch("startDate");
+  const dateType = watch("date_type");
+  const dateStart = watch("date_start");
 
   const today = new Date().toISOString().split("T")[0];
 
-  const { mutate, isPending } = useAxiosMutation("/task", "POST", {
+  const { mutate, isPending } = useAxiosMutation("/api/v1/tasks", "POST", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       reset();
@@ -71,12 +69,14 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
   });
 
   const handleCreateTask = (values: TaskState) => {
+    console.log(values.single_date );
+    
     mutate({
       ...values,
-      singleDate: values.singleDate || undefined,
-      startDate: values.startDate || undefined,
-      endDate: values.endDate || undefined,
-      reminder: values.reminder || undefined,
+      single_date: values.single_date || null,
+      date_start: values.date_start || null,
+      date_end: values.date_end || null,
+      reminder: values.reminder || null,
     });
   };
 
@@ -126,14 +126,14 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
 
           {/* Date Type */}
           <div className="flex gap-2">
-            {(["no-date", "single", "range"] as DateType[]).map((type) => (
+            {(["no_date", "single", "range"] as DateType[]).map((type) => (
               <Button
                 key={type}
                 type="button"
                 variant={dateType === type ? "default" : "outline"}
                 className="flex-1"
                 onClick={() =>
-                  setValue("dateType", type, { shouldValidate: true })
+                  setValue("date_type", type, { shouldValidate: true })
                 }
               >
                 {type.replace("-", " ")}
@@ -145,7 +145,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
           {dateType === "single" && (
             <div>
               <Label>Date</Label>
-              <Input type="date" min={today} {...register("singleDate")} />
+              <Input type="date" min={today} {...register("single_date")} />
             </div>
           )}
 
@@ -154,14 +154,14 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
             <div className="space-y-2">
               <div>
                 <Label>Start Date</Label>
-                <Input type="date" min={today} {...register("startDate")} />
+                <Input type="date" min={today} {...register("date_start")} />
               </div>
               <div>
                 <Label>End Date</Label>
                 <Input
                   type="date"
-                  min={addOneDay(startDate) || today}
-                  {...register("endDate")}
+                  min={addOneDay(dateStart) || today}
+                  {...register("date_end")}
                 />
               </div>
             </div>

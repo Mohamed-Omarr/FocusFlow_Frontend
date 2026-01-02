@@ -1,171 +1,115 @@
-import { useState, useEffect } from "react";
-import { TaskData } from "../types";
-import { getBreakInfo } from "../helper";
+"use client";
 
-/* ----------------------------- hook ----------------------------- */
+import { ActiveSessionData } from "../types";
+import {
+  cancel_session,
+  end_manual_break,
+  pause_session,
+  resume_session,
+  start_manual_break,
+} from "../helper";
+import { useCountdown } from "./UseCountdown";
 
-export function useSessionTimer(taskData: TaskData | null) {
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+export function useSessionTimer(
+  task: ActiveSessionData | null,
+  backendSeconds: number // result of get_active_timer RPC
+) {
+  /* ----------------------------- focus countdown ----------------------------- */
 
-  const [isOnBreak, setIsOnBreak] = useState(false);
-  const [breakTimeLeft, setBreakTimeLeft] = useState(0);
-  const [breaksTaken, setBreaksTaken] = useState(0);
-  const [scheduledBreaks, setScheduledBreaks] = useState<number[]>([]);
-  const [manualBreaksLeft, setManualBreaksLeft] = useState(0);
-  const [nextBreakIn, setNextBreakIn] = useState<number | null>(null);
-  const [showBreakHeadsUp, setShowBreakHeadsUp] = useState(false);
+  const isFocusRunning =
+    !!task && !task.is_paused && !task.is_on_break;
 
-  const [isFinished, setIsFinished] = useState(false);
+const timeLeft = useCountdown(
+  backendSeconds,
+  isFocusRunning && backendSeconds > 0
+);
+  /* ----------------------------- break countdown ----------------------------- */
 
-  /* ----------------------------- init ----------------------------- */
+  const breakSeconds =
+    task && task.is_on_break
+      ? task.break_duration_minutes * 60
+      : 0;
 
-  useEffect(() => {
-    if (!taskData) return;
+  const breakTimeLeft = useCountdown(
+    breakSeconds,
+    !!task?.is_on_break
+  );
 
-    setTimeLeft(taskData.duration * 60);
-    setIsPaused(false);
-    setIsOnBreak(false);
-    setBreaksTaken(0);
-    setIsFinished(false);
+  /* ----------------------------- auto break heads-up ----------------------------- */
 
-    const { numBreaks } = getBreakInfo(taskData.duration);
+  let nextBreakIn: number | null = null;
+  let showBreakHeadsUp = false;
 
-    const breaks =
-      numBreaks > 0
-        ? Array.from({ length: numBreaks }, (_, i) =>
-            Math.round(((i + 1) / (numBreaks + 1)) * taskData.duration * 60)
-          )
-        : [];
+  if (
+    task &&
+    task.breaktime_type === "auto" &&
+    task.allowed_break_count > 0 &&
+    !task.is_on_break
+  ) {
+    const totalSeconds =
+      (task.planned_duration_minutes + task.extended_time_minutes) * 60;
 
-    setScheduledBreaks(breaks);
+    const elapsed = totalSeconds - timeLeft;
 
-    if (taskData.breakMode === "manual") {
-      setManualBreaksLeft(numBreaks);
+    const breakPoints = Array.from(
+      { length: task.allowed_break_count },
+      (_, i) =>
+        Math.round(
+          ((i + 1) / (task.allowed_break_count + 1)) * totalSeconds
+        )
+    );
+
+    const upcoming = breakPoints.find((b) => b > elapsed);
+
+    if (upcoming) {
+      nextBreakIn = upcoming - elapsed;
+      showBreakHeadsUp = nextBreakIn <= 60;
     }
-  }, [taskData]);
-
-  /* ----------------------------- timer ----------------------------- */
-
-  useEffect(() => {
-    if (!taskData || isPaused || isFinished) return;
-
-    const updateNextBreak = () => {
-      const elapsed = taskData.duration * 60 - timeLeft;
-      const remaining = scheduledBreaks.filter((b) => b > elapsed);
-
-      if (remaining.length > 0) {
-        setNextBreakIn(remaining[0] - elapsed);
-      } else {
-        setNextBreakIn(null);
-        setShowBreakHeadsUp(false);
-      }
-    };
-
-    const interval = setInterval(() => {
-      if (isOnBreak) {
-        setBreakTimeLeft((prev) => {
-          if (prev <= 1) {
-            setIsOnBreak(false);
-            updateNextBreak();
-            return 0;
-          }
-          return prev - 1;
-        });
-        return;
-      }
-
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setIsFinished(true);
-          return 0;
-        }
-
-        const elapsed = taskData.duration * 60 - prev + 1;
-
-        if (
-          taskData.breakMode === "auto" &&
-          scheduledBreaks.includes(elapsed) &&
-          !isOnBreak
-        ) {
-          const { breakDuration } = getBreakInfo(taskData.duration);
-
-          setIsOnBreak(true);
-          setBreakTimeLeft(breakDuration * 60);
-          setBreaksTaken((b) => b + 1);
-          updateNextBreak();
-          setShowBreakHeadsUp(false);
-        } else if (nextBreakIn !== null) {
-          const next = nextBreakIn - 1;
-          setNextBreakIn(next);
-
-          if (next <= 60 && next > 0) setShowBreakHeadsUp(true);
-          else setShowBreakHeadsUp(false);
-        }
-
-        return prev - 1;
-      });
-    }, 1000);
-
-    updateNextBreak();
-    return () => clearInterval(interval);
-  }, [
-    taskData,
-    isPaused,
-    isOnBreak,
-    scheduledBreaks,
-    nextBreakIn,
-    timeLeft,
-    isFinished,
-  ]);
+  }
 
   /* ----------------------------- actions ----------------------------- */
 
-  const pause = () => setIsPaused(true);
-  const resume = () => setIsPaused(false);
+  const startManualBreak = async () => {
+    if (
+      !task ||
+      task.is_on_break ||
+      task.is_paused ||
+      task.breaks_taken >= task.allowed_break_count
+    )
+      return;
 
-  const startManualBreak = () => {
-    if (!taskData || manualBreaksLeft <= 0) return;
-
-    const { breakDuration } = getBreakInfo(taskData.duration);
-
-    setIsOnBreak(true);
-    setBreakTimeLeft(breakDuration * 60);
-    setBreaksTaken((b) => b + 1);
-    setManualBreaksLeft((b) => b - 1);
+    await start_manual_break();
   };
 
-  const finishBreak = () => {
-    setIsOnBreak(false);
-    setBreakTimeLeft(0);
+  const finishBreak = async () => {
+    if (!task?.is_on_break) return;
+    await end_manual_break();
   };
 
-  const extendSession = (minutes: number) => {
-    setTimeLeft(minutes * 60);
-    setIsPaused(false);
-    setIsFinished(false);
+  const pause = async (reason: string) => {
+    if (!task || task.is_paused || task.is_on_break) return;
+    await pause_session(reason);
+  };
+
+  const resume = async () => {
+    if (!task || !task.is_paused) return;
+    await resume_session();
+  };
+
+  const cancel = async (reason: string) => {
+    if (!task) return;
+    await cancel_session(reason);
   };
 
   return {
-    // time
     timeLeft,
     breakTimeLeft,
-    isPaused,
-    isFinished,
-
-    // break
-    isOnBreak,
-    breaksTaken,
-    manualBreaksLeft,
     nextBreakIn,
     showBreakHeadsUp,
-
-    // actions
-    pause,
-    resume,
     startManualBreak,
     finishBreak,
-    extendSession,
+    pause,
+    resume,
+    cancel,
   };
 }

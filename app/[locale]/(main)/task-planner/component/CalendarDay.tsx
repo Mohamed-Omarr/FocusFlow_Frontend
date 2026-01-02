@@ -1,4 +1,7 @@
 "use client";
+
+import { TaskType } from "../types";
+
 export function CalendarDay({
   day,
   dateStr,
@@ -8,7 +11,7 @@ export function CalendarDay({
 }: {
   day: number;
   dateStr: string;
-  tasksForDay: Task[];
+  tasksForDay: TaskType[];
   selectedDate: string | null;
   onSelect: (date: string) => void;
 }) {

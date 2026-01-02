@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-mode/theme-provider";
-import AuthProvider from "./SessionProvider";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -50,7 +49,7 @@ export default async function RootLayout({ children, params }: Prop) {
           disableTransitionOnChange
         >
           <NextIntlClientProvider>
-            <AuthProvider> {children}</AuthProvider>
+            {children}
             <Toaster position="top-center" />
           </NextIntlClientProvider>
         </ThemeProvider>

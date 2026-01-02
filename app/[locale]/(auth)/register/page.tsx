@@ -15,17 +15,10 @@ import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
 import { Link } from "@/i18n/navigation";
 import { RegisterResponse } from "../types";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { data: session, status } = useSession(); // ✅ session
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/home"); // locale-safe via i18n router
-    }
-  }, [status, router]);
+
   const {
     register,
     handleSubmit,
@@ -44,18 +37,16 @@ export default function RegisterPage() {
   // SUBMIT HANDLER
   const onSubmit = async (data: RegisterFormInterface) => {
     try {
-      const res: RegisterResponse = await axios.post(
-        "https://focusbackend.vercel.app/api/v1/users/register",
-        {
-          email: data.email,
-          name: data.name,
-          password: data.password,
-          confirmPassword: data.confirmPassword,
-        }
-      );
-      toasting.success(res.data.message, () => router.push("/login"));
+      const res: RegisterResponse = await axios.post("/api/v1/auth/register", {
+        email: data.email,
+        username: data.name,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      });
+      console.log(res.data);
     } catch (err: any) {
-      toasting.error(err.response.data.message || `Register error:${err}`);
+      console.log(err);
+      // toasting.error(err.response.data.message || `Register error:${err}`);
     } finally {
       reset();
     }

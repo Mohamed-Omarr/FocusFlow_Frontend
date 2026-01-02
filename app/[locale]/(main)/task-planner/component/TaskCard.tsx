@@ -34,7 +34,7 @@ export function TaskCard({ task }: { task: TaskCardType }) {
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
 
   const isRange =
-    task.startDate && task.endDate && task.startDate !== task.endDate;
+    task.date_start && task.date_end && task.date_start !== task.date_end;
 
   const canPostpone = !task.postponed;
 
@@ -51,7 +51,6 @@ export function TaskCard({ task }: { task: TaskCardType }) {
       return { previousTasks };
     },
     onSuccess: () => {
-      reset();
       setShowPostponeForm(false);
     },
     onError: (_err, context) => {
@@ -116,18 +115,18 @@ export function TaskCard({ task }: { task: TaskCardType }) {
 
       {/* Dates */}
       <div className="flex flex-col gap-2 text-xs text-muted-foreground mt-2">
-        {task.singleDate && (
+        {task.single_date && (
           <span>
-            Date: {new Date(task.singleDate + "T00:00:00").toLocaleDateString()}
+            Date: {new Date(task.single_date + "T00:00:00").toLocaleDateString()}
           </span>
         )}
 
-        {!task.singleDate && task.startDate && (
+        {!task.single_date && task.date_start && (
           <span>
-            Date: {new Date(task.startDate + "T00:00:00").toLocaleDateString()}
-            {isRange && task.endDate
+            Date: {new Date(task.date_start + "T00:00:00").toLocaleDateString()}
+            {isRange && task.date_end
               ? ` – ${new Date(
-                  task.endDate + "T00:00:00"
+                  task.date_end + "T00:00:00"
                 ).toLocaleDateString()}`
               : ""}
           </span>

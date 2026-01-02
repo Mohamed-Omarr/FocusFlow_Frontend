@@ -4,7 +4,7 @@ export const CategoryTypes = {
   personal: "personal",
 } as const;
 export const DateTypes = {
-  no_date: "no-date",
+  no_date: "no_date",
   single: "single",
   range: "range",
 } as const;
@@ -17,12 +17,12 @@ export type TaskType = {
   id: string;// default uuid
   name: string;
   category: CategoryType;  
-  dateType: DateType;
+  date_type: DateType;
   // optionals
-  singleDate?: string; //
-  startDate?: string; //
-  endDate?: string; //
-  reminder?: string; //
+  single_date: string | null; //
+  date_start: string | null; //
+  date_end: string | null; //
+  reminder: string | null; //
   //
 
   postponed: boolean; // default false

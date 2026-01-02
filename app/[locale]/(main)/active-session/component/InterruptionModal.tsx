@@ -23,7 +23,7 @@ interface InterruptionDialogProps {
   onOpenChange: (open: boolean) => void;
   type: InterruptionType;
   sessionId: string;
-  onConfirm: () => void;
+  onConfirm: (r:string) => void;
   onCancel: () => void;
 }
 
@@ -66,18 +66,9 @@ export function InterruptionModal({
   const handleConfirm = () => {
     if (!selectedReason) return;
 
-    storage.addInterruption({
-      id: crypto.randomUUID(),
-      sessionId,
-      type,
-      reason: selectedReason,
-      customReason: selectedReason === "other" ? customReason : undefined,
-      createdAt: new Date().toISOString(),
-    });
-
     setSelectedReason("");
     setCustomReason("");
-    onConfirm();
+    onConfirm(selectedReason);
   };
 
   const handleCancel = () => {

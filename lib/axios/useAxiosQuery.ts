@@ -1,14 +1,15 @@
+"use client"
 import { useQuery, useMutation, UseQueryOptions, UseMutationOptions } from "@tanstack/react-query";
 import axiosClient from "./axiosClient";
 
 // --- GET Hook ---
 export const useAxiosGet = <TData>(
-  key: string | unknown[],
+  queryKey: string[],  
   url: string,
   options?: UseQueryOptions<TData, Error>
 ) => {
   return useQuery<TData, Error>({
-    queryKey: Array.isArray(key) ? key : [key],
+    queryKey,
     queryFn: async () => {
       const response = await axiosClient.get<TData>(url);
       return response.data;
@@ -23,7 +24,7 @@ export const useAxiosMutation = <TData,TVariables>(
   method:  "POST" | "PATCH" | "DELETE" ,
   options?: UseMutationOptions<TData, Error, TVariables>
 ) => {
-
+ 
   return useMutation<TData, Error, TVariables>({
     mutationFn: async (data: TVariables) => {
       const response = await axiosClient.request<TData>({

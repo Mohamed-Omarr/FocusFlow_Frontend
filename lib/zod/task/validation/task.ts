@@ -2,38 +2,43 @@ import { z } from "zod";
 export const ValidateCreateTask = z.object({
     name: z.string().min(2, {message: "Must be at  least 2 or more characters long"}).max(20,{message: "Must be less than 30 characters"}),
     category: z.enum(["work","study","personal"]),
-    dateType: z.enum(["no-date","single","range"]),
-    singleDate: z.iso.date().optional(),
-    startDate: z.iso.date().optional(),
-    endDate: z.iso.date().optional(),
-    reminder: z.iso.time({ precision: -1 }).optional(),
+    date_type: z.enum(["no_date","single","range"]),
+    single_date: z.iso.date().nullable().optional(),
+    date_start: z.iso.date().nullable().optional(),
+    date_end: z.iso.date().nullable().optional(),
+    reminder: z.iso.time({ precision: -1 }).nullable().optional()
     
 }).refine(
     data => {
-      if (!data.startDate || !data.endDate) return true;
-      return new Date(data.endDate) > new Date(data.startDate);
+      if (!data.date_start || !data.date_end) return true;
+      return new Date(data.date_end) > new Date(data.date_start);
     },
     {
       message: "End date must be after start date ",
-      path: ["endDate"], 
+      path: ["date_end"], 
     }
   );
 
-
 export const ValidatePostponeTask = z
   .object({
-    singleDate: z.iso.date().optional(),
-    startDate: z.iso.date().optional(),
-    endDate: z.iso.date().optional(),
+    // id: z.uuid({ message: "Invalid ID format. Must be a valid UUID." }),
+    name: z.string().min(2, {message: "Must be at  least 2 or more characters long"}).max(20,{message: "Must be less than 30 characters"}),
+    single_date: z.iso.date().nullable().optional(),
+    date_start: z.iso.date().nullable().optional(),
+    date_end: z.iso.date().nullable().optional(),
+    category: z.enum(["work","study","personal"]),
+    date_type: z.enum(["no_date","single","range"]),
+    reminder: z.iso.time({ precision: -1 }).nullable().optional()
+    // 
   })
   .refine(
     data => {
-      if (!data.startDate || !data.endDate) return true;
-      return new Date(data.endDate) > new Date(data.startDate);
+      if (!data.date_start || !data.date_end) return true;
+      return new Date(data.date_end) > new Date(data.date_start);
     },
     {
       message: "End date must be after start date ",
-      path: ["endDate"], 
+      path: ["date_end"], 
     }
   );
 

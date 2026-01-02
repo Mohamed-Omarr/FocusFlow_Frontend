@@ -8,25 +8,21 @@ import { Button } from "@/components/ui/button";
 import { CustomTimeInput } from "./CustomTimeInput";
 import { BreakTimeSelector } from "./BreakTimeSelector";
 import { TaskType } from "../../task-planner/types";
+import { useAxiosGet, useAxiosMutation } from "@/lib/axios/useAxiosQuery";
 
 type TaskList = Pick<TaskType, "id" | "name" | "category">;
 
 export function TaskListSection() {
   const router = useRouter();
-
-  const [tasks] = useState<TaskList[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem("focusflow-tasks");
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { data: tasks = [] } = useAxiosGet<TaskList[]>(
+    ["tasks"],
+    "/api/v1/tasks/daily"
+  );
 
   const [timerDuration, setTimerDuration] = useState<"1" | "60" | "custom">(
     "1"
   );
+
   const [customMinutes, setCustomMinutes] = useState("");
   const [customValid, setCustomValid] = useState(false);
   const [selectedTask, setSelectedTask] = useState("");
@@ -35,6 +31,7 @@ export function TaskListSection() {
 
   const sessionLength =
     timerDuration === "custom" ? Number(customMinutes) : Number(timerDuration);
+  const { mutate } = useAxiosMutation("/api/v1/sessions/active", "POST");
 
   const handleStartSession = () => {
     if (!selectedTask) {
@@ -52,16 +49,12 @@ export function TaskListSection() {
         ? Number(customMinutes)
         : Number(timerDuration);
 
-    sessionStorage.setItem(
-      "currentTask",
-      JSON.stringify({
-        name: tasks.find((t) => t.id === selectedTask)?.name,
-        duration,
-        breakMode,
-      })
-    );
-
-    router.push("/active-session");
+    mutate({
+      id: tasks.find((t) => t.id === selectedTask)?.id,
+      duration: duration,
+      breaktime_type: breakMode,
+    });
+    // router.push("/active-session");
   };
 
   return (

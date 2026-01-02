@@ -16,10 +16,10 @@ import { TaskType } from "../types";
 
 type NonScheduledTask = Omit<
   TaskType,
-  "completed" | "dateType" | "reminder"
+  "completed" | "date_type" | "reminder"
 > & {
-  dateType: "no-date";
-  reminder: undefined;
+  date_type: "no_date";
+  reminder: null;
 };
 
 export default function NonScheduledTask({
@@ -37,7 +37,7 @@ export default function NonScheduledTask({
 
   const handleFinalDelete = async () => {
     try {
-      await handleDeleteTask(selectedId);
+      // await handleDeleteTask(selectedId);
       setOpenDelete(false);
     } catch (err) {}
   };
@@ -54,11 +54,11 @@ export default function NonScheduledTask({
 
       {/* LIST */}
       <div className="space-y-1.5 max-h-48 overflow-y-auto">
-        {nonScheduled.filter((task) => !task.startDate).length === 0 ? (
+        {nonScheduled.filter((task) => !task.date_start).length === 0 ? (
           <p className="text-xs text-muted-foreground">No tasks found</p>
         ) : (
           nonScheduled
-            .filter((task) => !task.startDate)
+            .filter((task) => !task.date_start)
             .map((task) => (
               <div
                 key={task.id}
