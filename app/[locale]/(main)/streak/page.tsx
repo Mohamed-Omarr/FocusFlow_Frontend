@@ -11,7 +11,7 @@ export default function StreaksPage() {
   const [totalStars] = useState(24);
   const [longestStreak] = useState(12);
 
-  // Mock data for weekly calendar
+  // Mock data
   const weeklyData = [
     { day: "Mon", score: 85, active: true },
     { day: "Tue", score: 78, active: true },
@@ -22,7 +22,6 @@ export default function StreaksPage() {
     { day: "Sun", score: 0, active: false },
   ];
 
-  // Mock milestones
   const milestones = [
     {
       id: 1,
@@ -56,17 +55,8 @@ export default function StreaksPage() {
 
   return (
     <main className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full">
-      <div
-        className="
-    mb-8
-    border border-border/50
-    backdrop-blur-xl
-    bg-background/60
-    rounded-full
-    px-6
-    py-3
-  "
-      >
+      {/* Header */}
+      <div className="mb-8 border border-border/50 backdrop-blur-xl bg-background/60 rounded-full px-6 py-3">
         <h1 className="text-2xl font-bold text-foreground">
           Your Progress
           <br />
@@ -76,21 +66,25 @@ export default function StreaksPage() {
         </h1>
       </div>
 
+      {/* Top Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Current Streak Card */}
         <CurrentStreak currentStreak={currentStreak} />
 
-        {/* Stars & Achievements Card */}
-        <StarsEarned totalStars={totalStars} longestStreak={longestStreak} />
+        <StarsEarned
+          totalStars={totalStars}
+          longestStreak={longestStreak}
+          nextStarMilestone={{
+            title: "25 Stars ✨",
+            targetStars: 25,
+          }}
+          earningRule="Earn 1 star to completed focus session"
+        />
       </div>
 
-      {/* Weekly Progress Overview */}
       <WeeklyProgress weeklyData={weeklyData} />
-
-      {/* Milestones & Achievements */}
       <Milestones milestones={milestones} />
 
-      {/* Motivational Section & Actions */}
+      {/* Motivation */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-gradient-to-br from-secondary/10 to-accent/10 rounded-3xl p-8 border border-secondary/20">
           <div className="flex items-center gap-2 mb-4">

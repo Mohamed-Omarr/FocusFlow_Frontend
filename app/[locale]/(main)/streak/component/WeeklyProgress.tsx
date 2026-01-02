@@ -30,15 +30,7 @@ export default function WeeklyProgress({ weeklyData }) {
                   : "bg-muted/30 border border-dashed border-border"
               }`}
               title={day.active ? `Focus score: ${day.score}` : "Rest day"}
-            >
-              {day.active && (
-                <div className="h-full flex items-end justify-center p-2">
-                  <span className="text-xs font-semibold text-white">
-                    {day.score}
-                  </span>
-                </div>
-              )}
-            </div>
+            ></div>
             {day.active && <div className="text-lg">✓</div>}
           </div>
         ))}
