@@ -5,9 +5,9 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { queryClient } from "@/lib/utils";
 
 export default async function TaskPlannerPage() {
-  const queryClient = new QueryClient();
   const supabase = await createServerSupabaseClient();
 
   const {

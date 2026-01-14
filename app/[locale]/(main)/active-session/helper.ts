@@ -82,10 +82,34 @@ export async function finish_active_session(sessionId:string) {
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("active_sessions").update({
     session_status:"finished",extension_started_at:null,
-  }).eq("id",sessionId)
+  }).eq("id",sessionId).eq("session_status", "finished_pending_extension");
 
   if (error) throw new Error(error.message);
 
   await invalidateCache(supabase);
+
+  return true;
+}
+
+
+
+
+
+
+// check user if onboarding true
+export async function checkuseronboarding() {
+  const supabase = await createServerSupabaseClient();
+  const { data,error } = await supabase.from("profile").select("onboarding_completed").single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Complete onboarding
+export async function completeOnBoarding() {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("complete_onboarding",{focus_rhythm:'Most days', session_length:'25',  main_struggle:'Getting started', goal_orientation:'Building the habit'})
+
+  if (error) throw new Error(error.message);
   return true;
 }

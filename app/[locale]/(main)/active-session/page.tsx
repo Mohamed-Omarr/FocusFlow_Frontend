@@ -88,11 +88,9 @@ export default function ActiveSessionPage() {
   const displaySeconds = String(activeSeconds % 60).padStart(2, "0");
 
   /* ----------------------------- Render ----------------------------- */
-  if (data.session.session_status === "finished_pending_extension" ) {
-    return <SessionCheckoutForm sessionId={data?.session.id}  />;
+  if (data.session.session_status === "finished_pending_extension") {
+    return <SessionCheckoutForm sessionId={data?.session.id} />;
   }
-
-
 
   return (
     <>
