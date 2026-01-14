@@ -13,19 +13,19 @@ const groq = new Groq({
   apiKey: process.env.Groq_SECRET_KEY!,
 });
 
-const supabaseAdmin = await createServerSupabaseClient();
 
 export async function POST(req: Request) {
+  const supabaseAdmin = await createServerSupabaseClient();
   const auth = req.headers.get("authorization");
-  console.log("Running in cron mode");
 
   // 1️⃣ Cron / Edge Function mode
   if (auth === `Bearer ${process.env.CRON_SECRET_SERVER}`) {
+    console.log("Running in cron mode");
 
     // Fetch all users from Supabase
     const { data: users, error: usersError } = await supabaseAdmin
       .from("profile")
-      .select("id");
+      .select("user_id");
 
     if (usersError || !users) {
       return NextResponse.json(
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     for (const user of users) {
-      const userId = user.id;
+      const userId = user.user_id;
 
       // 1. Get user snapshot
       const { data: snapshot, error } = await supabaseAdmin.rpc(
