@@ -2,7 +2,6 @@ import TaskPlannerClient from "./Index";
 import {
   dehydrate,
   HydrationBoundary,
-  QueryClient,
 } from "@tanstack/react-query";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { queryClient } from "@/lib/utils";

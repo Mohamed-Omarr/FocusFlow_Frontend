@@ -15,7 +15,7 @@ export default function ActiveSessionPage() {
 
   const { data, isLoading } = useAxiosGet<ActiveSessionResponse>(
     ["active_session"],
-    "/api/v1/sessions/active"
+    "/sessions/active"
   );
 
   const {

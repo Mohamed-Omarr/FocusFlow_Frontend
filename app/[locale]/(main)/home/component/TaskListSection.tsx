@@ -16,7 +16,7 @@ export function TaskListSection() {
   const router = useRouter();
   const { data: tasks = [] } = useAxiosGet<TaskList[]>(
     ["tasks"],
-    "/api/v1/tasks/daily"
+    "/tasks/daily"
   );
 
   const [timerDuration, setTimerDuration] = useState<"1" | "60" | "custom">(
@@ -31,7 +31,7 @@ export function TaskListSection() {
 
   const sessionLength =
     timerDuration === "custom" ? Number(customMinutes) : Number(timerDuration);
-  const { mutate } = useAxiosMutation("/api/v1/sessions/active", "POST");
+  const { mutate } = useAxiosMutation("/sessions/active", "POST");
 
   const handleStartSession = () => {
     if (!selectedTask) {

@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-  withCredentials: true, // Important! Sends cookies automatically
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1`,
+  withCredentials: true, // Important Sends cookies automatically
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",

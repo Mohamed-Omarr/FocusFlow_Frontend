@@ -14,6 +14,8 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { TaskType } from "../types";
+import { queryClient } from "@/lib/utils";
+import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
 
 type ScheduledTask = Omit<TaskType, "completed" | "date_type" | "reminder"> & {
   date_type: "single" | "range";
@@ -28,16 +30,42 @@ export default function ScheduledTask({
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  /* ───────────── DELETE MUTATION ───────────── */
+  const { mutate: deleteTask, isPending } = useAxiosMutation(
+    `/tasks/${selectedId}`,
+    "DELETE",
+    {
+      onMutate: async () => {
+        await queryClient.cancelQueries({ queryKey: ["tasks"] });
+
+        const previousTasks = queryClient.getQueryData<TaskType[]>(["tasks"]);
+
+        // ✅ REMOVE task optimistically
+        queryClient.setQueryData<TaskType[]>(["tasks"], (old) =>
+          old?.filter((t) => t.id !== selectedId),
+        );
+
+        return { previousTasks };
+      },
+      onError: (_err, context) => {
+        queryClient.setQueryData(["tasks"], context?.previousTasks);
+      },
+      onSettled: () => {
+        setOpenDelete(false);
+        setSelectedId(null);
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      },
+    },
+  );
+
   const confirmDelete = (id: string) => {
     setSelectedId(id);
     setOpenDelete(true);
   };
 
-  const handleFinalDelete = async () => {
-    try {
-      // await handleDeleteTask(selectedId);
-      setOpenDelete(false);
-    } catch (err) {}
+  const handleFinalDelete = () => {
+    if (!selectedId) return;
+    deleteTask(undefined); // 👈 required argument
   };
 
   return (
@@ -78,10 +106,10 @@ export default function ScheduledTask({
                   {task.single_date
                     ? task.single_date
                     : task.date_start &&
-                      task.date_end &&
-                      task.date_end !== task.date_start
-                    ? `${task.date_start} / ${task.date_end}`
-                    : task.date_start}
+                        task.date_end &&
+                        task.date_end !== task.date_start
+                      ? `${task.date_start} / ${task.date_end}`
+                      : task.date_start}
                 </p>
 
                 {/* Reminder */}
@@ -120,9 +148,10 @@ export default function ScheduledTask({
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleFinalDelete}
+              disabled={isPending}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
-              Delete Task
+              {isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

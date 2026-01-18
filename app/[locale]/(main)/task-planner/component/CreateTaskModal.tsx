@@ -60,7 +60,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
 
   const today = new Date().toISOString().split("T")[0];
 
-  const { mutate, isPending } = useAxiosMutation("/api/v1/tasks", "POST", {
+  const { mutate, isPending } = useAxiosMutation("/tasks", "POST", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       reset();

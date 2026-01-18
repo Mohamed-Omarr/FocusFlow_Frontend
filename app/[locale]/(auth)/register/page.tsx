@@ -37,7 +37,7 @@ export default function RegisterPage() {
   // SUBMIT HANDLER
   const onSubmit = async (data: RegisterFormInterface) => {
     try {
-      const res: RegisterResponse = await axios.post("/api/v1/auth/register", {
+      const res: RegisterResponse = await axios.post("/auth/register", {
         email: data.email,
         username: data.name,
         password: data.password,

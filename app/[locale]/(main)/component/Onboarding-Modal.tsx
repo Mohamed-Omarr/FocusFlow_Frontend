@@ -4,13 +4,13 @@ import { useState } from "react";
 import {
   ChevronRight,
   ChevronLeft,
-  X,
   Sparkles,
   Target,
   TrendingUp,
   Gift,
 } from "lucide-react";
 import { completeOnBoarding } from "../active-session/helper";
+import axios from "axios";
 
 const questions = [
   {
@@ -69,7 +69,7 @@ export function OnboardingModal() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-const [isOpen,setIsOpen] = useState(true)
+  const [isOpen,setIsOpen] = useState(true)
   const totalSteps = introSteps.length + questions.length;
   const isIntroStep = currentStep < introSteps.length;
   const questionIndex = currentStep - introSteps.length;
@@ -93,8 +93,12 @@ const [isOpen,setIsOpen] = useState(true)
     setAnswers(newAnswers);
 
     if (isLastStep) {
-      completeOnBoarding();
-      console.log("done")
+      const res = await axios.post("/ai/run", {
+        name: "Test User AI",
+      });
+      await completeOnBoarding();
+
+      console.log("AI response:", res.data);
     } else {
       setCurrentStep(currentStep + 1);
       const nextQuestionIndex = currentStep + 1 - introSteps.length;

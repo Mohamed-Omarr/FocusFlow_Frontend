@@ -77,6 +77,21 @@ export async function end_manual_break() {
 }
 
 
+// session reflection
+export async function save_session_reflection(selectedDistractions,distractionNote,mood,energy) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.from("active_sessions").update({
+    session_status:"finished",extension_started_at:null,
+  }).eq("id",sessionId).eq("session_status", "finished_pending_extension");
+
+  if (error) throw new Error(error.message);
+
+  await invalidateCache(supabase);
+
+  return true;
+}
+
+
 // finished/completed active session
 export async function finish_active_session(sessionId:string) {
   const supabase = await createServerSupabaseClient();
@@ -92,14 +107,11 @@ export async function finish_active_session(sessionId:string) {
 }
 
 
-
-
-
-
 // check user if onboarding true
 export async function checkuseronboarding() {
   const supabase = await createServerSupabaseClient();
-  const { data,error } = await supabase.from("profile").select("onboarding_completed").single();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data,error } = await supabase.from("profile").select("onboarding_completed").eq("user_id",user?.id).single();
 
   if (error) throw new Error(error.message);
   return data;

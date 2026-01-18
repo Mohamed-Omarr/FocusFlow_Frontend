@@ -6,140 +6,137 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 const langfuse = new Langfuse({
   publicKey: process.env.LANGFUSE_PUBLIC_KEY!,
   secretKey: process.env.LANGFUSE_SECRET_KEY!,
-  baseUrl: process.env.LANGFUSE_HOST!,
+  baseUrl: process.env.LANGFUSE_BASE_URL!,
 });
 
 const groq = new Groq({
   apiKey: process.env.Groq_SECRET_KEY!,
 });
 
+// Helper: normalize Langfuse prompt messages to Groq
+function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
+  return promptArray.map((msg: any) => {
+    let content = "";
+
+    if (typeof msg.content === "string") {
+      content = msg.content;
+    } else if (Array.isArray(msg.content)) {
+      content = msg.content
+        .filter((c: any) => c.type === "text")
+        .map((c: any) => c.text)
+        .join("\n");
+    } else {
+      throw new Error(`Invalid content for role ${msg.role}`);
+    }
+
+    // Replace snapshot placeholder for user role
+    if (msg.role === "user") {
+      content = JSON.stringify(snapshot);
+    }
+
+    return { role: msg.role, content };
+  });
+}
 
 export async function POST(req: Request) {
   const supabaseAdmin = await createServerSupabaseClient();
   const auth = req.headers.get("authorization");
 
-  // 1️⃣ Cron / Edge Function mode
-  if (auth === `Bearer ${process.env.CRON_SECRET_SERVER}`) {
-    console.log("Running in cron mode");
+  const isCron = auth === `Bearer ${process.env.CRON_SECRET_SERVER}`;
 
-    // Fetch all users from Supabase
-    const { data: users, error: usersError } = await supabaseAdmin
+  // Get users: all users in cron mode, single user otherwise
+  let users: { user_id: string }[] = [];
+
+  if (isCron) {
+    const { data: allUsers, error } = await supabaseAdmin
       .from("profile")
       .select("user_id");
-
-    if (usersError || !users) {
-      return NextResponse.json(
-        { error: "Failed to fetch users for cron run" },
-        { status: 500 }
-      );
+    if (error || !allUsers) {
+      return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
     }
-
-    for (const user of users) {
-      const userId = user.user_id;
-
-      // 1. Get user snapshot
-      const { data: snapshot, error } = await supabaseAdmin.rpc(
-        "get_ai_user_snapshot",
-        { p_user_id: userId }
-      );
-      if (!snapshot || error) {
-        console.error(`Snapshot failed for user ${userId}:`, error);
-        continue;
-      }
-
-      // 2. Get prompt & config
-      const prompt = await langfuse.getPrompt("focusflow_ai_coach");
-      const systemMessage = prompt.messages[0].content;
-      const config = prompt.config;
-
-      // 3. Call Groq AI
-      const completion = await groq.chat.completions.create({
-        model: config.model,
-        temperature: config.temperature,
-        max_tokens: config.max_tokens,
-        messages: [
-          { role: "system", content: systemMessage },
-          { role: "user", content: JSON.stringify(snapshot) },
-        ],
-      });
-
-      const raw = completion.choices[0].message?.content;
-      let insights;
-      try {
-        insights = JSON.parse(raw || "[]");
-      } catch {
-        console.error(`Invalid JSON for user ${userId}:`, raw);
-        continue;
-      }
-
-      // 4. Save insights
-      const rows = insights.map((i: any) => ({
-        user_id: userId,
-        type: i.type,
-        message: i.message,
-      }));
-
-      const { error: insertError } = await supabaseAdmin
-        .from("ai_insights")
-        .insert(rows);
-
-      if (insertError) {
-        console.error(`Insert failed for user ${userId}:`, insertError);
-      }
-    }
-
-    return NextResponse.json({ ok: true, message: "Cron AI run completed" });
-  }
-
-  // 2️⃣ Normal user mode
-  else {
-    const supabase = await createServerSupabaseClient();
-    const { data } = await supabase.auth.getUser();
-
+    users = allUsers;
+  } else {
+    const { data } = await supabaseAdmin.auth.getUser();
     if (!data.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    users = [{ user_id: data.user.id }];
+  }
 
-    const userId = data.user.id;
+  for (const user of users) {
+    const userId = user.user_id;
 
-    // Same logic as before for a single user
+    // 1️⃣ Get snapshot for the user
     const { data: snapshot, error } = await supabaseAdmin.rpc(
       "get_ai_user_snapshot",
       { p_user_id: userId }
     );
-
-    if (error || !snapshot) {
-      console.error(error);
-      return NextResponse.json({ error: "Snapshot failed" }, { status: 500 });
+    if (!snapshot || error) {
+      console.error(`Snapshot failed for user ${userId}:`, error);
+      continue;
     }
 
-    const prompt = await langfuse.getPrompt("focusflow_ai_coach");
-    const systemMessage = prompt.messages[0].content;
-    const config = prompt.config;
+    // 2️⃣ Get Langfuse prompt
+    let promptArray: any[] = [];
+    let config: any = {};
 
-    const completion = await groq.chat.completions.create({
-      model: config.model,
-      temperature: config.temperature,
-      max_tokens: config.max_tokens,
-      messages: [
-        { role: "system", content: systemMessage },
-        { role: "user", content: JSON.stringify(snapshot) },
-      ],
-    });
-
-    const raw = completion.choices[0].message?.content;
-    let insights;
     try {
-      insights = JSON.parse(raw || "[]");
-    } catch {
-      console.error("Invalid JSON:", raw);
-      return NextResponse.json({ error: "Bad AI output" }, { status: 500 });
+      const prompt = await langfuse.getPrompt("ai_coach_v1");
+      if (!Array.isArray(prompt.prompt)) {
+        throw new Error("Prompt is not an array");
+      }
+      promptArray = prompt.prompt;
+      config = (prompt as any).config || {};
+    } catch (e: any) {
+      console.error(`Failed to get prompt for user ${userId}:`, e.message);
+      continue;
     }
 
+    // 3️⃣ Normalize messages for Groq
+    let messages: { role: string; content: string }[];
+    try {
+      messages = normalizeLangfuseMessages(promptArray, snapshot);
+    } catch (e: any) {
+      console.error(`Invalid Langfuse messages for user ${userId}:`, e.message);
+      continue;
+    }
+
+    // 4️⃣ Call Groq AI
+    let completion: any;
+    try {
+      completion = await groq.chat.completions.create({
+        model: config.model || "llama-3.3-70b-versatile",
+        temperature: config.temperature ?? 0.7,
+        max_tokens: config.max_tokens ?? 500,
+        messages,
+      });
+    } catch (e: any) {
+      console.error(`Groq completion failed for user ${userId}:`, e.message);
+      continue;
+    }
+
+    const raw = completion.choices?.[0]?.message?.content;
+    if (!raw) {
+      console.error(`Empty completion for user ${userId}`);
+      continue;
+    }
+
+    // 5️⃣ Parse JSON insights
+    let insights: any[];
+    try {
+      insights = JSON.parse(raw);
+    } catch {
+      console.error(`Invalid JSON from Groq for user ${userId}:`, raw);
+      continue;
+    }
+
+    // 6️⃣ Save insights to Supabase
     const rows = insights.map((i: any) => ({
       user_id: userId,
       type: i.type,
       message: i.message,
+      confidence:i.confidence,
+      context:i.context.reason
     }));
 
     const { error: insertError } = await supabaseAdmin
@@ -147,10 +144,12 @@ export async function POST(req: Request) {
       .insert(rows);
 
     if (insertError) {
-      console.error(insertError);
-      return NextResponse.json({ error: "Insert failed" }, { status: 500 });
+      console.error(`Insert failed for user ${userId}:`, insertError);
     }
-
-    return NextResponse.json({ ok: true, insights });
   }
+
+  return NextResponse.json({
+    ok: true,
+    message: isCron ? "Cron AI run completed" : "Single user AI run completed",
+  });
 }

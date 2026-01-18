@@ -38,33 +38,29 @@ export function TaskCard({ task }: { task: TaskCardType }) {
 
   const canPostpone = !task.postponed;
 
-  const { mutate } = useAxiosMutation("/task/123", "DELETE", {
-    onMutate: async (newData) => {
+  const { mutate } = useAxiosMutation(`/tasks/${task.id}`, "DELETE", {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["tasks"] });
 
       const previousTasks = queryClient.getQueryData<TaskType[]>(["tasks"]);
 
       queryClient.setQueryData<TaskType[]>(["tasks"], (old) =>
-        old?.map((task) => (task.id !== "123" ? { ...task, ...newData } : task))
+        old?.filter((t) => t.id !== task.id),
       );
 
       return { previousTasks };
     },
-    onSuccess: () => {
-      setShowPostponeForm(false);
+
+    onError: (_err, _vars, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["tasks"], context.previousTasks);
+      }
     },
-    onError: (_err, context) => {
-      queryClient.setQueryData(["tasks"], context?.previousTasks);
-    },
+
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-
-  const handleDeleteTask = (id: string) => {
-    mutate({ id: id });
-    setOpenDeleteConfirm(false);
-  };
 
   return (
     <div className="rounded-xl p-3 border border-border">
@@ -117,7 +113,8 @@ export function TaskCard({ task }: { task: TaskCardType }) {
       <div className="flex flex-col gap-2 text-xs text-muted-foreground mt-2">
         {task.single_date && (
           <span>
-            Date: {new Date(task.single_date + "T00:00:00").toLocaleDateString()}
+            Date:{" "}
+            {new Date(task.single_date + "T00:00:00").toLocaleDateString()}
           </span>
         )}
 
@@ -126,7 +123,7 @@ export function TaskCard({ task }: { task: TaskCardType }) {
             Date: {new Date(task.date_start + "T00:00:00").toLocaleDateString()}
             {isRange && task.date_end
               ? ` – ${new Date(
-                  task.date_end + "T00:00:00"
+                  task.date_end + "T00:00:00",
                 ).toLocaleDateString()}`
               : ""}
           </span>
@@ -158,7 +155,12 @@ export function TaskCard({ task }: { task: TaskCardType }) {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => handleDeleteTask(task.id)}>
+            <AlertDialogAction
+              onClick={() => {
+                mutate(undefined);
+                setOpenDeleteConfirm(false);
+              }}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

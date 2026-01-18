@@ -8,7 +8,7 @@ import {
   MessageSquare,
   Volume2,
   Wind,
-  HelpCircle,
+  // HelpCircle,
 } from "lucide-react";
 import { extend_session, finish_active_session } from "../helper";
 
@@ -19,7 +19,7 @@ type DistractionType =
   | "Social Media"
   | "Noise"
   | "Environment"
-  | "Other";
+  // | "Other";
 
 type EnergyLevel = "Low" | "Medium" | "High";
 type Mood = "Focused" | "Tired" | "Neutral" | "Distracted";
@@ -30,7 +30,7 @@ const distractionIcons: Record<DistractionType, any> = {
   "Social Media": MessageSquare,
   Noise: Volume2,
   Environment: Wind,
-  Other: HelpCircle,
+  // Other: HelpCircle,
 };
 
 export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
@@ -41,7 +41,7 @@ export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
     DistractionType[]
   >([]);
   const [distractionNote, setDistractionNote] = useState("");
-  const [otherDistractionText, setOtherDistractionText] = useState("");
+  // const [otherDistractionText, setOtherDistractionText] = useState("");
 
   const [energy, setEnergy] = useState<EnergyLevel | null>(null);
   const [mood, setMood] = useState<Mood | null>(null);
@@ -70,7 +70,7 @@ export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
   };
 
     const handleFinishSession = async (id:string) => {
-    await finish_active_session(id);
+      await finish_active_session(id);
   };
 
 
@@ -143,14 +143,14 @@ export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
             )}
           </div>
 
-          {selectedDistractions.includes("Other") && (
+          {/* {selectedDistractions.includes("Other") && (
             <textarea
               value={otherDistractionText}
               onChange={(e) => setOtherDistractionText(e.target.value)}
               className="w-full mb-3 p-2 border rounded-xl"
               placeholder="Describe the distraction"
             />
-          )}
+          )} */}
 
           <textarea
             value={distractionNote}

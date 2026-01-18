@@ -77,7 +77,7 @@ export function PostponeTaskModal({
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<PostponeFormValues | null>(
-    null
+    null,
   );
 
   const {
@@ -94,7 +94,6 @@ export function PostponeTaskModal({
     defaultValues: {
       name: task.name,
       category: task.category,
-      reminder: task.reminder,
       date_type: task.date_type ?? "no_date",
     },
   });
@@ -107,7 +106,6 @@ export function PostponeTaskModal({
     if (dateType === "single") {
       setValue("date_start", null);
       setValue("date_end", null);
-      setValue("reminder", null);
     }
 
     if (dateType === "range") {
@@ -123,21 +121,21 @@ export function PostponeTaskModal({
   }, [dateType, setValue]);
 
   /* ───────────── MUTATION ───────────── */
-  const { mutate, isPending } = useAxiosMutation(`/task/${task.id}`, "PATCH", {
+  const { mutate, isPending } = useAxiosMutation(`/tasks/${task.id}`, "PATCH", {
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: ["tasks"] });
 
       const previousTasks = queryClient.getQueryData<TaskType[]>(["tasks"]);
 
       queryClient.setQueryData<TaskType[]>(["tasks"], (old) =>
-        old?.map((t) => (t.id === task.id ? { ...t, ...newData } : t))
+        old?.map((t) => (t.id === task.id ? { ...t, ...newData } : t)),
       );
 
       return { previousTasks };
     },
     onSuccess: () => {
-      reset();
       setShowPostponeForm(false);
+      reset();
     },
     onError: (_err, context) => {
       queryClient.setQueryData(["tasks"], context?.previousTasks);
@@ -160,15 +158,16 @@ export function PostponeTaskModal({
       name: pendingValues.name,
       category: pendingValues.category,
       date_type: pendingValues.date_type,
+      reminder: null,
     };
 
-    if (pendingValues.date_type !== "single") {
+    if (pendingValues.date_type !== "no_date") {
       payload.reminder = pendingValues.reminder;
     }
 
     if (
       pendingValues.date_type === "range" &&
-      pendingValues.single_date &&
+      pendingValues.date_start &&
       pendingValues.date_end
     ) {
       mutate({
@@ -185,7 +184,6 @@ export function PostponeTaskModal({
         single_date: pendingValues.single_date,
         date_start: null,
         date_end: null,
-        reminder: null,
       });
     }
 
@@ -195,7 +193,6 @@ export function PostponeTaskModal({
         date_start: null,
         date_end: null,
         single_date: null,
-        reminder: null,
       });
     }
   };
@@ -267,7 +264,7 @@ export function PostponeTaskModal({
           </div>
 
           {/* REMINDER */}
-          {dateType !== "single" && (
+          {dateType !== "no_date" && (
             <div>
               <Label>Reminder</Label>
               <Input type="time" {...register("reminder")} />

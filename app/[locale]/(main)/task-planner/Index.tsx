@@ -33,7 +33,7 @@ const TaskPlannerClient = () => {
     data: tasks = [],
     isLoading,
     isError,
-  } = useAxiosGet<TaskPage[]>(["tasks"], "/api/v1/tasks");
+  } = useAxiosGet<TaskPage[]>(["tasks"], "/tasks");
 
   /* ============================
      Derived task groups
