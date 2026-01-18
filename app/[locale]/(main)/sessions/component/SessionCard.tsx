@@ -4,34 +4,67 @@ import {
   Clock,
   Coffee,
   PauseCircle,
-  Target,
   Timer,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
 
-export default function SessionCard({ session }) {
+export default function SessionCard({ session }: { session: Session }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  function formatTimeUTC(value?: string | Date) {
+    if (!value) return "--:--";
+
+    const date = typeof value === "string" ? new Date(value) : value;
+
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+    });
+  }
+
+ function formatDateUTC(value?: string | Date) {
+  if (!value) return "--";
+
+  const date = typeof value === "string" ? new Date(value) : value;
+
+  return date.toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    timeZone: "UTC",
+  });
+}
+
 
   return (
     <>
-      <div className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer">
-        <div className="flex items-start justify-between mb-3 ">
-          <h3 className="font-medium text-base">{session.name}</h3>
-          <span className="text-sm px-2 py-1 rounded font-medium bg-primary btn-text">
-            {session.score}
-          </span>
+      {/* CARD */}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setIsOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setIsOpen(true);
+          }
+        }}
+        className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+      >
+        <div className="mb-3">
+          <h3 className="font-medium text-base">{session.task_name}</h3>
         </div>
 
-        {(session.cancelReason || session.pauseReason) && (
+        {(session.is_canceled || session.pauses) && (
           <div className="mb-3 flex flex-wrap gap-2">
-            {session.cancelReason && (
+            {session.cancel_reason && (
               <div className="flex flex-center gap-1 text-xs px-2 py-1 rounded bg-red-500/10 text-red-500">
                 <XCircle className="w-3 h-3" />
                 <span>Canceled</span>
               </div>
             )}
-            {session.pauseReason && (
+            {session.pauses && (
               <div className="flex flex-center gap-1 text-xs px-2 py-1 rounded bg-orange-500/10 text-orange-500">
                 <PauseCircle className="w-3 h-3" />
                 <span>Paused</span>
@@ -40,29 +73,26 @@ export default function SessionCard({ session }) {
           </div>
         )}
 
-        <div className=" flex-center-between">
-          <div className="flex flex-center gap-4 small-muted-text">
+        <div className="">
+          <div className="small-muted-text">
             <div className="flex flex-center gap-1.5">
               <Clock className="w-4 h-4" />
-              <span>{session.duration}</span>
-            </div>
-            <div className="flex flex-center gap-1.5">
-              <Target className="w-4 h-4" />
-              <span>Score</span>
+              <span>{session.planned_duration_minutes}</span>
             </div>
           </div>
-          <button
-            onClick={() => setIsOpen(true)}
-            className="text-sm font-medium hover:underline text-primary"
-          >
-            Read more
-          </button>
         </div>
       </div>
 
+      {/* MODAL */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50  flex-center-all z-50 p-4">
-          <div className="rounded-lg shadow-lg max-w-md w-full p-6 relative bg-popover text-popover-foreground">
+        <div
+          className="fixed inset-0 bg-black/50 flex-center-all z-50 p-4"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="rounded-lg shadow-lg max-w-md w-full p-6 relative bg-popover text-popover-foreground"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setIsOpen(false)}
               className="absolute top-2 right-2 font-bold text-xl hover:text-gray-300"
@@ -70,7 +100,7 @@ export default function SessionCard({ session }) {
               ×
             </button>
 
-            <h2 className="text-2xl font-semibold mb-4">{session.name}</h2>
+            <h2 className="text-2xl font-semibold mb-4">{session.task_name}</h2>
 
             <div className="grid grid-cols-2 gap-4 mb-4 small-muted-text">
               <div>
@@ -78,14 +108,16 @@ export default function SessionCard({ session }) {
                   <Calendar className="w-4 h-4" />
                   <span>Date</span>
                 </div>
-                <p className="font-medium">{session.date}</p>
+                <p className="font-medium"> {formatDateUTC(session.created_at)}</p>
               </div>
               <div>
                 <div className="flex flex-center gap-1">
                   <Clock className="w-4 h-4" />
                   <span>Duration</span>
                 </div>
-                <p className="font-medium">{session.duration}</p>
+                <p className="font-medium">
+                  {session.planned_duration_minutes}
+                </p>
               </div>
             </div>
 
@@ -96,7 +128,8 @@ export default function SessionCard({ session }) {
                   <span>Time Range</span>
                 </div>
                 <p className="font-medium">
-                  {session.startTime} - {session.endTime}
+                  {formatTimeUTC(session.start_time)} –{" "}
+                  {formatTimeUTC(session.end_time)}{" "}
                 </p>
               </div>
               <div>
@@ -104,42 +137,27 @@ export default function SessionCard({ session }) {
                   <Coffee className="w-4 h-4" />
                   <span>Breaks</span>
                 </div>
-                <p className="font-medium">
-                  {session.breaks} {session.breaks === 1 ? "break" : "breaks"}
-                </p>
+                <p className="font-medium">{session.total_break_minutes}</p>
               </div>
             </div>
 
-            <div className="mb-4">
-              <div className="flex flex-center gap-2 small-muted-text">
-                <Target className="w-4 h-4" />
-                <span>Score</span>
-              </div>
-              <div className="flex flex-center gap-2 mt-1">
-                <span className="text-lg px-3 py-1 rounded font-medium bg-primary btn-text">
-                  {session.score}
-                </span>
-                <span className="text-muted-foreground text-sm">/ 100</span>
-              </div>
-            </div>
-
-            {session.cancelReason && (
+            {session.is_canceled && (
               <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                 <div className="flex flex-center gap-2 text-sm font-medium text-red-500 mb-1">
                   <XCircle className="w-4 h-4" />
                   <span>Cancel Reason</span>
                 </div>
-                <p className="text-sm">{session.cancelReason}</p>
+                <p className="text-sm">{session.cancel_reason}</p>
               </div>
             )}
 
-            {session.pauseReason && (
+            {session.pauses && (
               <div className="mb-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
                 <div className="flex flex-center gap-2 text-sm font-medium text-orange-500 mb-1">
                   <PauseCircle className="w-4 h-4" />
                   <span>Pause Reason</span>
                 </div>
-                <p className="text-sm">{session.pauseReason}</p>
+                <p className="text-sm">{session.pauses.map((x) => x.reason)}</p>
               </div>
             )}
           </div>
