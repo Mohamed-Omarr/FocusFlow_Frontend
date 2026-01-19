@@ -5,7 +5,6 @@ import { Search } from "lucide-react";
 
 import SessionCard from "./component/SessionCard";
 import { useAxiosGet } from "@/lib/axios/useAxiosQuery";
-import type { SessionHistoryResponse } from "@/app/api/v1/sessions/history/route";
 
 export default function SessionsPage() {
   const [activeCategory, setActiveCategory] = useState<
@@ -29,47 +28,31 @@ export default function SessionsPage() {
     isLoading,
     isError,
     error,
-  } = useAxiosGet(["sessions"], "/sessions/history");
+  } = useAxiosGet<Session[]>(["sessions"], "/sessions/history");
 
-  const sessions = response;
+  const sessions = response ?? [];
+
   /* ---------------- FILTER + SORT ---------------- */
   const filteredAndSortedSessions = useMemo(() => {
-    let result = [...sessions];
+    const now = Date.now();
 
-    /* (Optional) Category filter — only if your API provides category */
-    result = result.filter(
-      (session) => session.task_category === activeCategory,
-    );
+    return sessions
+      .filter((s) => s.task_category === activeCategory)
+      .filter((s) =>
+        searchQuery
+          ? s.task_name.toLowerCase().includes(searchQuery.toLowerCase())
+          : true,
+      )
+      .filter((s) => {
+        if (dateFilter === "all") return true;
 
-    /* Search */
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((session) =>
-        session.task_name.toLowerCase().includes(query),
-      );
-    }
-
-    /* Date filter */
-    if (dateFilter !== "all") {
-      const now = new Date();
-
-      result = result.filter((session) => {
-        const sessionDate = new Date(session.created_at);
-        const diffInDays =
-          (now.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24);
+        const diffInDays = (now - Date.parse(s.created_at)) / 86_400_000;
 
         if (dateFilter === "2weeks") return diffInDays <= 14;
         if (dateFilter === "4weeks") return diffInDays <= 28;
-        if (dateFilter === "1month+") return diffInDays > 28;
-        return true;
-      });
-    }
-
-    /* Sort newest first */
-    return result.sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
+        return diffInDays > 28;
+      })
+      .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
   }, [sessions, searchQuery, dateFilter, activeCategory]);
 
   /* ---------------- LOADING ---------------- */

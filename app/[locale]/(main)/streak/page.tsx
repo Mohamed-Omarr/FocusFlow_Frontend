@@ -1,17 +1,35 @@
 "use client";
-import { useState } from "react";
 import { Lightbulb } from "lucide-react";
 import CurrentStreak from "./component/CurrentStreak";
 import StarsEarned from "./component/StarsEarned";
 import WeeklyProgress from "./component/WeeklyProgress";
 import Milestones from "./component/Milestones";
+import { useAxiosGet } from "@/lib/axios/useAxiosQuery";
 
-export default function StreaksPage() {
-  const [currentStreak] = useState(5);
-  const [totalStars] = useState(24);
-  const [longestStreak] = useState(12);
+export default function StreakPage() {
+  const {
+    data: response,
+    isLoading,
+    isError,
+    error,
+  } = useAxiosGet<UserProgress>(["UserProgress"], "/user/progress");
 
-  // Mock data
+  /* ---------------- STATES ---------------- */
+  if (isLoading) {
+    return (
+      <main className="flex-1 flex items-center justify-center">
+        <p className="text-sm text-muted-foreground">Loading your progress…</p>
+      </main>
+    );
+  }
+
+  if (isError || !response) {
+    throw new Error(error?.message || "Failed to load user progress");
+  }
+
+  const { current_streak, total_stars, longest_streak, targetStars } = response;
+
+  /* ---------------- MOCK DATA (still fine for now) ---------------- */
   const weeklyData = [
     { day: "Mon", score: 85, active: true },
     { day: "Tue", score: 78, active: true },
@@ -27,21 +45,21 @@ export default function StreaksPage() {
       id: 1,
       title: "7-day Streak",
       description: "Consistency Badge",
-      achieved: false,
+      achieved: current_streak >= 7,
       icon: "🔥",
     },
     {
       id: 2,
       title: "5-day Streak",
       description: "Building Momentum",
-      achieved: true,
+      achieved: current_streak >= 5,
       icon: "⭐",
     },
     {
       id: 3,
       title: "25 Stars Earned",
       description: "Star Collector",
-      achieved: false,
+      achieved: total_stars >= 25,
       icon: "✨",
     },
     {
@@ -53,6 +71,7 @@ export default function StreaksPage() {
     },
   ];
 
+  /* ---------------- UI ---------------- */
   return (
     <main className="flex-1 px-6 py-8 max-w-7xl mx-auto w-full">
       {/* Header */}
@@ -68,16 +87,16 @@ export default function StreaksPage() {
 
       {/* Top Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <CurrentStreak currentStreak={currentStreak} />
+        <CurrentStreak currentStreak={response.current_streak} />
 
         <StarsEarned
-          totalStars={totalStars}
-          longestStreak={longestStreak}
+          totalStars={total_stars}
+          longestStreak={longest_streak}
           nextStarMilestone={{
-            title: "25 Stars ✨",
-            targetStars: 25,
+            title: `${targetStars} Stars ✨`,
+            targetStars: targetStars,
           }}
-          earningRule="Earn 1 star to completed focus session"
+          earningRule="Earn 1 star per completed focus session"
         />
       </div>
 
@@ -85,7 +104,7 @@ export default function StreaksPage() {
       <Milestones milestones={milestones} />
 
       {/* Motivation */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
         <div className="lg:col-span-2 bg-gradient-to-br from-secondary/10 to-accent/10 rounded-3xl p-8 border border-secondary/20">
           <div className="flex items-center gap-2 mb-4">
             <Lightbulb className="w-5 h-5 text-secondary" />
@@ -94,11 +113,11 @@ export default function StreaksPage() {
             </h2>
           </div>
           <p className="text-muted-foreground mb-4 leading-relaxed">
-            "Small steps every day make a big difference. Your brain thanks you
-            for showing up consistently."
+            “Small steps every day make a big difference. Your brain thanks you
+            for showing up consistently.”
           </p>
           <p className="text-sm text-accent">
-            You're more focused in the mornings — try morning sessions to
+            You’re more focused in the mornings — try morning sessions to
             continue your streak!
           </p>
         </div>

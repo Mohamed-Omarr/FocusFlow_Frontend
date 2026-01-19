@@ -1,7 +1,11 @@
 "use client";
 import { TrendingUp } from "lucide-react";
 
-export default function CurrentStreak({ currentStreak }) {
+export default function CurrentStreak({
+  currentStreak,
+}: {
+  currentStreak: number;
+}) {
   return (
     <div className="bg-card rounded-3xl p-8 border border-border relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 pointer-events-none" />
@@ -28,12 +32,24 @@ export default function CurrentStreak({ currentStreak }) {
         </div>
 
         <p className="text-center text-muted-foreground">
-          Keep going! You've been consistent for{" "}
-          <span className="text-primary font-semibold">
-            {currentStreak} days
-          </span>
-          .
+          {currentStreak === 0 ? (
+            <>Start your first streak today 🚀</>
+          ) : currentStreak === 1 ? (
+            <>
+              Great start! You've begun your streak with{" "}
+              <span className="text-primary font-semibold">1 day</span>.
+            </>
+          ) : (
+            <>
+              Keep going! You've been consistent for{" "}
+              <span className="text-primary font-semibold">
+                {currentStreak} days
+              </span>
+              .
+            </>
+          )}
         </p>
+
         <p className="text-center text-sm text-accent mt-2">
           You're building great focus habits!
         </p>
