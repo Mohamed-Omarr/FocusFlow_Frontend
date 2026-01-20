@@ -17,7 +17,7 @@ export async function GET() {
   /* User progress */
   const { data: progress, error: progressError } = await supabase
     .from("user_progress_insights")
-    .select("total_stars, current_streak, longest_streak")
+    .select("current_streak, longest_streak")
     .eq("user_id", user.id)
     .single();
 
@@ -40,17 +40,11 @@ export async function GET() {
     );
   }
 
-  /* Remaining target (⭐ IMPORTANT PART) */
-  const remainingStars = Math.max(
-    activeChallenge.target_sessions - activeChallenge.completed_sessions,
-    0
-  );
-
   /*  Final response */
   return NextResponse.json({
-    total_stars: progress.total_stars,
     current_streak: progress.current_streak,
     longest_streak: progress.longest_streak,
-    targetStars: remainingStars,
+    targetStars:activeChallenge.target_sessions ,
+    currentStars:activeChallenge.completed_sessions,
   });
 }

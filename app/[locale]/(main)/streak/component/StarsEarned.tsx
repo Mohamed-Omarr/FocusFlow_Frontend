@@ -7,20 +7,20 @@ type NextStarMilestone = {
 };
 
 type StarsEarnedProps = {
-  totalStars: number;
+  currentStars: number;
   longestStreak: number;
   nextStarMilestone?: NextStarMilestone;
   earningRule?: string; // purely informational
 };
 
 export default function StarsEarned({
-  totalStars,
+  currentStars,
   longestStreak,
   nextStarMilestone,
   earningRule,
 }: StarsEarnedProps) {
-  const target = nextStarMilestone?.targetStars ?? totalStars;
-  const progress = Math.min(totalStars / target, 1);
+  const target = nextStarMilestone?.targetStars ?? currentStars;
+  const progress = Math.min(currentStars / target, 1);
   const circumference = 2 * Math.PI * 88; // ≈ 553
 
   return (
@@ -71,7 +71,7 @@ export default function StarsEarned({
           {/* Center */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="text-5xl font-bold bg-gradient-to-br from-secondary to-accent bg-clip-text text-transparent">
-              {totalStars}
+              {currentStars}
             </div>
             {nextStarMilestone && (
               <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">

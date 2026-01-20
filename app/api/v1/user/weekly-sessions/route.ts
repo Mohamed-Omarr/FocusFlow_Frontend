@@ -28,5 +28,6 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  //return raw rows
   return NextResponse.json(data);
 }

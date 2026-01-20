@@ -1,19 +1,29 @@
 "use client";
+
+import { useAxiosGet } from "@/lib/axios/useAxiosQuery";
 import { Award } from "lucide-react";
 
-type Milestone = {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  achieved: boolean;
-  progress?: {
-    current: number;
-    target: number;
-  };
-};
 
-export default function Milestones({ milestones }: { milestones: Milestone[] }) {
+export default function Milestones() {
+  const {
+    data: milestones,
+    isLoading,
+    isError,
+    error,
+  } = useAxiosGet<Milestones[]>(["milestones"], "/user/milestones");
+
+  if (isLoading) {
+    return (
+      <div className="text-sm text-muted-foreground text-center py-8">
+        Loading milestones…
+      </div>
+    );
+  }
+
+  if (isError || !milestones) {
+    throw new Error(error?.message || "Failed to load milestones");
+  }
+
   return (
     <div className="bg-card rounded-3xl p-8 border border-border mb-8">
       <div className="flex items-center gap-2 mb-6">
@@ -23,14 +33,17 @@ export default function Milestones({ milestones }: { milestones: Milestone[] }) 
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {milestones.map((m) => {
-          const progress =
-            m.progress && m.progress.target > 0
-              ? Math.min(m.progress.current / m.progress.target, 1)
-              : 0;
+      {/* 🆕 EMPTY STATE */}
+      {milestones.length === 0 && (
+        <div className="text-sm text-muted-foreground text-center py-10">
+          No milestones yet — start your journey to success.
+        </div>
+      )}
 
-          return (
+      {/* 🏆 MILESTONES */}
+      {milestones.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {milestones.map((m) => (
             <div
               key={m.id}
               className={`p-6 rounded-2xl border transition-all ${
@@ -46,35 +59,22 @@ export default function Milestones({ milestones }: { milestones: Milestone[] }) 
                   <h3 className="font-semibold text-foreground mb-1">
                     {m.title}
                   </h3>
+
                   <p className="text-sm text-muted-foreground mb-3">
                     {m.description}
                   </p>
 
-                  {m.progress && !m.achieved && (
-                    <>
-                      <div className="h-2 rounded-full bg-muted overflow-hidden mb-1">
-                        <div
-                          className="h-full bg-primary transition-all"
-                          style={{ width: `${progress * 100}%` }}
-                        />
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {m.progress.current} / {m.progress.target}
-                      </div>
-                    </>
-                  )}
-
                   {m.achieved && (
-                    <div className="mt-2 inline-flex items-center gap-1 text-xs text-primary font-medium">
+                    <div className="inline-flex items-center gap-1 text-xs text-primary font-medium">
                       <span>✓</span> Achieved
                     </div>
                   )}
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

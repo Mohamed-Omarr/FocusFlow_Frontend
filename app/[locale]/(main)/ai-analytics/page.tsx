@@ -14,14 +14,14 @@ export default function AIAnalyticsPage() {
         {/* Header */}
         <div
           className="
-    mb-8
-    border border-border/50
-    backdrop-blur-xl
-    bg-background/60
-    rounded-full
-    px-6
-    py-3
-  "
+              mb-8
+              border border-border/50
+              backdrop-blur-xl
+              bg-background/60
+              rounded-full
+              px-6
+              py-3
+            "
         >
           <h1 className="text-2xl font-bold text-foreground">
             Analytics

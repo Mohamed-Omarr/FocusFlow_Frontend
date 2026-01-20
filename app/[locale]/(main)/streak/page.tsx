@@ -27,49 +27,7 @@ export default function StreakPage() {
     throw new Error(error?.message || "Failed to load user progress");
   }
 
-  const { current_streak, total_stars, longest_streak, targetStars } = response;
-
-  /* ---------------- MOCK DATA (still fine for now) ---------------- */
-  const weeklyData = [
-    { day: "Mon", score: 85, active: true },
-    { day: "Tue", score: 78, active: true },
-    { day: "Wed", score: 92, active: true },
-    { day: "Thu", score: 88, active: true },
-    { day: "Fri", score: 81, active: true },
-    { day: "Sat", score: 0, active: false },
-    { day: "Sun", score: 0, active: false },
-  ];
-
-  const milestones = [
-    {
-      id: 1,
-      title: "7-day Streak",
-      description: "Consistency Badge",
-      achieved: current_streak >= 7,
-      icon: "🔥",
-    },
-    {
-      id: 2,
-      title: "5-day Streak",
-      description: "Building Momentum",
-      achieved: current_streak >= 5,
-      icon: "⭐",
-    },
-    {
-      id: 3,
-      title: "25 Stars Earned",
-      description: "Star Collector",
-      achieved: total_stars >= 25,
-      icon: "✨",
-    },
-    {
-      id: 4,
-      title: "1 Hour Focus",
-      description: "Deep Work Badge",
-      achieved: true,
-      icon: "🎯",
-    },
-  ];
+  const { current_streak, longest_streak, targetStars,currentStars } = response;
 
   /* ---------------- UI ---------------- */
   return (
@@ -87,10 +45,10 @@ export default function StreakPage() {
 
       {/* Top Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <CurrentStreak currentStreak={response.current_streak} />
+        <CurrentStreak currentStreak={current_streak} />
 
         <StarsEarned
-          totalStars={total_stars}
+          currentStars={currentStars}
           longestStreak={longest_streak}
           nextStarMilestone={{
             title: `${targetStars} Stars ✨`,
@@ -100,8 +58,8 @@ export default function StreakPage() {
         />
       </div>
 
-      <WeeklyProgress weeklyData={weeklyData} />
-      <Milestones milestones={milestones} />
+      <WeeklyProgress />
+      <Milestones />
 
       {/* Motivation */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
