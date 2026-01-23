@@ -14,16 +14,10 @@ import { extend_session, finish_active_session } from "../helper";
 
 type Step = "extend" | "distraction" | "mood" | "complete";
 
-type DistractionType =
-  | "Phone"
-  | "Social Media"
-  | "Noise"
-  | "Environment"
-  // | "Other";
+type DistractionType = "Phone" | "Social Media" | "Noise" | "Environment";
 
 type EnergyLevel = "Low" | "Medium" | "High";
 type Mood = "Focused" | "Tired" | "Neutral" | "Distracted";
-
 
 const distractionIcons: Record<DistractionType, any> = {
   Phone,
@@ -33,7 +27,7 @@ const distractionIcons: Record<DistractionType, any> = {
   // Other: HelpCircle,
 };
 
-export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
+export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
   const [currentStep, setCurrentStep] = useState<Step>("extend");
   const [extendMinutes, setExtendMinutes] = useState(5);
 
@@ -65,14 +59,13 @@ export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
 
   const toggleDistraction = (type: DistractionType) => {
     setSelectedDistractions((prev) =>
-      prev.includes(type) ? prev.filter((d) => d !== type) : [...prev, type]
+      prev.includes(type) ? prev.filter((d) => d !== type) : [...prev, type],
     );
   };
 
-    const handleFinishSession = async (id:string) => {
-      await finish_active_session(id);
+  const handleFinishSession = async (id: string) => {
+    await finish_active_session(id);
   };
-
 
   /* ---------------- render ---------------- */
 
@@ -139,7 +132,7 @@ export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
                     {type}
                   </button>
                 );
-              }
+              },
             )}
           </div>
 
@@ -219,7 +212,7 @@ export function SessionCheckoutForm({sessionId}:{sessionId:string}) {
           <Sparkles className="w-12 h-12 mx-auto mb-4 text-emerald-500" />
           <h2 className="text-3xl font-bold mb-2">All Done!</h2>
           <button
-            onClick={()=>handleFinishSession(sessionId)}
+            onClick={() => handleFinishSession(sessionId)}
             className="px-6 py-3 bg-primary text-white rounded-xl"
           >
             Finish

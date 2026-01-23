@@ -1,3 +1,4 @@
+import { useAxiosGet } from "@/lib/axios/useAxiosQuery";
 import { Badge, Target, TrendingUp } from "lucide-react";
 import {
   Bar,
@@ -8,41 +9,6 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
-
-const monthlyScoreWeeks = [
-  {
-    week: "Week 1",
-    score: 78,
-    sessionLength: 85,
-    consistency: 82,
-    distractions: 70,
-    energy: 75,
-  },
-  {
-    week: "Week 2",
-    score: 82,
-    sessionLength: 88,
-    consistency: 85,
-    distractions: 75,
-    energy: 80,
-  },
-  {
-    week: "Week 3",
-    score: 85,
-    sessionLength: 90,
-    consistency: 88,
-    distractions: 80,
-    energy: 82,
-  },
-  {
-    week: "Week 4",
-    score: 86,
-    sessionLength: 92,
-    consistency: 90,
-    distractions: 82,
-    energy: 85,
-  },
-];
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload[0]) {
@@ -76,6 +42,12 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 export default function MonthlyFocusScore() {
+  const {
+    data: monthlyScoreWeeks,
+    isLoading,
+    isError,
+  } = useAxiosGet(["monthly-focus-score"], "/user/monthly-focus-score");
+
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-3xl p-8 border border-border">
       <div className="flex items-start justify-between mb-6">
@@ -91,9 +63,8 @@ export default function MonthlyFocusScore() {
             <span className="text-2xl text-muted-foreground">/100</span>
           </div>
         </div>
-        <Badge className="bg-blue-600/20 text-blue-400 border-0">
+        <Badge className=" text-blue-400 border-0">
           <TrendingUp className="w-3.5 h-3.5 mr-1" />
-          +4 this month
         </Badge>
       </div>
 
@@ -117,16 +88,13 @@ export default function MonthlyFocusScore() {
               content={<CustomTooltip />}
               cursor={{ fill: "rgba(255,255,255,0.1)" }}
             />
-            <Bar dataKey="score" radius={[6, 6, 0, 0]}>
-              {monthlyScoreWeeks.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill="oklch(0.7 0.15 160)"
-                  className="transition-all hover:opacity-100 hover:brightness-125"
-                  opacity={0.8}
-                />
-              ))}
-            </Bar>
+            <Bar
+              dataKey="score"
+              fill="oklch(0.7 0.15 160)"
+              radius={[6, 6, 0, 0]}
+              className="transition-all hover:opacity-100 hover:brightness-125"
+              opacity={0.8}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
