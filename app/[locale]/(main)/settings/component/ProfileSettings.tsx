@@ -1,49 +1,92 @@
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Upload } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { updateProfile } from "@/lib/actions/update-profile";
+import {
+  profileSchema,
+  ProfileSchema,
+} from "@/lib/zod/settings/validation/profile";
+import Image from "next/image";
+
+interface Props {
+  avatarUrl: string;
+  profileName: string;
+  profileEmail: string;
+}
 
 export default function ProfileSettings({
   avatarUrl,
-  setAvatarUrl,
   profileName,
-  setProfileName,
   profileEmail,
-  setProfileEmail,
-}) {
-  const handleAvatarUpload = (e) => {
+}: Props) {
+  const [preview, setPreview] = useState(avatarUrl);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ProfileSchema>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      username: profileName,
+    },
+  });
+
+  const watchedUsername = watch("username");
+  const watchedAvatar = watch("avatar");
+
+  const hasChanges = watchedUsername !== profileName || !!watchedAvatar;
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => setAvatarUrl(reader.result);
-    reader.readAsDataURL(file);
+    setPreview(URL.createObjectURL(file));
+    setValue("avatar", file, { shouldDirty: true });
+  };
+
+  const onSubmit = async (data: ProfileSchema) => {
+    await updateProfile(data);
+    reset({ username: data.username });
   };
 
   return (
-    <div className="rounded-2xl border bg-card/50 backdrop-blur-xl p-8 shadow-xl space-y-8">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="rounded-2xl border bg-card/50 backdrop-blur-xl p-8 space-y-8"
+    >
       {/* Avatar */}
-      <div className="flex flex-col items-center gap-6 border-b pb-8">
+      <div className="flex justify-center border-b pb-8">
         <div className="relative group">
-          <img
-            src={avatarUrl}
-            alt="Avatar"
+          <Image
+            alt="avatar"
+            height={100}
+            width={100}
+            src={preview}
             className="w-32 h-32 rounded-full object-cover border"
           />
 
           <label
-            htmlFor="avatar-upload"
+            htmlFor="avatar"
             className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer"
           >
-            <Upload className="w-6 h-6 text-white" />
+            <Upload className="text-white" />
           </label>
 
           <input
-            id="avatar-upload"
+            id="avatar"
             type="file"
-            accept="image/*"
-            className="hidden"
+            accept="image/png,image/jpeg"
+            hidden
             onChange={handleAvatarUpload}
           />
         </div>
@@ -51,20 +94,31 @@ export default function ProfileSettings({
 
       {/* Fields */}
       <div className="space-y-6 max-w-xl mx-auto">
-        <div className="space-y-2">
+        <div>
           <Label>Username</Label>
-          <Input value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+          <Input {...register("username")} />
+          {errors.username && (
+            <p className="text-sm text-red-500">{errors.username.message}</p>
+          )}
         </div>
 
-        <div className="space-y-2">
-          <Label>Email Address</Label>
-          <Input value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
+        <div>
+          <Label>Email</Label>
+          <Input value={profileEmail} disabled />
         </div>
 
-        <button className="px-6 py-3 bg-primary text-primary-foreground rounded-xl mt-4">
-          Save Changes
+        <button
+          type="submit"
+          disabled={!hasChanges || isSubmitting}
+          className={`px-6 py-3 rounded-xl ${
+            hasChanges
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted text-muted-foreground"
+          }`}
+        >
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

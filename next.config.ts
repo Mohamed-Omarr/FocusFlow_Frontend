@@ -11,7 +11,16 @@ const config: NextConfig = {
     reactStrictMode: true,
     typescript:{
       ignoreBuildErrors:true
-    }
+    },
+     images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "wwwbebfhojdhxynbuxbh.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
 
 export default withNextIntl(config);

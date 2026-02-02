@@ -5,6 +5,7 @@ type UserProgress = {
     currentStars: number,
 };
 
+
 type WeeklyDay = {
   day: string; // "Mon", "Tue", ...
 };
