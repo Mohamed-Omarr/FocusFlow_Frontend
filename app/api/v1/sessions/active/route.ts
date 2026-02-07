@@ -25,12 +25,12 @@ export type ActiveSessionResponse = {
 
 // --- Helper: Heal Redis from Postgres ---
 async function handleRedisMiss(userId: string, supabase: any, cacheKey: string): Promise<ActiveSessionResponse> {
-  console.log("Redis Miss: Healing from Postgres...");
 
   const { data: session } = await supabase
     .from("active_sessions")
     .select("*")
     .eq("user_id", userId)
+    .not("session_status", "in", ["canceled", "finished"])
     .single();
 
   if (!session) {
@@ -85,8 +85,75 @@ export async function GET(req: Request) {
       return NextResponse.json(fallback);
     }
 
-    let remaining = 0;
+    // 2️. Redis stale → canceled session → drop + heal
+      if (cached.session_status === "canceled" || cached.session_status === "finished") {
+        await redis.del(cacheKey);
 
+        const fallback = await handleRedisMiss(user.id, supabase, cacheKey);
+        return NextResponse.json(fallback);
+      }
+
+// --------------------------------------------------
+// AUTO BREAK RESOLUTION (SERVER-ONLY, NO CACHE DELETE)
+// --------------------------------------------------
+      if (
+        cached.breaktime_type === "auto" &&
+        cached.session_status === "running" &&
+        !cached.is_paused
+      ) {
+        //  START AUTO BREAK
+        if (
+          !cached.is_on_break &&
+          cached.breaks_taken < cached.allowed_break_count
+        ) {
+          const { data: started } = await supabase.rpc("start_auto_break");
+
+          if (started) {
+            //  Redis is stale now
+            await redis.del(cacheKey);
+
+            // 🔁 Rehydrate immediately and respond
+            const freshResponse = await handleRedisMiss(
+              user.id,
+              supabase,
+              cacheKey
+            );
+
+            return NextResponse.json(freshResponse);
+          }
+
+        }
+
+        //  END AUTO BREAK (time-gated)
+        if (cached.is_on_break && cached.break_started_at) {
+          const breakStartedAt = new Date(cached.break_started_at).getTime();
+          const breakDurationMs =
+            cached.break_duration_minutes * 60 * 1000;
+
+          if (now >= breakStartedAt + breakDurationMs) {
+            const { data: ended } = await supabase.rpc("end_auto_break");
+
+            if (ended) {
+              //  Redis snapshot is now invalid
+              await redis.del(cacheKey);
+
+              // 🔁Immediately rehydrate from DB and respond
+              const freshResponse = await handleRedisMiss(
+                user.id,
+                supabase,
+                cacheKey
+              );
+
+              return NextResponse.json(freshResponse);
+            }
+      }
+        }
+      }
+
+      // 
+
+
+    let remaining = 0;
     // 2. LOGIC: Calculate remaining time or handle Paused state
     if (cached.is_paused) {
       // Time is frozen while paused. Do not check for 0.
@@ -111,7 +178,10 @@ export async function GET(req: Request) {
             session_status: 'finished_pending_extension',
             extension_started_at: cached.extension_started_at 
           })
-          .eq("id", cached.id);
+          .eq("id", cached.id)
+          .not("session_status", "in", ["canceled", "finished"])
+
+          
       }
     } 
     else if (cached.session_status === 'finished_pending_extension') {
@@ -139,7 +209,6 @@ export async function GET(req: Request) {
     return NextResponse.json(response);
 
   } catch (err) {
-    console.error("Timer GET Error:", err);
     return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
 }
@@ -167,6 +236,7 @@ export async function POST(req: Request) {
     .from("active_sessions")
     .select("*")
     .eq("id", session_id)
+    .not("session_status", "in", ["canceled", "finished"])
     .single();
 
   if (!fullSession) return NextResponse.json({ error: "Session creation failed" }, { status: 500 });

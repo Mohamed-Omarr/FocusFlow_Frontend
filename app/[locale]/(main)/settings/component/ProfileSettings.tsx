@@ -94,7 +94,7 @@ export default function ProfileSettings({
 
       {/* Fields */}
       <div className="space-y-6 max-w-xl mx-auto">
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Username</Label>
           <Input {...register("username")} />
           {errors.username && (
@@ -102,7 +102,7 @@ export default function ProfileSettings({
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Email</Label>
           <Input value={profileEmail} disabled />
         </div>

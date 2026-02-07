@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
 export function Hero() {
   return (
@@ -77,10 +78,10 @@ export function Hero() {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 flex flex-center gap-2">
+                <Link href={"/login"} className="relative z-10 flex flex-center gap-2">
                   Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
+                </Link>
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-secondary to-primary"
                   initial={{ x: "100%" }}

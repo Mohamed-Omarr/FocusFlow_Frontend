@@ -3,7 +3,6 @@
 import { useAxiosGet } from "@/lib/axios/useAxiosQuery";
 import { Award } from "lucide-react";
 
-
 export default function Milestones() {
   const {
     data: milestones,
@@ -33,14 +32,12 @@ export default function Milestones() {
         </h2>
       </div>
 
-      {/* 🆕 EMPTY STATE */}
       {milestones.length === 0 && (
         <div className="text-sm text-muted-foreground text-center py-10">
-          No milestones yet — start your journey to success.
+          No milestones yet — start your journey.
         </div>
       )}
 
-      {/* 🏆 MILESTONES */}
       {milestones.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {milestones.map((m) => (

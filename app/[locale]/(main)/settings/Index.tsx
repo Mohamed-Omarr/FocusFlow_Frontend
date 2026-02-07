@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, SettingsIcon, Lock, Shield } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 import ProfileSettings from "./component/ProfileSettings";
 import GeneralSettings from "./component/GeneralSettings";
@@ -13,6 +12,7 @@ import PasswordModal from "./component/PasswordModal";
 import DeleteAccountModal from "./component/DeleteAccountModal";
 
 import { deleteAccount } from "@/lib/actions/delete-account";
+import { useRouter } from "@/i18n/navigation";
 
 interface UserInformation {
   username: string;
@@ -27,11 +27,8 @@ export default function SettingsClient({ user }: { user: UserInformation }) {
         Local editable state
      ============================ */
   const [profileName, setProfileName] = useState(user.username);
+  
   const [avatarUrl, setAvatarUrl] = useState(user.avatar);
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -63,7 +60,10 @@ export default function SettingsClient({ user }: { user: UserInformation }) {
           </p>
         </div>
 
-        <Tabs defaultValue="profile" className="flex flex-col lg:flex-row gap-6">
+        <Tabs
+          defaultValue="profile"
+          className="flex flex-col lg:flex-row gap-6"
+        >
           <TabsList className="flex lg:flex-col lg:w-64 gap-2 p-3 rounded-2xl bg-card/50 border">
             <TabsTrigger value="profile">
               <User /> Profile
@@ -83,9 +83,7 @@ export default function SettingsClient({ user }: { user: UserInformation }) {
             <TabsContent value="profile">
               <ProfileSettings
                 avatarUrl={avatarUrl}
-                setAvatarUrl={setAvatarUrl}
                 profileName={profileName}
-                setProfileName={setProfileName}
                 profileEmail={user.email}
               />
             </TabsContent>
@@ -95,15 +93,7 @@ export default function SettingsClient({ user }: { user: UserInformation }) {
             </TabsContent>
 
             <TabsContent value="password">
-              <PasswordSettings
-                currentPassword={currentPassword}
-                setCurrentPassword={setCurrentPassword}
-                newPassword={newPassword}
-                setNewPassword={setNewPassword}
-                confirmPassword={confirmPassword}
-                setConfirmPassword={setConfirmPassword}
-                setShowPasswordPopup={setShowPasswordPopup}
-              />
+              <PasswordSettings />
             </TabsContent>
 
             <TabsContent value="account">

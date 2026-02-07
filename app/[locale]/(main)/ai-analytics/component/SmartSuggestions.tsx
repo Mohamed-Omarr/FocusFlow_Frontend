@@ -4,16 +4,20 @@ import { Brain, Clock, Lightbulb, TrendingUp } from "lucide-react";
 export default function SmartSuggestions() {
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
-        <Lightbulb className="w-6 h-6 text-primary" />
-        <h2 className="text-2xl font-bold text-foreground">
-          Smart Suggestions
-        </h2>
+      <div className="flex items-center gap-4 mb-8 border border-border/50 backdrop-blur-xl bg-background/60 rounded-2xl px-6 py-4">
+        <Lightbulb className="w-6 h-6 text-primary shrink-0" />
+
+        <div className="flex flex-col">
+          <h2 className="text-2xl font-bold text-foreground leading-tight">
+            Smart Suggestions
+          </h2>
+
+          <p className="text-sm text-muted-foreground">
+            Supportive insights to help you understand and improve your focus
+            patterns
+          </p>
+        </div>
       </div>
-      <p className="text-muted-foreground mb-8">
-        Supportive insights to help you understand and improve your focus
-        patterns
-      </p>
 
       <div className="grid md:grid-cols-3 gap-6">
         {[
@@ -53,7 +57,7 @@ export default function SmartSuggestions() {
         ))}
       </div>
 
-      <div className="mt-8 text-center">
+      <div className="my-8 text-center">
         <p className="text-sm text-muted-foreground italic">
           Remember: These insights are here to support you, not to add pressure.
           Every small improvement counts.

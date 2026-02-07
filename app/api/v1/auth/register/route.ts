@@ -1,3 +1,4 @@
+import { base_url } from '@/lib/axios/axiosClient';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
 
     const { data, error: authError } =
       await supabase.auth.signUp({ email, password, options: {
-        emailRedirectTo:`${process.env.NEXT_PUBLIC_BASE_URL}/login`,
+        emailRedirectTo:`${base_url}/login`,
     data: {
       username
     }

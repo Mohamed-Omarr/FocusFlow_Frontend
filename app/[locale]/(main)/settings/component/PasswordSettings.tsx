@@ -6,7 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PasswordSchema, PasswordSchemaType } from "@/lib/zod/settings/validation/password";
+import {
+  PasswordSchema,
+  PasswordSchemaType,
+} from "@/lib/zod/settings/validation/password";
 import { updatePasswordAction } from "@/lib/actions/update-password";
 
 export default function PasswordSettings() {
@@ -48,7 +51,7 @@ export default function PasswordSettings() {
       <h2 className="text-2xl font-bold">Change Password</h2>
 
       <div className="space-y-5">
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Current Password</Label>
           <Input type="password" {...register("currentPassword")} />
           {errors.currentPassword && (
@@ -58,7 +61,7 @@ export default function PasswordSettings() {
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>New Password</Label>
           <Input type="password" {...register("newPassword")} />
           {errors.newPassword && (
@@ -68,7 +71,7 @@ export default function PasswordSettings() {
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Confirm Password</Label>
           <Input type="password" {...register("confirmPassword")} />
           {errors.confirmPassword && (
@@ -78,9 +81,7 @@ export default function PasswordSettings() {
           )}
         </div>
 
-        {serverError && (
-          <p className="text-sm text-red-600">{serverError}</p>
-        )}
+        {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
         {success && (
           <p className="text-sm text-green-600">

@@ -6,6 +6,9 @@ import { ModeToggle } from "@/components/theme-mode/ModeToggle";
 export function Header() {
   const navItems = ["Features", "Analytics"];
 
+  const authPath = ["Login"];
+
+
   return (
     <div className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
       <motion.header
@@ -30,6 +33,19 @@ export function Header() {
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase().trim()}`}
+                className="small-muted-text hover:text-foreground transition-colors cursor-pointer"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -2 }}
+              >
+                {item}
+              </motion.a>
+            ))}
+              {authPath.map((item, index) => (
+              <motion.a
+                key={item}
+                href={`${item.toLowerCase().trim()}`}
                 className="small-muted-text hover:text-foreground transition-colors cursor-pointer"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}

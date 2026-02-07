@@ -10,7 +10,7 @@ import WeeklyFocusScore from "./component/WeeklyFocusScore";
 export default function AIAnalyticsPage() {
   return (
     <div>
-      <main>
+      <main className="flex flex-col gap-4">
         {/* Header */}
         <div
           className="

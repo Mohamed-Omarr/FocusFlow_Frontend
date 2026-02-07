@@ -1,6 +1,8 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+const DAY = 24 * 60 * 60 * 1000;
+
 export async function GET() {
   const supabase = await createServerSupabaseClient();
 
@@ -14,7 +16,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  /* ---------- CHECK IF USER STARTED (COMPLETED ANY TASK) ---------- */
+  /* ---------- CHECK USER STARTED ---------- */
   const { data: hasCompletedTask } = await supabase
     .from("tasks")
     .select("id")
@@ -23,7 +25,6 @@ export async function GET() {
     .limit(1)
     .maybeSingle();
 
-  // 🚨 New user → no milestones at all
   if (!hasCompletedTask) {
     return NextResponse.json([]);
   }
@@ -31,11 +32,14 @@ export async function GET() {
   /* ---------- FETCH MILESTONES ---------- */
   const { data: milestones, error: milestoneError } = await supabase
     .from("milestones")
-    .select("id, title, description, icon, created_at")
-    .order("created_at", { ascending: true });
+    .select("id, title, description, icon, type, order_index")
+    .order("order_index", { ascending: true, nullsFirst: false });
 
   if (milestoneError) {
-    return NextResponse.json({ error: milestoneError.message }, { status: 400 });
+    return NextResponse.json(
+      { error: milestoneError.message },
+      { status: 400 },
+    );
   }
 
   /* ---------- FETCH ACHIEVED ---------- */
@@ -45,48 +49,72 @@ export async function GET() {
     .eq("user_id", user.id);
 
   if (achievedError) {
-    return NextResponse.json({ error: achievedError.message }, { status: 400 });
+    return NextResponse.json(
+      { error: achievedError.message },
+      { status: 400 },
+    );
   }
 
-  /* ---------- MAP ACHIEVEMENTS ---------- */
   const achievedMap = new Map(
     achievedRows.map((r) => [r.milestone_id, r.achieved_at]),
   );
 
+  /* ---------- PROGRESSION STATE ---------- */
+  const progression = milestones.filter(
+    (m) => m.type === "progression" && m.order_index !== null,
+  );
+
+  const lastAchievedOrder = progression.reduce((max, m) => {
+    return achievedMap.has(m.id)
+      ? Math.max(max, m.order_index!)
+      : max;
+  }, 0);
+
   const now = Date.now();
 
-  const response = milestones
+  /* ---------- VISIBILITY RULES ---------- */
+  const visible = milestones
     .map((m) => {
       const achievedAt = achievedMap.get(m.id);
 
-      if (achievedAt) {
+      // 🟡 EVENT → show only if achieved (recent)
+      if (m.type === "event") {
+        if (!achievedAt) return null;
+
         const diff = now - new Date(achievedAt).getTime();
+        if (diff > DAY) return null;
 
-        // ❌ achieved but older than 24h → hide
-        if (diff > 24 * 60 * 60 * 1000) {
-          return null;
-        }
-
-        // ✅ achieved within 24h → spotlight
         return {
-          id: m.id,
-          title: m.title,
-          description: m.description,
-          icon: m.icon,
+          ...m,
           achieved: true,
         };
       }
 
-      // ⏳ upcoming milestone
-      return {
-        id: m.id,
-        title: m.title,
-        description: m.description,
-        icon: m.icon,
-        achieved: false,
-      };
+      // 🔵 PROGRESSION
+      if (m.order_index === lastAchievedOrder) {
+        // latest achieved
+        if (!achievedAt) return null;
+
+        const diff = now - new Date(achievedAt).getTime();
+        if (diff > DAY) return null;
+
+        return {
+          ...m,
+          achieved: true,
+        };
+      }
+
+      if (m.order_index === lastAchievedOrder + 1) {
+        // next step
+        return {
+          ...m,
+          achieved: false,
+        };
+      }
+
+      return null;
     })
     .filter(Boolean);
 
-  return NextResponse.json(response);
+  return NextResponse.json(visible);
 }

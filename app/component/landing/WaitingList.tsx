@@ -89,14 +89,12 @@ export function WaitlistForm() {
       </form>
 
       <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-sm text-muted-foreground">
-        {["Early access", "Launch day benefits", "Priority support"].map(
-          (benefit, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-primary" />
-              <span>{benefit}</span>
-            </div>
-          )
-        )}
+        {["Early access", "Priority support"].map((benefit, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-primary" />
+            <span>{benefit}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

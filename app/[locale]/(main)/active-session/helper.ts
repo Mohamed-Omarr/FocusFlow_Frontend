@@ -55,7 +55,7 @@ export async function cancel_session(reason: string) {
   return true;
 }
 
-// ☕ BREAKS
+// ☕ Manual BREAKS
 export async function start_manual_break() {
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("start_manual_break");
@@ -77,16 +77,36 @@ export async function end_manual_break() {
 }
 
 
+// // ☕ Auto BREAKS
+// export async function start_auto_break() {
+//   const supabase = await createServerSupabaseClient();
+//   const { error } = await supabase.rpc("start_auto_break");
+
+//   if (error) throw new Error(error.message);
+
+//   await invalidateCache(supabase);
+//   return true;
+// }
+
+// export async function end_auto_break() {
+//   const supabase = await createServerSupabaseClient();
+//   const { error } = await supabase.rpc("end_auto_break");
+
+//   if (error) throw new Error(error.message);
+
+//   await invalidateCache(supabase);
+//   return true;
+// }
+
+
 // session reflection
-export async function save_session_reflection(selectedDistractions,distractionNote,mood,energy) {
+export async function save_session_reflection(sessionId,selectedDistractions,distractionNote,mood,energy) {
   const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.from("active_sessions").update({
+  const { error } = await supabase.from("session_reflection").insert({
     session_status:"finished",extension_started_at:null,
-  }).eq("id",sessionId).eq("session_status", "finished_pending_extension");
+  })
 
   if (error) throw new Error(error.message);
-
-  await invalidateCache(supabase);
 
   return true;
 }

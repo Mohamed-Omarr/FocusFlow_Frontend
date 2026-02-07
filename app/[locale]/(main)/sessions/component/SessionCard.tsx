@@ -77,7 +77,7 @@ export default function SessionCard({ session }: { session: Session }) {
           <div className="small-muted-text">
             <div className="flex flex-center gap-1.5">
               <Clock className="w-4 h-4" />
-              <span>{session.planned_duration_minutes}</span>
+              <span>{session.planned_duration_minutes} minutes</span>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function SessionCard({ session }: { session: Session }) {
                   <span>Duration</span>
                 </div>
                 <p className="font-medium">
-                  {session.planned_duration_minutes}
+                  {session.planned_duration_minutes} minutes
                 </p>
               </div>
             </div>

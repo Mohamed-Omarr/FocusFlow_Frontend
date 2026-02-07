@@ -1,12 +1,13 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { base_url } from "../axios/axiosClient";
 
 export async function requestPasswordReset(email: string) {
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
+    redirectTo: `${base_url}/reset-password`,
   });
 
   if (error) {

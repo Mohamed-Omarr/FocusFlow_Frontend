@@ -11,13 +11,13 @@ export default function GeneralSettings() {
 
       <div className="flex items-start gap-10">
         {/* Language */}
-        <div>
+        <div className="flex flex-row gap-2">
           <Label>Language</Label>
           <LangSwitcher />
         </div>
 
         {/* Theme */}
-        <div>
+        <div className="flex flex-row gap-2">
           <Label>Theme</Label>
           <ModeToggle />
         </div>
