@@ -47,22 +47,28 @@ if (task.reminded_at) {
     }
 
     // 3️⃣ Send email via Loops
-    await axios.post(
-      "https://app.loops.so/api/v1/transactional",
-      {
-        email: task.user.email,
-        transactionalId: "cmldv15o77a990izbpq8dbost",
-        dataVariables: {
-          taskName: task.name,
-        },
+    try {
+  const res = await axios.post(
+    "https://app.loops.so/api/v1/transactional",
+    {
+      email: task.user.email,
+      transactionalId: "cmldv15o77a990izbpq8dbost", // exact template ID
+      dataVariables: {
+        taskName: task.name, // must match placeholders in template
       },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  console.log("Loops transactional response:", res.data);
+    } catch (err: any) {
+      console.error("Loops transactional error:", err.response?.data || err.message);
+    }
 
     // 4️⃣ Mark as reminded
     await supabase
