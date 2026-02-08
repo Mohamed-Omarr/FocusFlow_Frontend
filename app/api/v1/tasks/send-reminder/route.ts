@@ -71,11 +71,12 @@ if (task.reminded_at) {
     }
 
     // 4️⃣ Mark as reminded
-    await supabase
+    const { data: updatedTask, error: updateError } = await supabase
       .from("tasks")
       .update({ reminded_at: new Date().toISOString() })
       .eq("id", task.id);
 
-    return NextResponse.json({ success: true });
+    if (updateError) console.error("Supabase update failed:", updateError);
+
   }
 );
