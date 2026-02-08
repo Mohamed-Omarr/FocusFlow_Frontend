@@ -16,7 +16,7 @@ export async function deleteAccount() {
     throw new Error("Unauthorized");
   }
 
-  // 2️⃣ Admin client (service role supabase Admin) -- only used here
+  // 2️⃣ Admin client (service role supabase Admin) -- only used here and in (send-reminder)
   const adminSupabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
