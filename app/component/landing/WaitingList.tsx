@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-
+import axios from "axios";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,21 +11,56 @@ export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // ✅ Allowed email domains
+  const allowedDomains = [
+    "gmail.com",
+    "yahoo.com",
+    "outlook.com",
+    "hotmail.com",
+    "icloud.com",
+    "protonmail.com",
+    // add your company or partner domains here
+  ];
+
+  // ✅ Email validation
+  const isValidEmail = (email: string) => {
+    // basic format check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
+
+    // check if domain is allowed
+    const domain = email.split("@")[1].toLowerCase();
+    return allowedDomains.includes(domain);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (isLoading || isSubmitted) return;
 
-    // Store email in localStorage for now
-    const emails = JSON.parse(localStorage.getItem("waitlist_emails") || "[]");
-    emails.push({ email, date: new Date().toISOString() });
-    localStorage.setItem("waitlist_emails", JSON.stringify(emails));
+    if (!isValidEmail(email)) {
+      setError(
+        "Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, iCloud, ProtonMail)."
+      );
+      return;
+    }
 
-    setIsSubmitted(true);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      await axios.post("/api/v1/waitlist", { email });
+
+      setIsSubmitted(true);
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.error ||
+          "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -58,6 +93,7 @@ export function WaitlistForm() {
           Master your day with FocusFlow.
         </h3>
       </div>
+
       <p className="text-center text-muted-foreground mb-3 leading-relaxed">
         Turn distractions into progress. Join the waitlist and be the first to
         experience FocusFlow with exclusive early access.
@@ -79,6 +115,7 @@ export function WaitlistForm() {
             className="pl-12 h-12 rounded-2xl bg-background/50 border-primary/20 focus:border-primary/50"
           />
         </div>
+
         <Button
           type="submit"
           disabled={isLoading}
@@ -87,6 +124,10 @@ export function WaitlistForm() {
           {isLoading ? "Joining..." : "Join Waitlist"}
         </Button>
       </form>
+
+      {error && (
+        <p className="mt-3 text-sm text-destructive text-center">{error}</p>
+      )}
 
       <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-sm text-muted-foreground">
         {["Early access", "Priority support"].map((benefit, index) => (

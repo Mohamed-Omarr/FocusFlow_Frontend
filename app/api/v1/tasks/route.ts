@@ -21,6 +21,7 @@ export async function GET() {
     .from("tasks")
     .select("*")
     .eq("user_id", user.id)
+    .eq("completed", false)
     .order("created_at", { ascending: false });
 
   if (error) {
