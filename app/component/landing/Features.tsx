@@ -5,36 +5,33 @@ const features = [
   {
     icon: Timer,
     title: "Focus Sessions",
-    description:
-      "Time your deep work sessions with customizable focus timers and break intervals.",
+    description: "Custom timers for focused work and breaks.",
     color: "from-primary to-secondary",
     emoji: "⏱️",
   },
   {
     icon: TrendingUp,
     title: "AI Analytics",
-    description:
-      "Get intelligent insights into your productivity patterns and personalized recommendations.",
+    description: "Smart insights into your productivity patterns.",
     color: "from-secondary to-accent",
     emoji: "📊",
   },
   {
     icon: Flame,
     title: "Habit Streaks",
-    description:
-      "Build consistency with daily streaks and celebrate your progress without pressure.",
+    description: "Stay consistent with simple daily streaks.",
     color: "from-accent to-primary",
     emoji: "🔥",
   },
   {
     icon: Bell,
     title: "Smart Reminders",
-    description:
-      "Gentle nudges at the right time to help you stay on track with your goals.",
+    description: "Timely nudges to keep you on track.",
     color: "from-primary to-accent",
     emoji: "🔔",
   },
 ];
+
 
 export function Features() {
   return (

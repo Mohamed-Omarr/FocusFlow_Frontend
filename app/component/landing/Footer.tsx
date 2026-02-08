@@ -1,11 +1,21 @@
 import { motion } from "motion/react";
 import { Linkedin } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 export function Footer() {
   const footerLinks = {
-    Product: ["Features", "Analytics"],
-    Company: ["About", "Contact"],
-    Resources: ["Help Center", "Privacy Policy", "Terms of Service"],
+    Product: [
+      { label: "Features", href: "#features" },
+      { label: "Analytics", href: "#analytics" },
+    ],
+    Company: [
+      { label: "About", href: "about" },
+      { label: "Contact", href: "contact" },
+    ],
+    Legal: [
+      { label: "Privacy Policy", href: "privacy-policy" },
+      { label: "Terms of Service", href: "terms-of-service" },
+    ],
   };
 
   const socialLinks = [{ icon: Linkedin, href: "#", label: "LinkedIn" }];
@@ -44,15 +54,14 @@ export function Footer() {
             <div key={category}>
               <h4 className="text-white mb-4">{category}</h4>
               <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link}>
-                    <motion.a
-                      href="#"
+                {links.map((result, index) => (
+                  <li key={index}>
+                    <Link
+                      href={result.href}
                       className="text-[#A7A7B0] hover:text-white transition-colors"
-                      whileHover={{ x: 2 }}
                     >
-                      {link}
-                    </motion.a>
+                      {result.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

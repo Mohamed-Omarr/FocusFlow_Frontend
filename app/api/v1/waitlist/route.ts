@@ -1,6 +1,4 @@
-import { LoopsClient } from "loops";
-
-const loops = new LoopsClient(process.env.LOOPS_API_KEY!);
+import { loops } from "@/lib/loops/loops";
 
 export async function POST(req: Request) {
   const { email } = await req.json();
