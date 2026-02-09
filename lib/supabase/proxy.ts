@@ -2,23 +2,21 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const PROTECTED_PAGES = ['home', 'settings', 'sessions','task-planner','ai-analytics'];
-const PUBLIC_PAGES = ['login', 'register','/'];
+const PUBLIC_PAGES = ['login', 'register'];
 
 export async function supabaseSessionProxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
 
-const pathname = request.nextUrl.pathname;
-  // PRODUCTION: Only allow landing page
-  if (process.env.NODE_ENV === 'production') {
-    if (pathname !== '/') {
-      const url = request.nextUrl.clone();
-      url.pathname = '/';
-      return NextResponse.redirect(url);
-    }
-    // In prod, we do NOT run auth redirects
-    return NextResponse.next({ request });
+    const pathname = request.nextUrl.pathname;
+
+
+    //  Production: force landing page only
+  if (process.env.NODE_ENV === "production" && pathname !== "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
   }
 
   // With Fluid compute, don't put this client in a global environment
@@ -53,7 +51,6 @@ const pathname = request.nextUrl.pathname;
 
   const user = data?.claims
 
-  
   const locale = pathname.split('/')[1];
   const page = pathname.split(`/${locale}/`)[1]?.split('/')[0];
 
