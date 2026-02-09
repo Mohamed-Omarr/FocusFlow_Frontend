@@ -18,7 +18,7 @@ const pathname = request.nextUrl.pathname;
       return NextResponse.redirect(url);
     }
     // In prod, we do NOT run auth redirects
-    return supabaseResponse;
+    return NextResponse.next({ request });
   }
 
   // With Fluid compute, don't put this client in a global environment
