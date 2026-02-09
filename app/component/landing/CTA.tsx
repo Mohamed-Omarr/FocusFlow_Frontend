@@ -1,10 +1,13 @@
-"use client";
+'use client';
 
 import { motion } from "motion/react";
-import {  Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { WaitlistForm } from "./WaitingList";
+import { useTranslations } from "next-intl";
 
 export function CTA() {
+  const t = useTranslations("landing.cta");
+
   return (
     <section className="section-wrapper relative overflow-hidden">
       {/* Background decorations */}
@@ -69,9 +72,9 @@ export function CTA() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                Ready to transform{" "}
+                {t("title_part1")}{" "}
                 <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                  your productivity?
+                  {t("title_part2")}
                 </span>
               </motion.h2>
 
@@ -94,9 +97,7 @@ export function CTA() {
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
                 <Globe className="w-4 h-4" />
-                <p className="text-xs sm:text-sm">
-                  Available in Arabic, Turkish, and English
-                </p>
+                <p className="text-xs sm:text-sm">{t("available_languages")}</p>
               </motion.div>
             </div>
 

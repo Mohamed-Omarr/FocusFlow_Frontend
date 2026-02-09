@@ -2,8 +2,11 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export function Hero() {
+  const t = useTranslations("landing.hero");
+
   return (
     <section id="home" className="hero-section relative overflow-hidden">
       {/* Gradient Background Effects */}
@@ -35,12 +38,12 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            FocusFlow
+            {t("title_line1")}
             <br />
-            Your Calm
+            {t("title_line2")}
             <br />
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Productivity Companion
+              {t("title_line3")}
             </span>
           </motion.h1>
 
@@ -50,8 +53,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Track your focus, build habits, and improve your productivity —
-            without pressure.
+            {t("subtitle")}
           </motion.p>
 
           <motion.div
@@ -65,14 +67,14 @@ export function Hero() {
               whileTap={{ scale: 0.98 }}
             >
               <Link href="/login" className="flex items-center gap-2">
-                Get Started
+                {t("cta")}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.button>
           </motion.div>
         </div>
 
-        {/* RIGHT — Floating text zone (now fades in) */}
+        {/* RIGHT — Floating text zone */}
         <motion.div
           className="relative hidden lg:block w-[360px]"
           initial={{ opacity: 0 }}
@@ -88,7 +90,7 @@ export function Hero() {
               y: { duration: 7, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            Focus that adapts to you
+            {t("floating_texts.text1")}
           </motion.div>
 
           <motion.div
@@ -100,7 +102,7 @@ export function Hero() {
               y: { duration: 8, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            Built for focus, not burnout
+            {t("floating_texts.text2")}
           </motion.div>
 
           <motion.div
@@ -112,7 +114,7 @@ export function Hero() {
               y: { duration: 6.5, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            Start where you are
+            {t("floating_texts.text3")}
           </motion.div>
 
           <motion.div
@@ -124,7 +126,7 @@ export function Hero() {
               y: { duration: 9, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            Where change starts
+            {t("floating_texts.text4")}
           </motion.div>
 
           <motion.div
@@ -136,7 +138,7 @@ export function Hero() {
               y: { duration: 7.5, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            Consistent, not perfect
+            {t("floating_texts.text5")}
           </motion.div>
         </motion.div>
       </div>

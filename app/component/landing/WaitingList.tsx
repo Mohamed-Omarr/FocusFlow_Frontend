@@ -6,8 +6,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Check, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function WaitlistForm() {
+  const t = useTranslations("landing.cta.waitinglist");
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +36,7 @@ export function WaitlistForm() {
     if (isLoading || isSubmitted) return;
 
     if (!isValidEmail(email)) {
-      setError(
-        "Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, iCloud, ProtonMail)."
-      );
+      setError(t("errors.invalid_email"));
       return;
     }
 
@@ -46,10 +46,7 @@ export function WaitlistForm() {
       await axios.post("/api/v1/waitlist", { email });
       setIsSubmitted(true);
     } catch (err: any) {
-      setError(
-        err?.response?.data?.error ||
-          "Something went wrong. Please try again."
-      );
+      setError(err?.response?.data?.error || t("errors.generic"));
     } finally {
       setIsLoading(false);
     }
@@ -64,12 +61,12 @@ export function WaitlistForm() {
           </div>
           <div className="text-left">
             <h3 className="text-xl font-semibold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              You're on the list!
+              {t("success.title")}
             </h3>
             <p className="text-sm text-muted-foreground">
-              We'll notify you at{" "}
-              <span className="text-foreground font-medium">{email}</span> when
-              we launch.
+              {t("success.description_part1")}{" "}
+              <span className="text-foreground font-medium">{email}</span>{" "}
+              {t("success.description_part2")}
             </p>
           </div>
         </div>
@@ -82,17 +79,16 @@ export function WaitlistForm() {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-5 sm:mb-6 text-center">
         <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
         <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-          Master your day with FocusFlow.
+          {t("headline")}
         </h3>
       </div>
 
       <p className="text-center text-sm sm:text-base text-muted-foreground mb-3 leading-relaxed">
-        Turn distractions into progress. Join the waitlist and be the first to
-        experience FocusFlow with exclusive early access.
+        {t("description_part1")}
       </p>
 
       <p className="text-center text-sm sm:text-base text-muted-foreground mb-4 sm:mb-3 leading-relaxed">
-        we are coming soon.
+        {t("description_part2")}
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
@@ -100,7 +96,7 @@ export function WaitlistForm() {
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             type="email"
-            placeholder="Enter your email address"
+            placeholder={t("input_placeholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -113,7 +109,7 @@ export function WaitlistForm() {
           disabled={isLoading}
           className="h-11 sm:h-12 px-6 sm:px-8 rounded-2xl font-semibold bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity shadow-lg shadow-primary/25"
         >
-          {isLoading ? "Joining..." : "Join Waitlist"}
+          {isLoading ? t("buttons.loading") : t("buttons.join_waitlist")}
         </Button>
       </form>
 
@@ -122,12 +118,14 @@ export function WaitlistForm() {
       )}
 
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-5 sm:mt-6 text-sm text-muted-foreground">
-        {["Early access", "Priority support"].map((benefit, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-primary" />
-            <span>{benefit}</span>
-          </div>
-        ))}
+        <div className="flex items-center gap-2">
+          <Check className="w-4 h-4 text-primary" />
+          <span>{t("benefits.early_access")}</span>{" "}
+        </div>
+        <div className="flex items-center gap-2">
+          <Check className="w-4 h-4 text-primary" />
+          <span>{t("benefits.priority_support")}</span>{" "}
+        </div>
       </div>
     </div>
   );

@@ -1,39 +1,41 @@
 import { motion } from "motion/react";
 import { Timer, TrendingUp, Flame, Bell } from "lucide-react";
-
-const features = [
-  {
-    icon: Timer,
-    title: "Focus Sessions",
-    description: "Custom timers for focused work and breaks.",
-    color: "from-primary to-secondary",
-    emoji: "⏱️",
-  },
-  {
-    icon: TrendingUp,
-    title: "AI Analytics",
-    description: "Smart insights into your productivity patterns.",
-    color: "from-secondary to-accent",
-    emoji: "📊",
-  },
-  {
-    icon: Flame,
-    title: "Habit Streaks",
-    description: "Stay consistent with simple daily streaks.",
-    color: "from-accent to-primary",
-    emoji: "🔥",
-  },
-  {
-    icon: Bell,
-    title: "Smart Reminders",
-    description: "Timely nudges to keep you on track.",
-    color: "from-primary to-accent",
-    emoji: "🔔",
-  },
-];
-
+import { useTranslations } from "next-intl";
 
 export function Features() {
+  const t = useTranslations("landing.features");
+
+  const features = [
+    {
+      icon: Timer,
+      title: t("focus_sessions.title"),
+      description: t("focus_sessions.description"),
+      color: "from-primary to-secondary",
+      emoji: "⏱️",
+    },
+    {
+      icon: TrendingUp,
+      title: t("ai_analytics.title"),
+      description: t("ai_analytics.description"),
+      color: "from-secondary to-accent",
+      emoji: "📊",
+    },
+    {
+      icon: Flame,
+      title: t("habit_streaks.title"),
+      description: t("habit_streaks.description"),
+      color: "from-accent to-primary",
+      emoji: "🔥",
+    },
+    {
+      icon: Bell,
+      title: t("smart_reminders.title"),
+      description: t("smart_reminders.description"),
+      color: "from-primary to-accent",
+      emoji: "🔔",
+    },
+  ];
+
   return (
     <section id="features" className="section-wrapper">
       {/* Background decoration */}
@@ -48,14 +50,13 @@ export function Features() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="section-heading-two">
-            Everything you need to{" "}
+            {t("heading.part1")}{" "}
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              stay focused
+              {t("heading.part2")}
             </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Powerful features designed to help you achieve deep work without
-            overwhelming you
+            {t("subheading")}
           </p>
         </motion.div>
 

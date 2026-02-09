@@ -4,10 +4,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import LangSwitcher from "../LangSwitcher";
 import { ModeToggle } from "@/components/theme-mode/ModeToggle";
+import { useTranslations } from "next-intl";
 
 export function Header() {
-  const navItems = ["Features", "Analytics"];
-  const authPath = ["Login"];
+  const t = useTranslations("landing.header");
+  const navItems = [t("features"), t("analytics")];
+  const authPath = [t("login")];
   const [open, setOpen] = useState(false);
 
   return (
@@ -90,11 +92,7 @@ export function Header() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d={
-                    open
-                      ? "M6 18L18 6M6 6l12 12"
-                      : "M4 6h16M4 12h16M4 18h16"
-                  }
+                  d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
                 />
               </svg>
             </motion.button>

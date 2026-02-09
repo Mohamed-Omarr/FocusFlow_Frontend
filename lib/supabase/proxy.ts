@@ -2,26 +2,12 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const PROTECTED_PAGES = ['home', 'settings', 'sessions','task-planner','ai-analytics'];
-const PUBLIC_PAGES = ['login', 'register'];
+const PUBLIC_PAGES = ['/'];
 
 export async function supabaseSessionProxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
-
-    const pathname = request.nextUrl.pathname;
-
-
-    //  Production: force landing page only
-   if (process.env.NODE_ENV === "production") {
-    if (pathname !== "/") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/";
-      return NextResponse.redirect(url);
-    }
-    // Skip Supabase logic entirely in production
-    return NextResponse.next({ request });
-  }
 
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
@@ -54,14 +40,18 @@ export async function supabaseSessionProxy(request: NextRequest) {
   const { data } = await supabase.auth.getClaims()
 
   const user = data?.claims
-
+ const pathname = request.nextUrl.pathname;
   const locale = pathname.split('/')[1];
   const page = pathname.split(`/${locale}/`)[1]?.split('/')[0];
 
   // If user is NOT logged in and tries to access a protected page → redirect to login
   if (!user && PROTECTED_PAGES.includes(page)) {
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/login`;
+    // currently for landing page
+    // url.pathname = `/${locale}/login`;
+
+    url.pathname = `/${locale}`;
+
     return NextResponse.redirect(url);
   }
 

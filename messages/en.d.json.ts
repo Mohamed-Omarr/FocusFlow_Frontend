@@ -2,12 +2,177 @@
 // See: https://next-intl.dev/docs/workflows/typescript#messages-arguments
 
 declare const messages: {
-  "Home": {
-    "title": "Hello World!",
-    "description": "This is the English homepage"
+  "landing": {
+    "header": {
+      "features": "Features",
+      "analytics": "Analytics",
+      "login": "Login"
+    },
+    "hero": {
+      "title_line1": "FocusFlow",
+      "title_line2": "Your Calm",
+      "title_line3": "Productivity Companion",
+      "subtitle": "Track your focus, build habits, and improve your productivity — without pressure.",
+      "cta": "Get Started",
+      "floating_texts": {
+        "text1": "Focus that adapts to you",
+        "text2": "Built for focus, not burnout",
+        "text3": "Start where you are",
+        "text4": "Where change starts",
+        "text5": "Consistent, not perfect"
+      }
+    },
+    "features": {
+      "heading": {
+        "part1": "Everything you need to",
+        "part2": "stay focused"
+      },
+      "subheading": "Powerful features designed to help you achieve deep work without overwhelming you",
+      "focus_sessions": {
+        "title": "Focus Sessions",
+        "description": "Custom timers for focused work and breaks."
+      },
+      "ai_analytics": {
+        "title": "AI Analytics",
+        "description": "Smart insights into your productivity patterns."
+      },
+      "habit_streaks": {
+        "title": "Habit Streaks",
+        "description": "Stay consistent with simple daily streaks."
+      },
+      "smart_reminders": {
+        "title": "Smart Reminders",
+        "description": "Timely nudges to keep you on track."
+      }
+    },
+    "cta": {
+      "title_part1": "Ready to transform",
+      "title_part2": "your productivity?",
+      "available_languages": "Available in Arabic, Turkish, and English",
+      "waitinglist": {
+        "headline": "Master your day with FocusFlow.",
+        "description_part1": "Turn distractions into progress. Join the waitlist and be the first to experience FocusFlow with exclusive early access.",
+        "description_part2": "We are coming soon.",
+        "input_placeholder": "Enter your email address",
+        "buttons": {
+          "loading": "Joining...",
+          "join_waitlist": "Join Waitlist"
+        },
+        "success": {
+          "title": "You're on the list!",
+          "description_part1": "We'll notify you at",
+          "description_part2": "when we launch."
+        },
+        "errors": {
+          "invalid_email": "Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, iCloud, ProtonMail).",
+          "generic": "Something went wrong. Please try again."
+        },
+        "benefits": {
+          "early_access": "Early access",
+          "priority_support": "Priority support"
+        }
+      }
+    },
+    "footer": {
+      "brand": "FocusFlow",
+      "description": "Your calm productivity companion for building focus, habits, and achieving deep work without pressure.",
+      "categories": {
+        "product": "Product",
+        "legal": "Legal"
+      },
+      "links": {
+        "features": "Features",
+        "analytics": "Analytics",
+        "privacy_policy": "Privacy Policy",
+        "terms_of_service": "Terms of Service"
+      },
+      "rights_reserved": "All rights reserved."
+    },
+    "privacyPolicy": {
+    "title": "Privacy Policy",
+    "effective_date": "Effective Date: February 8, 2026",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "FocusFlow (“we,” “our,” or “us”) values your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when you use our app and services."
+      },
+      "information_collected": {
+        "title": "2. Information We Collect",
+        "personal_information": "Name, email, and account info you provide when signing up or using the app."
+      },
+      "how_we_use": {
+        "title": "3. How We Use Your Information",
+        "item1": "To provide and improve our services.",
+        "item2": "To communicate with you (notifications, updates).",
+        "item3": "To ensure security and prevent fraud."
+      },
+      "sharing_information": {
+        "title": "4. Sharing Your Information",
+        "item1": "We do not sell your personal data.",
+        "item2": "May share with trusted service providers only to operate the app.",
+        "item3": "Legal obligations: if required by law."
+      },
+      "rights": {
+        "title": "5. Your Rights",
+        "item1": "Access, correct, or delete your personal information.",
+        "item2": "Opt out of marketing communications."
+      },
+      "data_security": {
+        "title": "6. Data Security",
+        "content": "We implement industry-standard measures to protect your data."
+      },
+      "changes_to_policy": {
+        "title": "7. Changes to This Policy",
+        "content": "Updates will be posted here with an updated date."
+      }
+    }
   },
-  "About": {
-    "title": "About us"
+  "termsOfService": {
+      "title": "Terms of Service",
+      "effective_date": "Effective Date: February 8, 2026",
+      "sections": {
+        "acceptance": {
+          "title": "1. Acceptance of Terms",
+          "content": "By using FocusFlow, you agree to these Terms. If you do not agree, do not use the service."
+        },
+        "use_of_service": {
+          "title": "2. Use of the Service",
+          "item1": "You must meet the minimum age requirement 16 years old.",
+          "item2": "Use the app responsibly; do not violate laws or infringe the rights of others."
+        },
+        "account_responsibility": {
+          "title": "3. Account Responsibility",
+          "item1": "Keep your account credentials secure.",
+          "item2": "You are responsible for any activity under your account."
+        },
+        "content": {
+          "title": "4. Content",
+          "item1": "You retain ownership of any content you create or upload in the app.",
+          "item2": "You grant us a license to store and operate your content solely to provide the service."
+        },
+        "prohibited_activities": {
+          "title": "5. Prohibited Activities",
+          "item1": "Hacking, reverse-engineering, or exploiting the app.",
+          "item2": "Uploading harmful, illegal, or offensive content."
+        },
+        "termination": {
+          "title": "6. Termination",
+          "content": "We may suspend or terminate accounts that violate these Terms. You may delete your account at any time."
+        },
+        "disclaimer_liability": {
+          "title": "7. Disclaimer & Liability",
+          "content": "The service is provided “as is” without warranties. We are not liable for indirect damages or data loss."
+        },
+        "governing_law": {
+          "title": "8. Governing Law",
+          "content": "These Terms are governed by the laws of Turkey."
+        },
+        "changes_to_terms": {
+          "title": "9. Changes to Terms",
+          "content": "Updates will be posted here. Continued use constitutes acceptance."
+        }
+      }
+    }
   }
 };
 export default messages;

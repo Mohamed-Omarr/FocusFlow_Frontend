@@ -1,9 +1,174 @@
 {
-  "Home": {
-    "title": "Merhaba Dünya!",
-    "description": "Türkçe ana sayfa"
-  },
-  "About": {
-    "title": "Hakkımızda"
+  "landing": {
+    "header": {
+      "features": "Özellikler",
+      "analytics": "Analitik",
+      "login": "Giriş Yap"
+    },
+    "hero": {
+      "title_line1": "FocusFlow",
+      "title_line2": "Sakinliğiniz",
+      "title_line3": "Üretkenlik Arkadaşınız",
+      "subtitle": "Odaklanmanızı takip edin, alışkanlıklar oluşturun ve üretkenliğinizi artırın — baskı olmadan.",
+      "cta": "Başlayın",
+      "floating_texts": {
+        "text1": "Sana uyum sağlayan odak",
+        "text2": "Yanmamak için odaklanmak üzere tasarlandı",
+        "text3": "Olduğun yerden başla",
+        "text4": "Değişimin başladığı yer",
+        "text5": "Tutarlı, mükemmel değil"
+      }
+    },
+    "features": {
+      "heading": {
+        "part1": "Odaklanman için gereken",
+        "part2": "her şey"
+      },
+      "subheading": "Derin çalışmayı başarmanı sağlayacak güçlü özellikler, seni bunaltmadan",
+      "focus_sessions": {
+        "title": "Odak Seansları",
+        "description": "Odaklanmış çalışma ve molalar için özel zamanlayıcılar."
+      },
+      "ai_analytics": {
+        "title": "Yapay Zeka Analitiği",
+        "description": "Üretkenlik alışkanlıklarınız hakkında akıllı analizler."
+      },
+      "habit_streaks": {
+        "title": "Alışkanlık Serileri",
+        "description": "Basit günlük alışkanlıklarla tutarlı kalın."
+      },
+      "smart_reminders": {
+        "title": "Akıllı Hatırlatmalar",
+        "description": "Sizi yolunuzda tutacak zamanında uyarılar."
+      }
+    },
+    "cta": {
+      "title_part1": "Üretkenliğinizi dönüştürmeye hazır mısınız?",
+      "title_part2": "",
+      "available_languages": "Arapça, Türkçe ve İngilizce mevcuttur",
+      "waitinglist": {
+        "headline": "FocusFlow ile gününüzü yönetin.",
+        "description_part1": "Dikkat dağıtıcıları ilerlemeye dönüştürün. Bekleme listesine katılın ve FocusFlow'u erken erişimle deneyen ilk kişi olun.",
+        "description_part2": "Çok yakında.",
+        "input_placeholder": "E-posta adresinizi girin",
+        "buttons": {
+          "loading": "Katılıyor...",
+          "join_waitlist": "Bekleme Listesine Katıl"
+        },
+        "success": {
+          "title": "Listeye eklendiniz!",
+          "description_part1": "Size şu adresten bildireceğiz",
+          "description_part2": "başladığında."
+        },
+        "errors": {
+          "invalid_email": "Lütfen desteklenen bir sağlayıcıdan geçerli bir e-posta adresi girin (Gmail, Yahoo, Outlook, iCloud, ProtonMail).",
+          "generic": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin."
+        },
+        "benefits": {
+          "early_access": "Erken erişim",
+          "priority_support": "Öncelikli destek"
+        }
+      }
+    },
+    "footer": {
+      "brand": "FocusFlow",
+      "description": "Odaklanma, alışkanlıklar oluşturma ve derin çalışma sağlama konusunda sakin üretkenlik arkadaşınız.",
+      "categories": {
+        "product": "Ürün",
+        "legal": "Yasal"
+      },
+      "links": {
+        "features": "Özellikler",
+        "analytics": "Analitik",
+        "privacy_policy": "Gizlilik Politikası",
+        "terms_of_service": "Hizmet Şartları"
+      },
+      "rights_reserved": "Tüm hakları saklıdır."
+    },
+    "privacyPolicy": {
+      "title": "Gizlilik Politikası",
+      "effective_date": "Yürürlük Tarihi: 8 Şubat 2026",
+      "sections": {
+        "introduction": {
+          "title": "1. Giriş",
+          "content": "FocusFlow (“biz”) gizliliğinize değer verir. Bu Gizlilik Politikası, uygulamamızı ve hizmetlerimizi kullanırken kişisel bilgilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklar."
+        },
+        "information_collected": {
+          "title": "2. Topladığımız Bilgiler",
+          "personal_information": "Kaydolurken veya uygulamayı kullanırken verdiğiniz isim, e-posta ve hesap bilgileri."
+        },
+        "how_we_use": {
+          "title": "3. Bilgilerinizi Nasıl Kullanıyoruz",
+          "item1": "Hizmetlerimizi sunmak ve geliştirmek için.",
+          "item2": "Sizinle iletişim kurmak için (bildirimler, güncellemeler).",
+          "item3": "Güvenliği sağlamak ve dolandırıcılığı önlemek için."
+        },
+        "sharing_information": {
+          "title": "4. Bilgilerinizi Paylaşma",
+          "item1": "Kişisel verilerinizi satmıyoruz.",
+          "item2": "Uygulamayı çalıştırmak için yalnızca güvenilir hizmet sağlayıcılarıyla paylaşabiliriz.",
+          "item3": "Yasal yükümlülükler: kanunen gerekiyorsa."
+        },
+        "rights": {
+          "title": "5. Haklarınız",
+          "item1": "Kişisel bilgilerinize erişin, düzeltin veya silin.",
+          "item2": "Pazarlama iletişimlerinden çıkın."
+        },
+        "data_security": {
+          "title": "6. Veri Güvenliği",
+          "content": "Verilerinizi korumak için sektör standardı önlemler uyguluyoruz."
+        },
+        "changes_to_policy": {
+          "title": "7. Politika Değişiklikleri",
+          "content": "Güncellemeler burada yayınlanacaktır."
+        }
+      }
+    },
+    "termsOfService": {
+      "title": "Hizmet Şartları",
+      "effective_date": "Yürürlük Tarihi: 8 Şubat 2026",
+      "sections": {
+        "acceptance": {
+          "title": "1. Şartların Kabulü",
+          "content": "FocusFlow'u kullanarak, bu Şartları kabul etmiş olursunuz. Kabul etmiyorsanız, hizmeti kullanmayın."
+        },
+        "use_of_service": {
+          "title": "2. Hizmetin Kullanımı",
+          "item1": "Minimum yaş şartını 16 olarak karşılamalısınız.",
+          "item2": "Uygulamayı sorumlu bir şekilde kullanın; kanunları ihlal etmeyin veya başkalarının haklarına zarar vermeyin."
+        },
+        "account_responsibility": {
+          "title": "3. Hesap Sorumluluğu",
+          "item1": "Hesap bilgilerinizi güvende tutun.",
+          "item2": "Hesabınız altında yapılan herhangi bir faaliyetden siz sorumlusunuz."
+        },
+        "content": {
+          "title": "4. İçerik",
+          "item1": "Uygulamada oluşturduğunuz veya yüklediğiniz içeriğin sahipliğini korursunuz.",
+          "item2": "Hizmeti sağlamak amacıyla içeriğinizi depolamak ve işletmek için bize lisans verirsiniz."
+        },
+        "prohibited_activities": {
+          "title": "5. Yasak Faaliyetler",
+          "item1": "Uygulamayı hacklemek, tersine mühendislik yapmak veya istismar etmek.",
+          "item2": "Zararlı, yasa dışı veya saldırgan içerik yüklemek."
+        },
+        "termination": {
+          "title": "6. Hesabın Sonlandırılması",
+          "content": "Bu Şartları ihlal eden hesapları askıya alabilir veya sonlandırabiliriz. Hesabınızı istediğiniz zaman silebilirsiniz."
+        },
+        "disclaimer_liability": {
+          "title": "7. Feragat ve Sorumluluk",
+          "content": "Hizmet 'olduğu gibi' sunulmaktadır. Dolaylı zararlar veya veri kayıplarından sorumlu değiliz."
+        },
+        "governing_law": {
+          "title": "8. Geçerli Hukuk",
+          "content": "Bu Şartlar Türkiye yasalarına tabidir."
+        },
+        "changes_to_terms": {
+          "title": "9. Şartlardaki Değişiklikler",
+          "content": "Güncellemeler burada yayınlanacaktır. Kullanımınıza devam etmek kabul anlamına gelir."
+        }
+      }
+    }
   }
 }

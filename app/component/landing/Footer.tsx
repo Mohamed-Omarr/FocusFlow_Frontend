@@ -6,8 +6,10 @@ import { Linkedin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PrivacyPolicy } from "./PrivacyPolicy";
 import { TermsOfService } from "./TermsOfService";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations("landing.footer"); // i18n namespace for footer
   const [modalContent, setModalContent] = useState<"privacy" | "terms" | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -28,21 +30,17 @@ export function Footer() {
 
   const footerLinks = {
     Product: [
-      { label: "Features", href: "#features" ,type: "not-modal"},
-      { label: "Analytics", href: "#analytics",type: "not-modal" },
+      { label: t("links.features"), href: "#features", type: "not-modal" },
+      { label: t("links.analytics"), href: "#analytics", type: "not-modal" },
     ],
-    // Company: [
-    //   { label: "About", href: "about" , type: "not-modal"},
-    //   { label: "Contact", href: "contact",type: "not-modal" },
-    // ],
     Legal: [
-      { label: "Privacy Policy", href: "privacy", type: "modal" },
-      { label: "Terms of Service", href: "terms", type: "modal" },
+      { label: t("links.privacy_policy"), href: "privacy", type: "modal" },
+      { label: t("links.terms_of_service"), href: "terms", type: "modal" },
     ],
   };
 
   const socialLinks = [
-    { icon: Linkedin, href: "https://www.linkedin.com/in/mohamed-omarr-", label: "LinkedIn" }
+    { icon: Linkedin, href: "#", label: "LinkedIn" }
   ];
 
   return (
@@ -52,12 +50,9 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <motion.div>
-              <span className="text-xl font-bold text-white">FocusFlow</span>
+              <span className="text-xl font-bold text-white">{t("brand")}</span>
             </motion.div>
-            <p className="text-[#A7A7B0] mb-6 max-w-sm">
-              Your calm productivity companion for building focus, habits, and
-              achieving deep work without pressure.
-            </p>
+            <p className="text-[#A7A7B0] mb-6 max-w-sm">{t("description")}</p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
                 <motion.a
@@ -79,13 +74,15 @@ export function Footer() {
           {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-white mb-4">{category}</h4>
+              <h4 className="text-white mb-4">{t(`categories.${category.toLowerCase()}`)}</h4>
               <ul className="space-y-3">
                 {links.map((result, index) => (
                   <li key={index}>
                     {result.type === "modal" ? (
                       <button
-                        onClick={() => setModalContent(result.href === "privacy" ? "privacy" : "terms")}
+                        onClick={() =>
+                          setModalContent(result.href === "privacy" ? "privacy" : "terms")
+                        }
                         className="text-[#A7A7B0] hover:text-white transition-colors"
                       >
                         {result.label}
@@ -109,8 +106,7 @@ export function Footer() {
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between flex-center gap-4">
           <p className="small-muted-text flex flex-center gap-1 mt-6">
             © {new Date().getFullYear()}
-            <span className="font-semibold text-primary">FocusFlow</span>, All
-            rights reserved.
+            <span className="font-semibold text-primary">{t("brand")}</span>, {t("rights_reserved")}
           </p>
         </div>
       </div>
