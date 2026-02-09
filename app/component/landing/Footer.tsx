@@ -40,7 +40,7 @@ export function Footer() {
   };
 
   const socialLinks = [
-    { icon: Linkedin, href: "#", label: "LinkedIn" }
+    { icon: Linkedin, href: "www.linkedin.com/in/mohamed-omarr-", label: "LinkedIn" }
   ];
 
   return (
