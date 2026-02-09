@@ -1,16 +1,16 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ArrowRight, Globe } from "lucide-react";
+import {  Globe } from "lucide-react";
 import { WaitlistForm } from "./WaitingList";
 
 export function CTA() {
   return (
-    <section className="section-wrapper">
+    <section className="section-wrapper relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute-inset">
+      <div className="absolute-inset pointer-events-none">
         <motion.div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]"
+          className="absolute top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-primary/20 rounded-full blur-[120px]"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.4, 0.2],
@@ -22,7 +22,7 @@ export function CTA() {
           }}
         />
         <motion.div
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px]"
+          className="absolute bottom-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-secondary/20 rounded-full blur-[120px]"
           animate={{
             scale: [1.3, 1, 1.3],
             opacity: [0.2, 0.4, 0.2],
@@ -36,7 +36,7 @@ export function CTA() {
         />
       </div>
 
-      <div className="container-wrapper">
+      <div className="container-wrapper relative">
         <motion.div
           className="max-container"
           initial={{ opacity: 0, scale: 0.95 }}
@@ -44,13 +44,26 @@ export function CTA() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="relative bg-gradient-to-br from-card to-muted border border-border rounded-3xl p-12 md:p-16 overflow-hidden shadow-2xl">
+          <div
+            className="
+              relative
+              bg-gradient-to-br
+              from-card
+              to-muted
+              border
+              border-border
+              rounded-2xl sm:rounded-3xl
+              p-2 sm:p-10 lg:p-16
+              overflow-hidden
+              shadow-2xl
+            "
+          >
             {/* Gradient overlay */}
             <div className="absolute-inset bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
 
             <div className="relative z-10 text-center">
               <motion.h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6"
+                className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -62,77 +75,34 @@ export function CTA() {
                 </span>
               </motion.h2>
 
-              {/* <motion.p
-                className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Start your focus journey today and join thousands of users
-                building better habits
-              </motion.p> */}
-
-              {/* BUTTONS */}
-              {/* <motion.div
-                className="flex-col sm:flex-row flex-center-all gap-4 mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <motion.button
-                  className="group px-8 py-4 bg-gradient-to-r from-primary to-secondary btn-text rounded-xl shadow-lg shadow-primary/30"
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow:
-                      "0 20px 40px rgba(60, 130, 246, 0.4)",
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="flex flex-center gap-2">
-                    Get Started
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </motion.button>
-
-                <motion.button
-                  className="px-8 py-4 bg-foreground/5 border border-border text-foreground rounded-xl backdrop-blur-sm hover:bg-foreground/10 hover:border-border/50 transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Learn More
-                </motion.button>
-              </motion.div> */}
-
-              {/* WAITLIST INSERTED HERE */}
+              {/* WAITLIST */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.45 }}
-                className="mt-12"
+                className="mt-8 sm:mt-10 lg:mt-12"
               >
                 <WaitlistForm />
               </motion.div>
 
               <motion.div
-                className="flex-center-all gap-2 text-muted-foreground mt-10"
+                className="flex items-center justify-center gap-2 text-muted-foreground mt-8 sm:mt-10"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
                 <Globe className="w-4 h-4" />
-                <p className="text-sm">
+                <p className="text-xs sm:text-sm">
                   Available in Arabic, Turkish, and English
                 </p>
               </motion.div>
             </div>
 
-            {/* Decorative corner elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary to-transparent opacity-20 rounded-bl-full" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-secondary to-transparent opacity-20 rounded-tr-full" />
+            {/* Decorative corners */}
+            <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-br from-primary to-transparent opacity-20 rounded-bl-full" />
+            <div className="absolute bottom-0 left-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-tr from-secondary to-transparent opacity-20 rounded-tr-full" />
           </div>
         </motion.div>
       </div>

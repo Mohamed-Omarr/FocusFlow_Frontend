@@ -1,4 +1,4 @@
-export default function PrivacyPolicy() {
+export function PrivacyPolicy() {
   return (
     <div className="max-w-3xl mx-auto p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-md">
       <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>

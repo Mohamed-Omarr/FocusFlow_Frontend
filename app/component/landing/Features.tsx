@@ -71,7 +71,7 @@ export function Features() {
               whileHover={{ y: -8 }}
             >
               {/* Card */}
-              <div className="relative h-full bg-card border border-border rounded-2xl p-6 transition-all duration-300 group-hover:border-border/50 group-hover:shadow-xl group-hover:shadow-primary/10">
+              <div className="relative flex flex-col flex-center  h-full bg-card border border-border rounded-2xl p-6 transition-all duration-300 group-hover:border-border/50 group-hover:shadow-xl group-hover:shadow-primary/10">
                 {/* Icon */}
                 <motion.div
                   className={`w-16 h-16 rounded-xl bg-gradient-to-br ${feature.color}  flex-center-all mb-4`}
@@ -85,7 +85,7 @@ export function Features() {
                 <h3 className="text-xl font-semibold text-foreground mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-center">
                   {feature.description}
                 </p>
 

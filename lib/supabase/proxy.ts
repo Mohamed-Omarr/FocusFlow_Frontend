@@ -9,6 +9,13 @@ export async function supabaseSessionProxy(request: NextRequest) {
     request,
   })
 
+  // Production-only: block all routes except landing page
+  if (process.env.NODE_ENV === 'production' && request.nextUrl.pathname !== '/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    return NextResponse.redirect(url);
+  }
+
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
   const supabase = createServerClient(
