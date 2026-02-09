@@ -52,19 +52,24 @@ export async function supabaseSessionProxy(request: NextRequest) {
   const locale = pathname.split('/')[1];
   const page = pathname.split(`/${locale}/`)[1]?.split('/')[0];
 
-  // If user is NOT logged in and tries to access a protected page → redirect to login
-  if (!user && PROTECTED_PAGES.includes(page)) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/login`;
-    return NextResponse.redirect(url);
+
+  if ((process.env.NODE_ENV !== 'production') || pathname === '/') {
+    
+    // If user is NOT logged in and tries to access a protected page → redirect to login
+    if (!user && PROTECTED_PAGES.includes(page)) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${locale}/login`;
+      return NextResponse.redirect(url);
+    }
+  
+    // If user IS logged in and tries to access a public page → redirect to home
+    if (user && PUBLIC_PAGES.includes(page)) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${locale}/home`;
+      return NextResponse.redirect(url);
+    }
   }
 
-  // If user IS logged in and tries to access a public page → redirect to home
-  if (user && PUBLIC_PAGES.includes(page)) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/home`;
-    return NextResponse.redirect(url);
-  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
