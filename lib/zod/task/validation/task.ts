@@ -1,6 +1,6 @@
 import { z } from "zod";
 export const ValidateCreateTask = z.object({
-    name: z.string().min(2, {message: "Must be at  least 2 or more characters long"}).max(20,{message: "Must be less than 30 characters"}),
+    name: z.string().min(0, {message: "Must be at  least 2 or more characters long"}).max(20,{message: "Must be less than 30 characters"}),
     category: z.enum(["work","study","personal"]),
     date_type: z.enum(["no_date","single","range"]),
     single_date: z.iso.date().nullable().optional(),

@@ -60,14 +60,14 @@ export function BreakTimeSelector({
         <Button
           variant={breakMode === "auto" ? "default" : "outline"}
           onClick={() => setBreakMode("auto")}
-          className="flex-1"
+          className="flex-1 cursor-pointer"
         >
           Auto Break
         </Button>
         <Button
           variant={breakMode === "manual" ? "default" : "outline"}
           onClick={() => setBreakMode("manual")}
-          className="flex-1"
+          className="flex-1 cursor-pointer"
         >
           Manual Break
         </Button>

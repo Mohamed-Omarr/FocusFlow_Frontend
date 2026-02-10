@@ -107,6 +107,26 @@ export default function WeeklyFocusScore() {
     );
   }
 
+  const latestData = weeklyScoreData[weeklyScoreData.length - 1];
+
+  const breakdownItems = [
+    {
+      label: "Session Length",
+      value: latestData.sessionLength,
+      color: "oklch(0.65 0.18 200)",
+    },
+    {
+      label: "Distractions",
+      value: latestData.distractions,
+      color: "oklch(0.7 0.15 160)",
+    },
+    {
+      label: "Energy",
+      value: latestData.energy,
+      color: "oklch(0.72 0.14 140)",
+    },
+  ];
+
   /* ---------------- RENDER ---------------- */
 
   return (
@@ -125,8 +145,40 @@ export default function WeeklyFocusScore() {
             onMouseEnter={() => setShowBreakdown(true)}
             onMouseLeave={() => setShowBreakdown(false)}
           >
-            <span className="text-6xl font-bold">{currentScore}</span>
+            <span className="text-6xl font-bold text-foreground">
+              {currentScore}
+            </span>
             <span className="text-2xl text-muted-foreground">/100</span>
+
+            {/* Breakdown Card on Hover */}
+            {showBreakdown && (
+              <div className="absolute left-0 top-full mt-4 z-10 w-64 p-4 bg-popover border border-border rounded-lg shadow-lg animate-in fade-in-0 zoom-in-95">
+                <h3 className="font-semibold mb-3 text-sm text-foreground">
+                  Score Breakdown
+                </h3>
+                <div className="space-y-3">
+                  {breakdownItems.map((item) => (
+                    <div key={item.label} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{item.label}</span>
+                        <span className="font-medium text-foreground">
+                          {item.value}%
+                        </span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all"
+                          style={{
+                            width: `${item.value}%`,
+                            backgroundColor: item.color,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -138,13 +190,13 @@ export default function WeeklyFocusScore() {
       </div>
 
       <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-        Your focus score across each day of the week, showing daily
-        consistency and growth patterns.
+        Your focus score across each day of the week, showing daily consistency
+        and growth patterns.
       </p>
 
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={weeklyScoreData}>
+          <BarChart data={weeklyScoreData} maxBarSize={60}>
             <XAxis dataKey="day" tickLine={false} axisLine={false} />
             <YAxis hide domain={[0, 100]} />
             <Tooltip content={<CustomTooltip />} />

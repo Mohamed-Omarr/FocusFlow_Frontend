@@ -27,7 +27,7 @@ export default function HomePage() {
           Tip of the day
         </h3>
         <p className="text-lg text-foreground leading-relaxed">
-          Short sessions lead to long-term consistency.
+          Short sessions lead to long term consistency.
         </p>
       </div>
     </div>

@@ -35,9 +35,10 @@ export default function SmartSuggestions() {
           },
           {
             icon: TrendingUp,
-            title: "Peak Performance Time",
+            title: "Focus Optimization Insight",
             description:
-              "You seem more productive earlier in the day. Consider scheduling your most important deep work tasks between 9-11 AM.",
+            
+              "Focus often starts to ease after about 25 minutes, particularly in noisier settings. Creating a calmer environment and pacing sessions thoughtfully can help focus feel steadier and naturally stretch toward 30 minutes.",
           },
         ].map((suggestion, i) => (
           <div
@@ -59,7 +60,7 @@ export default function SmartSuggestions() {
 
       <div className="my-8 text-center">
         <p className="text-sm text-muted-foreground italic">
-          Remember: These insights are here to support you, not to add pressure.
+          Remember: These insights are here to support you,
           Every small improvement counts.
         </p>
       </div>

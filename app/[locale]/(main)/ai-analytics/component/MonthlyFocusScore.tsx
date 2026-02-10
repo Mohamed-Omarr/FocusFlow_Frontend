@@ -23,9 +23,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
         <p className="text-muted-foreground">
           Score:{" "}
-          <span className="font-medium text-foreground">
-            {data.score}/100
-          </span>
+          <span className="font-medium text-foreground">{data.score}/100</span>
         </p>
 
         <div className="pt-2 mt-2 border-t border-border/50 space-y-0.5">
@@ -47,10 +45,7 @@ export default function MonthlyFocusScore() {
     data: monthlyScoreWeeks,
     isLoading,
     isError,
-  } = useAxiosGet<any[]>(
-    ["monthly-focus-score"],
-    "/user/monthly-focus-score",
-  );
+  } = useAxiosGet<any[]>(["monthly-focus-score"], "/user/monthly-focus-score");
 
   /* -------- derived values -------- */
 
@@ -113,27 +108,34 @@ export default function MonthlyFocusScore() {
         consistency and growth patterns.
       </p>
 
-      <div className="h-32">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={monthlyScoreWeeks}>
-            <XAxis
-              dataKey="week"
-              tickLine={false}
-              axisLine={false}
-              fontSize={12}
-            />
-            <YAxis hide domain={[0, 100]} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar
-              dataKey="score"
-              fill="oklch(0.7 0.15 160)"
-              radius={[6, 6, 0, 0]}
-              opacity={0.8}
-              className="transition-all hover:opacity-100 hover:brightness-125"
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {!monthlyScoreWeeks || monthlyScoreWeeks.length === 0 ? (
+        <div className="h-40 flex items-center justify-center text-muted-foreground text-sm text-center px-4">
+          Complete your first week of focus to unlock your monthly
+          insights!{" "}
+        </div>
+      ) : (
+        <div className="h-32">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={monthlyScoreWeeks}>
+              <XAxis
+                dataKey="week"
+                tickLine={false}
+                axisLine={false}
+                fontSize={12}
+              />
+              <YAxis hide domain={[0, 100]} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar
+                dataKey="score"
+                fill="oklch(0.7 0.15 160)"
+                radius={[6, 6, 0, 0]}
+                opacity={0.8}
+                className="transition-all hover:opacity-100 hover:brightness-125"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const PROTECTED_PAGES = ['home', 'settings', 'sessions','task-planner','ai-analytics','active-session','login','register','forgot-password'];
-const PUBLIC_PAGES = ['/'];
+const PROTECTED_PAGES = ['home', 'settings', 'sessions','task-planner','ai-analytics','active-session','register','forgot-password'];
+const PUBLIC_PAGES = ['/login'];
 
 export async function supabaseSessionProxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({

@@ -69,8 +69,8 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
   });
 
   const handleCreateTask = (values: TaskState) => {
-    console.log(values.single_date );
-    
+    console.log(values.single_date);
+
     mutate({
       ...values,
       single_date: values.single_date || null,
@@ -93,11 +93,11 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleCreateTask)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleCreateTask)} className="space-y-4"   autoComplete="off">
           {/* Name */}
           <div>
-            <Label>Task Name</Label>
-            <Input {...register("name")} placeholder="Study Math" />
+            <Label className="mb-2">Task Name</Label>
+            <Input {...register("name")} placeholder="learn coding" />
             {errors.name && (
               <p className="text-destructive text-sm">{errors.name.message}</p>
             )}
@@ -105,7 +105,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
 
           {/* Category */}
           <div>
-            <Label>Category</Label>
+            <Label className="mb-2">Category</Label>
             <Controller
               name="category"
               control={control}
@@ -125,7 +125,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
           </div>
 
           {/* Date Type */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 ">
             {(["no_date", "single", "range"] as DateType[]).map((type) => (
               <Button
                 key={type}
@@ -136,7 +136,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
                   setValue("date_type", type, { shouldValidate: true })
                 }
               >
-                {type.replace("-", " ")}
+                {type.replace("_", " ")}
               </Button>
             ))}
           </div>
@@ -144,7 +144,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
           {/* Single Date */}
           {dateType === "single" && (
             <div>
-              <Label>Date</Label>
+              <Label className="mb-2">Date</Label>
               <Input type="date" min={today} {...register("single_date")} />
             </div>
           )}
@@ -169,8 +169,8 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
 
           {/* Reminder */}
           {(dateType === "single" || dateType === "range") && (
-            <div>
-              <Label>Reminder</Label>
+            <div >
+              <Label className="mb-2">Reminder</Label>
               <Input type="time" {...register("reminder")} />
             </div>
           )}
