@@ -1,3 +1,4 @@
+"use client";
 import { motion } from "motion/react";
 import { Timer, TrendingUp, Flame, Bell } from "lucide-react";
 import { useTranslations } from "next-intl";

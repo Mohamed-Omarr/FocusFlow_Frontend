@@ -66,7 +66,7 @@ export function Hero() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Link href="/login" className="flex items-center gap-2">
+              <Link href="#cta" className="flex items-center gap-2">
                 {t("cta")}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>

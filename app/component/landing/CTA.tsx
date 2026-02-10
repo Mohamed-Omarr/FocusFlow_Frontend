@@ -9,7 +9,7 @@ export function CTA() {
   const t = useTranslations("landing.cta");
 
   return (
-    <section className="section-wrapper relative overflow-hidden">
+    <section id="cta" className="section-wrapper relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute-inset pointer-events-none">
         <motion.div

@@ -9,7 +9,7 @@
       "title_line1": "FocusFlow",
       "title_line2": "Sakinliğiniz",
       "title_line3": "Üretkenlik Arkadaşınız",
-      "subtitle": "Odaklanmanızı takip edin, alışkanlıklar oluşturun ve üretkenliğinizi artırın — baskı olmadan.",
+      "subtitle": "Odaklanmanızı takip edin, alışkanlıklar oluşturun ve üretkenliğinizi artırın baskı olmadan.",
       "cta": "Başlayın",
       "floating_texts": {
         "text1": "Sana uyum sağlayan odak",
@@ -42,6 +42,27 @@
         "description": "Sizi yolunuzda tutacak zamanında uyarılar."
       }
     },
+    "demo": {
+    "header_part_one": "FocusFlow'un nasıl çalıştığını izleyin",
+    "header_part_two": "odaklanmanızı dönüştürüyor",
+    "subtitle": "FocusFlow'u sadece 60 saniyede uygulamada görün",
+    "subtitle_two": "Ürün Tanıtımı",
+    "subtitle_three": "FocusFlow'u uygulamada görün",
+    "features": {
+      "quick_setup": {
+        "title": "Hızlı Kurulum",
+        "description": "Odaklanma seanslarını saniyeler içinde başlatın."
+      },
+      "deep_focus_mode": {
+        "title": "Derin Odak Modu",
+        "description": "Tam anlamıyla odakta kalın."
+      },
+      "insightful_analytics": {
+        "title": "Anlamlı Analitik",
+        "description": "Verimliliğinizi ve alışkanlıklarınızı takip edin."
+      }
+    }
+  },
     "cta": {
       "title_part1": "Üretkenliğinizi dönüştürmeye hazır mısınız?",
       "title_part2": "",

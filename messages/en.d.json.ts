@@ -12,7 +12,7 @@ declare const messages: {
       "title_line1": "FocusFlow",
       "title_line2": "Your Calm",
       "title_line3": "Productivity Companion",
-      "subtitle": "Track your focus, build habits, and improve your productivity — without pressure.",
+      "subtitle": "Track your focus, build habits, and improve your productivity without pressure.",
       "cta": "Get Started",
       "floating_texts": {
         "text1": "Focus that adapts to you",
@@ -43,6 +43,27 @@ declare const messages: {
       "smart_reminders": {
         "title": "Smart Reminders",
         "description": "Timely nudges to keep you on track."
+      }
+    },
+    "demo":{
+      "header_part_one": "Watch how FocusFlow",
+      "header_part_two": "transforms your focus",
+      "subtitle": "See FocusFlow in action in just 60 seconds",
+      "subtitle_two": "Product Demo",
+      "subtitle_three": "See FocusFlow in action",
+      "features":{
+        "quick_setup":{
+          "title": "Quick Setup",
+        "description": "Start your focus sessions in seconds."
+        },
+        "deep_focus_mode":{
+          "title": "Deep Focus Mode",
+        "description": "Stay fully in the zone."
+        },
+        "insightful_analytics":{
+          "title": "Insightful Analytics",
+      "description": "Track your productivity and habits."
+        }
       }
     },
     "cta": {

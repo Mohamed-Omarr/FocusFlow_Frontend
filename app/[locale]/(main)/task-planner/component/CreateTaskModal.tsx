@@ -69,7 +69,6 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
   });
 
   const handleCreateTask = (values: TaskState) => {
-    console.log(values.single_date);
 
     mutate({
       ...values,
