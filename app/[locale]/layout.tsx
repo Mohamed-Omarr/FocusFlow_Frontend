@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-mode/theme-provider";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -51,6 +53,8 @@ export default async function RootLayout({ children, params }: Prop) {
           <NextIntlClientProvider>
             {children}
             <Toaster position="top-center" />
+            <SpeedInsights/>
+            <Analytics/>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
