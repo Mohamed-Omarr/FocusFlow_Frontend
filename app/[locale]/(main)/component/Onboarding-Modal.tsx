@@ -89,10 +89,11 @@ export function OnboardingModal() {
     if (!selectedOption) return;
 
     const newAnswers = { ...answers, [currentQuestion!.id]: selectedOption };
+    
     setAnswers(newAnswers);
 
     if (isLastStep) {
-      await completeOnBoarding();
+      await completeOnBoarding(newAnswers);
       setIsOpen(false);
     } else {
       setCurrentStep(currentStep + 1);

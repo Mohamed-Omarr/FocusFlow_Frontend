@@ -125,9 +125,10 @@ export async function checkuseronboarding() {
 }
 
 // Complete onboarding
-export async function completeOnBoarding() {
+export async function completeOnBoarding(answers) {
+  
   const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.rpc("complete_onboarding",{focus_rhythm:'Most days', session_length:'25',  main_struggle:'Getting started', goal_orientation:'Building the habit'})
+  const { error } = await supabase.rpc("complete_onboarding",{focus_rhythm:answers.focus_rhythm, session_length:answers.session_length,  main_struggle:answers.main_struggle, goal_orientation:answers.goal_orientation})
 
   if (error) throw new Error(error.message);
   return true;
