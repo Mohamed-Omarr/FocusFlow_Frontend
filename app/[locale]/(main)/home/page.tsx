@@ -19,7 +19,7 @@ export default function HomePage() {
       {/* Task List Section */}
       <div className="w-full">
         <TaskListSection />
-      </div>
+      </div> 
 
       {/* Tip of the Day */}
       <div className="w-full bg-card rounded-3xl p-8 border border-border shadow-sm">

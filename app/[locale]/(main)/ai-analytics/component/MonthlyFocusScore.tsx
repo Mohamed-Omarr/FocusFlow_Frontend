@@ -27,8 +27,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         </p>
 
         <div className="pt-2 mt-2 border-t border-border/50 space-y-0.5">
-          <p>Session Length: {data.sessionLength}%</p>
-          <p>Consistency: {data.consistency}%</p>
+          <p>Session Length: {data.session_length}%</p>
           <p>Distractions: {data.distractions}%</p>
           <p>Energy: {data.energy}%</p>
         </div>
@@ -116,7 +115,7 @@ export default function MonthlyFocusScore() {
       ) : (
         <div className="h-32">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyScoreWeeks}>
+            <BarChart data={monthlyScoreWeeks} maxBarSize={60}>
               <XAxis
                 dataKey="week"
                 tickLine={false}

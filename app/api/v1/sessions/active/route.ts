@@ -30,11 +30,11 @@ async function handleRedisMiss(userId: string, supabase: any, cacheKey: string):
     .from("active_sessions")
     .select("*")
     .eq("user_id", userId)
-    .not("session_status", "in", ["canceled", "finished"])
+    .in("session_status", ["running", "finished_pending_extension"])
     .single();
 
   if (!session) {
-    return { session: null, remaining_seconds: 0 };
+    return { session: session, remaining_seconds: 0 };
   }
 
   const { data: dbRemaining } = await supabase.rpc("get_active_timer");
@@ -179,9 +179,7 @@ export async function GET(req: Request) {
             extension_started_at: cached.extension_started_at 
           })
           .eq("id", cached.id)
-          .not("session_status", "in", ["canceled", "finished"])
-
-          
+          .eq("session_status", "running")
       }
     } 
     else if (cached.session_status === 'finished_pending_extension') {
@@ -236,7 +234,7 @@ export async function POST(req: Request) {
     .from("active_sessions")
     .select("*")
     .eq("id", session_id)
-    .not("session_status", "in", ["canceled", "finished"])
+    .eq("session_status", "running")
     .single();
 
   if (!fullSession) return NextResponse.json({ error: "Session creation failed" }, { status: 500 });

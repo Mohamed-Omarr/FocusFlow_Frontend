@@ -11,6 +11,7 @@ import {
   // HelpCircle,
 } from "lucide-react";
 import { extend_session, finish_active_session } from "../helper";
+import { useRouter } from "@/i18n/navigation";
 
 type Step = "extend" | "distraction" | "mood" | "complete";
 
@@ -47,6 +48,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
     Distracted: "😕",
   };
 
+  const router = useRouter()
   /* ---------------- actions ---------------- */
 
   const handleExtendSession = async () => {
@@ -64,7 +66,12 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
   };
 
   const handleFinishSession = async (id: string) => {
-    await finish_active_session(id);
+    try {
+      await finish_active_session(id);
+      router.push("/home");
+    } catch {
+      // keep user on page
+    }
   };
 
   /* ---------------- render ---------------- */
@@ -91,7 +98,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
           <div className="flex gap-4 justify-center">
             <button
               onClick={handleExtendSession}
-              className="px-6 py-3 bg-primary text-white rounded-xl"
+              className="px-6 py-3 bg-primary text-white rounded-xl cursor-pointer"
             >
               <Clock className="inline w-5 h-5 mr-1" />
               Extend
@@ -99,9 +106,9 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
 
             <button
               onClick={handleEndSession}
-              className="px-6 py-3 bg-muted rounded-xl"
+              className="px-6 py-3 bg-muted rounded-xl cursor-pointer"
             >
-              End
+              Finish & Reflect
             </button>
           </div>
         </div>

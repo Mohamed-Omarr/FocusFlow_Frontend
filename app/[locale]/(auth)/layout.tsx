@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type React from "react";
-import { SupportButton } from "../(main)/component/Support-Button";
 import { Header } from "@/app/component/landing/Header";
 
 export const metadata: Metadata = {

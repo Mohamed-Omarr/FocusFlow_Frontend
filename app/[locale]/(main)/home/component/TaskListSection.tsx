@@ -15,6 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { useRouter } from "@/i18n/navigation";
 
 type TaskList = Pick<TaskType, "id" | "name" | "category">;
 
@@ -33,10 +34,17 @@ export function TaskListSection() {
   const [breakMode, setBreakMode] = useState<"auto" | "manual">("auto");
   const [isOpen, setIsOpen] = useState(false);
 
+  const router = useRouter();
+
   const sessionLength =
     timerDuration === "custom" ? Number(customMinutes) : Number(timerDuration);
 
-  const { mutate } = useAxiosMutation("/sessions/active", "POST");
+  const { mutate } = useAxiosMutation("/sessions/active", "POST",{
+    onSuccess: () => {
+        console.log("SUCCESS");
+      router.push("/active-session");
+    },
+  });
 
   const handleStartSession = () => {
     if (!selectedTask) return;

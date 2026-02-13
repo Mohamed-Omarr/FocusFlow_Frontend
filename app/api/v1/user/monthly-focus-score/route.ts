@@ -16,7 +16,7 @@ export async function GET() {
   const now = new Date();
 
   const { data, error } = await supabase.rpc(
-    "get_monthly_focus_weeks",
+    "get_monthly_focus_chart",
     {
       p_year: now.getUTCFullYear(),
       p_month: now.getUTCMonth() + 1,

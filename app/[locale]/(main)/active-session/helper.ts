@@ -99,19 +99,6 @@ export async function end_manual_break() {
 // }
 
 
-// session reflection
-export async function save_session_reflection(sessionId,selectedDistractions,distractionNote,mood,energy) {
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.from("session_reflection").insert({
-    session_status:"finished",extension_started_at:null,
-  })
-
-  if (error) throw new Error(error.message);
-
-  return true;
-}
-
-
 // finished/completed active session
 export async function finish_active_session(sessionId:string) {
   const supabase = await createServerSupabaseClient();
