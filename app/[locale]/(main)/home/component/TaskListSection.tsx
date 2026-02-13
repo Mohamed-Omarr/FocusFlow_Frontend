@@ -39,9 +39,8 @@ export function TaskListSection() {
   const sessionLength =
     timerDuration === "custom" ? Number(customMinutes) : Number(timerDuration);
 
-  const { mutate } = useAxiosMutation("/sessions/active", "POST",{
+  const { mutate } = useAxiosMutation("/sessions/active", "POST", {
     onSuccess: () => {
-        console.log("SUCCESS");
       router.push("/active-session");
     },
   });

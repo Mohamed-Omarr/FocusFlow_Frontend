@@ -1,5 +1,4 @@
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { createClient } from "@supabase/supabase-js";

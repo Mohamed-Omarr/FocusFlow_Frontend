@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { InterruptionModal } from "./component/InterruptionModal";
 import { useSessionTimer } from "./component/useSessionTimer";
@@ -9,13 +8,14 @@ import { createSupabaseClient } from "@/lib/supabase/client";
 import { SessionCheckoutForm } from "./component/SessionCheckoutForm";
 import { ActiveSessionResponse, InterruptionType } from "./types";
 import { queryClient } from "@/lib/utils";
+import { useRouter } from "@/i18n/navigation";
 
 export default function ActiveSessionPage() {
   const router = useRouter();
 
   const { data, isLoading } = useAxiosGet<ActiveSessionResponse>(
     ["active_session"],
-    "/sessions/active"
+    "/sessions/active",
   );
 
   const {
@@ -53,7 +53,6 @@ export default function ActiveSessionPage() {
 
   /* ----------------------------- Supabase Realtime ----------------------------- */
   const supabase = createSupabaseClient();
-  // setBackendSeconds(data.)
   useEffect(() => {
     const channel = supabase
       .channel("active_sessions")
@@ -61,13 +60,10 @@ export default function ActiveSessionPage() {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "active_sessions" },
         async (payload) => {
-          setTimeout(() => {
-            queryClient.refetchQueries({
-              queryKey: ["active_session"],
-              exact: true,
-            });
-          }, 500);
-        }
+          queryClient.invalidateQueries({
+            queryKey: ["active_session"],
+          });
+        },
       )
       .subscribe();
 
@@ -83,7 +79,7 @@ export default function ActiveSessionPage() {
   const activeSeconds = data.session.is_on_break ? breakTimeLeft : timeLeft;
   const displayMinutes = String(Math.floor(activeSeconds / 60)).padStart(
     2,
-    "0"
+    "0",
   );
   const displaySeconds = String(activeSeconds % 60).padStart(2, "0");
 

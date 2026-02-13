@@ -23,10 +23,10 @@ import {
 
 import { ValidateCreateTask } from "@/lib/zod/task/validation/task";
 import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { TaskType, DateType } from "../types";
 import { addOneDay } from "../helper";
+import { queryClient } from "@/lib/utils";
 
 type TaskState = Omit<TaskType, "id" | "postponed" | "completed">;
 
@@ -36,7 +36,6 @@ type CreateTaskProps = {
 };
 
 export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
-  const queryClient = useQueryClient();
 
   const {
     register,
