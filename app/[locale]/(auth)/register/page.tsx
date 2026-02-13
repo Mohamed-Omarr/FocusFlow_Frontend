@@ -43,7 +43,6 @@ export default function RegisterPage() {
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
-      console.log(res.data);
     } catch (err: any) {
       console.log(err);
       // toasting.error(err.response.data.message || `Register error:${err}`);

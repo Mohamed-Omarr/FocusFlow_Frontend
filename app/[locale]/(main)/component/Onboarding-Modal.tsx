@@ -64,12 +64,11 @@ const introSteps = [
   },
 ];
 
-
 export function OnboardingModal() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [isOpen,setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(true);
   const totalSteps = introSteps.length + questions.length;
   const isIntroStep = currentStep < introSteps.length;
   const questionIndex = currentStep - introSteps.length;
@@ -93,12 +92,8 @@ export function OnboardingModal() {
     setAnswers(newAnswers);
 
     if (isLastStep) {
-      const res = await axios.post("/ai/run", {
-        name: "Test User AI",
-      });
       await completeOnBoarding();
-
-      console.log("AI response:", res.data);
+      setIsOpen(false);
     } else {
       setCurrentStep(currentStep + 1);
       const nextQuestionIndex = currentStep + 1 - introSteps.length;
@@ -320,6 +315,7 @@ export function OnboardingModal() {
     </div>
   );
 
+    if (!isOpen) return null;
   return (
     <div className="fixed inset-0 max-h-fit bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-card border border-border rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-300">

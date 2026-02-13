@@ -58,7 +58,7 @@ export function Header() {
                 {item}
               </motion.a>
             ))}
-            {/* {authPath.map((item) => (
+            {authPath.map((item) => (
               <motion.a
                 key={item}
                 href={`/${item.toLowerCase().trim()}`}
@@ -67,7 +67,7 @@ export function Header() {
               >
                 {item}
               </motion.a>
-            ))} */}
+            ))}
           </nav>
 
           {/* Right Controls */}
@@ -142,7 +142,7 @@ export function Header() {
                     {item}
                   </a>
                 ))}
-                {/* {authPath.map((item) => (
+                {authPath.map((item) => (
                   <a
                     key={item}
                     href={`/${item.toLowerCase().trim()}`}
@@ -160,7 +160,7 @@ export function Header() {
                   >
                     {item}
                   </a>
-                ))} */}
+                ))}
               </nav>
             </motion.div>
           )}
