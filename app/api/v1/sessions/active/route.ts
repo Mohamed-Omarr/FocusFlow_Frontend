@@ -219,25 +219,19 @@ export async function POST(req: Request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // 1. Start session in Postgres (The Source of Truth)
-  // We need to fetch the returned row to get fields like 'task_name' and 'id'
-  const { data: session_id, error } = await supabase.rpc("start_session", { 
+// 1. Start session in Postgres (atomic, returns full row now)
+  const { data: fullSession, error } = await supabase.rpc("start_session", { 
     p_task_id: body.id, 
     p_planned_minutes: body.duration, 
     p_breaktime_type: body.breaktime_type 
   });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-
-  // 2. Fetch the fresh session row to cache it correctly
-  const { data: fullSession } = await supabase
-    .from("active_sessions")
-    .select("*")
-    .eq("id", session_id)
-    .eq("session_status", "running")
-    .single();
-
-  if (!fullSession) return NextResponse.json({ error: "Session creation failed" }, { status: 500 });
+  if (error || !fullSession) {
+    return NextResponse.json(
+      { error: error?.message ?? "Session creation failed" },
+      { status: 400 }
+    );
+  }
 
   // 3. SEED REDIS (The "Fast Lane")
   // We calculate the Target Time once.
@@ -252,5 +246,5 @@ export async function POST(req: Request) {
 
   await redis.set(`timer:${user.id}`, redisState, { ex: 86400 });
 
-  return NextResponse.json({ success: true, session_id }, { status: 201 });
+  return NextResponse.json({ success: true, session_id: fullSession.id }, { status: 201 });
 }
