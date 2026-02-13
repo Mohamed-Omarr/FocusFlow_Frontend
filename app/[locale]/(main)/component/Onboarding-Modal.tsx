@@ -10,7 +10,6 @@ import {
   Gift,
 } from "lucide-react";
 import { completeOnBoarding } from "../active-session/helper";
-import axios from "axios";
 
 const questions = [
   {
