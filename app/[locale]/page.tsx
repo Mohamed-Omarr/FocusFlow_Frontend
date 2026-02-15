@@ -15,7 +15,7 @@ function LandingPage() {
         <Features />
         <VideoSection />
         {/* <Testimonials /> */}
-        <CTA />
+        {/* <CTA /> */}
       </div>
       <Footer />
     </main>
