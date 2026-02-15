@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { check_active_session_helper } from '../actions/check-active-session';
 
 const PROTECTED_PAGES = ['home', 'settings', 'sessions','task-planner','ai-analytics','active-session'];
 const PUBLIC_PAGES = ['login','register','forgot-password','/'];
@@ -40,7 +41,7 @@ export async function supabaseSessionProxy(request: NextRequest) {
   const { data } = await supabase.auth.getClaims()
 
   const user = data?.claims
- const pathname = request.nextUrl.pathname;
+  const pathname = request.nextUrl.pathname;
   const locale = pathname.split('/')[1];
   const page = pathname.split(`/${locale}/`)[1]?.split('/')[0];
 
@@ -55,12 +56,38 @@ export async function supabaseSessionProxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // If user IS logged in and tries to access a public page → redirect to home
-  if (user && PUBLIC_PAGES.includes(page)) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/home`;
-    return NextResponse.redirect(url);
-  }
+    // If user IS logged in and tries to access a public page → redirect to home
+    if (user && PUBLIC_PAGES.includes(page)) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${locale}/home`;
+      return NextResponse.redirect(url);
+    }
+
+  // check if user has active session right now then block navigates 
+      if (user) {
+        const hasActiveSession = await check_active_session_helper();
+         //  If user HAS session → force them to active-session page
+          if (
+            hasActiveSession &&
+            !pathname.includes("/active-session")
+          ) {
+            const url = request.nextUrl.clone();
+            url.pathname = `/${locale}/active-session`;
+            return NextResponse.redirect(url);
+          }
+
+        //  If user does NOT have session → block access to active-session page
+        if (
+          !hasActiveSession &&
+          pathname.includes("/active-session")
+        ) {
+          const url = request.nextUrl.clone();
+          url.pathname = `/${locale}/home`; 
+          return NextResponse.redirect(url);
+        }
+
+      }
+
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:

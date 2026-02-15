@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { PasswordSchemaType } from "../zod/settings/validation/password";
+import { PasswordSchemaType } from "@/lib/zod/settings/validation/password";
 
 export async function updatePasswordAction(formData: PasswordSchemaType) {
   const supabase = await createServerSupabaseClient();

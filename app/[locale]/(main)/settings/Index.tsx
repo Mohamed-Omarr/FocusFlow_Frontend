@@ -11,7 +11,7 @@ import AccountSettings from "./component/AccountSettings";
 import PasswordModal from "./component/PasswordModal";
 import DeleteAccountModal from "./component/DeleteAccountModal";
 
-import { deleteAccount } from "@/lib/actions/delete-account";
+import { deleteAccount } from "@/lib/actions/profile/delete-account";
 import { useRouter } from "@/i18n/navigation";
 
 interface UserInformation {

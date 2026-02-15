@@ -76,29 +76,6 @@ export async function end_manual_break() {
   return true;
 }
 
-
-// // ☕ Auto BREAKS
-// export async function start_auto_break() {
-//   const supabase = await createServerSupabaseClient();
-//   const { error } = await supabase.rpc("start_auto_break");
-
-//   if (error) throw new Error(error.message);
-
-//   await invalidateCache(supabase);
-//   return true;
-// }
-
-// export async function end_auto_break() {
-//   const supabase = await createServerSupabaseClient();
-//   const { error } = await supabase.rpc("end_auto_break");
-
-//   if (error) throw new Error(error.message);
-
-//   await invalidateCache(supabase);
-//   return true;
-// }
-
-
 // finished/completed active session
 export async function finish_active_session(sessionId:string) {
   const supabase = await createServerSupabaseClient();

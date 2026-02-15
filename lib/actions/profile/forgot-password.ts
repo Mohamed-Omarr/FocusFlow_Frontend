@@ -1,7 +1,7 @@
 "use server";
 
+import { base_url } from "@/lib/axios/axiosClient";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { base_url } from "../axios/axiosClient";
 
 export async function requestPasswordReset(email: string) {
   const supabase = await createServerSupabaseClient();

@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { HelpCircle, MessageSquare, Send, Bug } from "lucide-react";
-import { storage } from "@/lib/storage";
 
 export function SupportButton() {
   const [open, setOpen] = useState(false);
@@ -28,15 +27,15 @@ export function SupportButton() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Save to storage or send to backend
-    storage.addSupportRequest({
-      id: crypto.randomUUID(),
-      type,
-      subject,
-      message,
-      email: email || undefined,
-      createdAt: new Date().toISOString(),
-    });
+    // // Save to storage or send to backend
+    // storage.addSupportRequest({
+    //   id: crypto.randomUUID(),
+    //   type,
+    //   subject,
+    //   message,
+    //   email: email || undefined,
+    //   createdAt: new Date().toISOString(),
+    // });
 
     // Reset form
     setType("suggestion");

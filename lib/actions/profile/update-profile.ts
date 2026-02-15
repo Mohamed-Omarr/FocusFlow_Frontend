@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { ProfileSchema } from "../zod/settings/validation/profile";
+import { ProfileSchema } from "@/lib/zod/settings/validation/profile";
 
 export async function updateProfile(data: ProfileSchema) {
   const supabase = await createServerSupabaseClient();
