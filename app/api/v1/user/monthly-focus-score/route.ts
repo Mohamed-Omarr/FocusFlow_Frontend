@@ -27,5 +27,5 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json(Array.isArray(data) ? data : []);
 }

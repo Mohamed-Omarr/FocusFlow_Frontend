@@ -27,6 +27,8 @@ import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
 import { TaskType, DateType } from "../types";
 import { addOneDay } from "../helper";
 import { queryClient } from "@/lib/utils";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 type TaskState = Omit<TaskType, "id" | "postponed" | "completed">;
 
@@ -36,7 +38,6 @@ type CreateTaskProps = {
 };
 
 export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
-
   const {
     register,
     handleSubmit,
@@ -48,6 +49,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
   } = useForm<TaskState>({
     resolver: zodResolver(ValidateCreateTask),
     mode: "onChange",
+    shouldUnregister: true,
     defaultValues: {
       category: "work",
       date_type: "no_date",
@@ -62,13 +64,13 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
   const { mutate, isPending } = useAxiosMutation("/tasks", "POST", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success("created successfully")
       reset();
       setShowCreateForm(false);
     },
   });
 
   const handleCreateTask = (values: TaskState) => {
-
     mutate({
       ...values,
       single_date: values.single_date || null,
@@ -77,6 +79,26 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
       reminder: values.reminder || null,
     });
   };
+
+  useEffect(() => {
+    if (dateType === "no_date") {
+      setValue("single_date", null);
+      setValue("date_start", null);
+      setValue("date_end", null);
+      setValue("reminder", null);
+    }
+
+    if (dateType === "single") {
+      setValue("date_start", null);
+      setValue("date_end", null);
+      setValue("reminder", null);
+    }
+
+    if (dateType === "range") {
+      setValue("single_date", null);
+      setValue("reminder", null);
+    }
+  }, [dateType, setValue]);
 
   return (
     <Dialog
@@ -91,7 +113,11 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleCreateTask)} className="space-y-4"   autoComplete="off">
+        <form
+          onSubmit={handleSubmit(handleCreateTask)}
+          className="space-y-4"
+          autoComplete="off"
+        >
           {/* Name */}
           <div>
             <Label className="mb-2">Task Name</Label>
@@ -131,7 +157,10 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
                 variant={dateType === type ? "default" : "outline"}
                 className="flex-1"
                 onClick={() =>
-                  setValue("date_type", type, { shouldValidate: true })
+                  setValue("date_type", type, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  })
                 }
               >
                 {type.replace("_", " ")}
@@ -167,7 +196,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
 
           {/* Reminder */}
           {(dateType === "single" || dateType === "range") && (
-            <div >
+            <div>
               <Label className="mb-2">Reminder</Label>
               <Input type="time" {...register("reminder")} />
             </div>

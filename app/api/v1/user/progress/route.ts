@@ -42,9 +42,9 @@ export async function GET() {
 
   /*  Final response */
   return NextResponse.json({
-    current_streak: progress.current_streak,
-    longest_streak: progress.longest_streak,
-    targetStars:activeChallenge.target_sessions ,
-    currentStars:activeChallenge.completed_sessions,
+    current_streak: progress.current_streak ?? 0,
+    longest_streak: progress.longest_streak ?? 0,
+    targetStars:activeChallenge.target_sessions ?? 0,
+    currentStars:activeChallenge.completed_sessions ?? 0,
   });
 }

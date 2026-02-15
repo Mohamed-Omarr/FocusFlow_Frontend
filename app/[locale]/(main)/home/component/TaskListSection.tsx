@@ -16,6 +16,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useRouter } from "@/i18n/navigation";
+import { CreateTaskModal } from "../../task-planner/component/CreateTaskModal";
+import { Plus } from "lucide-react";
 
 type TaskList = Pick<TaskType, "id" | "name" | "category">;
 
@@ -24,6 +26,7 @@ export function TaskListSection() {
     ["tasks"],
     "/tasks/daily",
   );
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const [timerDuration, setTimerDuration] = useState<"25" | "60" | "custom">(
     "25",
@@ -142,6 +145,17 @@ export function TaskListSection() {
               )}
             </motion.div>
 
+            {/* Create Task Button */}
+            <motion.div layout className="mb-5">
+              <Button
+                onClick={() => setShowCreateForm(true)}
+                className="flex flex-center gap-2 px-4 py-2 bg-primary btn-text rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 text-sm shadow-sm hover:shadow-md"
+              >
+                <Plus className="w-4 h-4" />
+                Create Task
+              </Button>
+            </motion.div>
+
             {/* TIMER */}
             <AnimatePresence mode="wait">
               {selectedTask && (
@@ -227,6 +241,14 @@ export function TaskListSection() {
                 Start
               </Button>
             </motion.div>
+
+            {/* Create Task Modal */}
+            {showCreateForm && (
+              <CreateTaskModal
+                show={showCreateForm}
+                setShowCreateForm={setShowCreateForm}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
