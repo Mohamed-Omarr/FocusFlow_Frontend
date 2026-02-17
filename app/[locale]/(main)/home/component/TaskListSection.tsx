@@ -18,6 +18,7 @@ import {
 import { useRouter } from "@/i18n/navigation";
 import { CreateTaskModal } from "../../task-planner/component/CreateTaskModal";
 import { Plus } from "lucide-react";
+import { TipsPopup } from "./TipsPopup";
 
 type TaskList = Pick<TaskType, "id" | "name" | "category">;
 
@@ -37,6 +38,9 @@ export function TaskListSection() {
   const [breakMode, setBreakMode] = useState<"auto" | "manual">("auto");
   const [isOpen, setIsOpen] = useState(false);
 
+  const [showTips, setShowTips] = useState(false);
+
+
   const router = useRouter();
 
   const sessionLength =
@@ -48,9 +52,27 @@ export function TaskListSection() {
     },
   });
 
-  const handleStartSession = () => {
-    if (!selectedTask) return;
+  // const handleStartSession = () => {
+  //   if (!selectedTask) return;
 
+  //   const duration =
+  //     timerDuration === "custom"
+  //       ? Number(customMinutes)
+  //       : Number(timerDuration);
+
+  //   mutate({
+  //     id: selectedTask,
+  //     duration,
+  //     breaktime_type: breakMode,
+  //   });
+  // };
+
+    const handleStartSession = () => {
+    if (!selectedTask) return;
+    setShowTips(true);
+  };
+
+    const handleConfirmStart = () => {
     const duration =
       timerDuration === "custom"
         ? Number(customMinutes)
@@ -238,7 +260,7 @@ export function TaskListSection() {
                 }
                 onClick={handleStartSession}
               >
-                Start
+                continue
               </Button>
             </motion.div>
 
@@ -252,6 +274,13 @@ export function TaskListSection() {
           </motion.div>
         )}
       </AnimatePresence>
+
+        {/* Tips Popup */}
+      <TipsPopup
+        open={showTips}
+        onOpenChange={setShowTips}
+        onConfirmStart={handleConfirmStart}
+      />
     </motion.div>
   );
 }

@@ -35,11 +35,11 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
   const [selectedDistractions, setSelectedDistractions] = useState<
     DistractionType[]
   >([]);
-  const [distractionNote, setDistractionNote] = useState("");
+  const [distractionNote, setDistractionNote] = useState<string|null>();
   // const [otherDistractionText, setOtherDistractionText] = useState("");
 
-  const [energy, setEnergy] = useState<EnergyLevel | null>(null);
-  const [mood, setMood] = useState<Mood | null>(null);
+  const [energy, setEnergy] = useState<EnergyLevel>();
+  const [mood, setMood] = useState<Mood>();
 
   const moodEmojis: Record<Mood, string> = {
     Focused: "😊",
@@ -48,7 +48,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
     Distracted: "😕",
   };
 
-  const router = useRouter()
+  const router = useRouter();
   /* ---------------- actions ---------------- */
 
   const handleExtendSession = async () => {
@@ -67,7 +67,13 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
 
   const handleFinishSession = async (id: string) => {
     try {
-      await finish_active_session(id);
+      const form = {
+        mood: mood,
+        energy: energy,
+        distractions: selectedDistractions,
+        notes: distractionNote,
+      };
+      await finish_active_session(id,form);
       router.push("/home");
     } catch {
       // keep user on page
