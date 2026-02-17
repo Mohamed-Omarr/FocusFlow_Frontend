@@ -11,8 +11,9 @@ const langfuse = new Langfuse({
 });
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_SECRET_KEY!,
+  apiKey: process.env.Groq_SECRET_KEY!,
 });
+
 
 function createSessionPairHash(sessionIds: string[]) {
   const sorted = [...sessionIds].sort();
