@@ -8,11 +8,8 @@ import { createSupabaseClient } from "@/lib/supabase/client";
 import { SessionCheckoutForm } from "./component/SessionCheckoutForm";
 import { ActiveSessionResponse, InterruptionType } from "./types";
 import { queryClient } from "@/lib/utils";
-import { useRouter } from "@/i18n/navigation";
 
 export default function ActiveSessionPage() {
-  const router = useRouter();
-
   const { data, isLoading } = useAxiosGet<ActiveSessionResponse>(
     ["active_session"],
     "/sessions/active",

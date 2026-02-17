@@ -1,9 +1,8 @@
 "use server";
 
-import { callMicroCoachingAI, generateShortFocusTip } from "@/lib/ai/generateShortFocusTip";
+import {  generateShortFocusTip } from "@/lib/ai/generateShortFocusTip";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redis } from "@/lib/upstash/upstash";
-import { randomUUID } from "crypto";
 
 // Helper to get User ID and handle Cache Invalidation
 async function invalidateCache(supabase: any) {
@@ -89,8 +88,7 @@ export async function finish_active_session(sessionId:string,reflections:{mood:s
   
   await invalidateCache(supabase);
 
-  const ress = await generateShortFocusTip();
-console.log(ress);
+  await generateShortFocusTip();
 
   return true;
 }

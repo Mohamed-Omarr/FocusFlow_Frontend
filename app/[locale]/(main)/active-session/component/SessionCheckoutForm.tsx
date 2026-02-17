@@ -74,7 +74,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
         notes: distractionNote,
       };
       await finish_active_session(id,form);
-      router.push("/home");
+      router.push("/sessions");
     } catch {
       // keep user on page
     }
