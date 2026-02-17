@@ -7,12 +7,12 @@ import { Upload } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateProfile } from "@/lib/actions/update-profile";
 import {
   profileSchema,
   ProfileSchema,
 } from "@/lib/zod/settings/validation/profile";
 import Image from "next/image";
+import { updateProfile } from "@/lib/actions/profile/update-profile";
 
 interface Props {
   avatarUrl: string;

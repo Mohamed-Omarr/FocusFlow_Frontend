@@ -10,7 +10,7 @@ import {
   PasswordSchema,
   PasswordSchemaType,
 } from "@/lib/zod/settings/validation/password";
-import { updatePasswordAction } from "@/lib/actions/update-password";
+import { updatePasswordAction } from "@/lib/actions/profile/update-password";
 
 export default function PasswordSettings() {
   const [success, setSuccess] = useState(false);
