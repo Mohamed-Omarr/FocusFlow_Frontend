@@ -40,14 +40,12 @@ function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
 
 export async function POST(req: Request) {
   const supabaseAdmin = await createServerSupabaseClient();
-
-  // Only allow cron calls
   const auth = req.headers.get("authorization");
+
   if (auth !== `Bearer ${process.env.CRON_SECRET_SERVER}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fetch all users
   const { data: allUsers, error: userError } = await supabaseAdmin
     .from("profile")
     .select("user_id");
@@ -55,43 +53,47 @@ export async function POST(req: Request) {
   if (userError || !allUsers) {
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
-  let allInsights;
+
+  // For returning debug info
+  const debug: Record<string, any> = {};
+  const allInsights: Record<string, any[]> = {};
+
   for (const user of allUsers) {
     const userId = user.user_id;
 
-    // 1️⃣ Get snapshot for the user
+    // 1️⃣ Get snapshot
     const { data: snapshot, error: snapshotError } = await supabaseAdmin.rpc(
       "get_ai_user_snapshot",
       { p_user_id: userId }
     );
 
+    debug[userId] = { snapshot, errors: {} };
+
     if (!snapshot || snapshotError) {
-      console.error(`Snapshot failed for user ${userId}:`, snapshotError);
+      debug[userId].errors.snapshot = snapshotError || "Snapshot is empty";
       continue;
     }
 
     // 2️⃣ Get Langfuse prompt
     let promptArray: any[] = [];
     let config: any = {};
-
     try {
       const prompt = await langfuse.getPrompt("ai_coach_v1");
-      if (!Array.isArray(prompt.prompt)) {
-        throw new Error("Prompt is not an array");
-      }
+      if (!Array.isArray(prompt.prompt)) throw new Error("Prompt is not an array");
       promptArray = prompt.prompt;
       config = (prompt as any).config || {};
     } catch (e: any) {
-      console.error(`Failed to get prompt for user ${userId}:`, e.message);
+      debug[userId].errors.prompt = e.message;
       continue;
     }
 
-    // 3️⃣ Normalize messages for Groq
-    let messages: { role: string; content: string }[];
+    // 3️⃣ Normalize messages
+    let messages: { role: string; content: string }[] = [];
     try {
       messages = normalizeLangfuseMessages(promptArray, snapshot);
+      debug[userId].messages = messages;
     } catch (e: any) {
-      console.error(`Invalid Langfuse messages for user ${userId}:`, e.message);
+      debug[userId].errors.normalization = e.message;
       continue;
     }
 
@@ -104,27 +106,29 @@ export async function POST(req: Request) {
         max_tokens: config.max_tokens ?? 500,
         messages,
       });
+      debug[userId].groqRaw = completion.choices?.[0]?.message?.content || "";
     } catch (e: any) {
-      console.error(`Groq completion failed for user ${userId}:`, e.message);
+      debug[userId].errors.groq = e.message;
       continue;
     }
 
     const raw = completion.choices?.[0]?.message?.content;
     if (!raw) {
-      console.error(`Empty completion for user ${userId}`);
+      debug[userId].errors.emptyResponse = "Groq returned empty content";
       continue;
     }
 
-    // 5️⃣ Parse JSON insights
+    // 5️⃣ Parse JSON
     let insights: any[];
     try {
       insights = JSON.parse(raw);
-    } catch {
-      console.error(`Invalid JSON from Groq for user ${userId}:`, raw);
+      debug[userId].parsedInsights = insights;
+    } catch (e) {
+      debug[userId].errors.invalidJSON = raw;
       continue;
     }
 
-    // 6️⃣ Save insights to Supabase
+    // 6️⃣ Save to Supabase if there are insights
     const rows = insights.map((i: any) => ({
       user_id: userId,
       type: i.type,
@@ -133,19 +137,17 @@ export async function POST(req: Request) {
       context: i.context?.reason,
     }));
 
-    const { error: insertError } = await supabaseAdmin
-      .from("ai_insights")
-      .insert(rows);
-
-    if (insertError) {
-      console.error(`Insert failed for user ${userId}:`, insertError);
+    if (rows.length > 0) {
+      const { error: insertError } = await supabaseAdmin.from("ai_insights").insert(rows);
+      if (insertError) debug[userId].errors.insert = insertError;
+      allInsights[userId] = insights;
     }
-    allInsights = insights;
-    }
+  }
 
   return NextResponse.json({
     ok: true,
-    message: "Cron AI run completed for all users",
-    insights: allInsights, // <-- Return all insights per user
+    message: "Cron AI run completed (debug mode)",
+    insights: allInsights,
+    debug,
   });
 }
