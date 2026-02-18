@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   if (userError || !allUsers) {
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
-  const allInsights: Record<string, any[]> = {};
+  let allInsights;
   for (const user of allUsers) {
     const userId = user.user_id;
 
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
     if (insertError) {
       console.error(`Insert failed for user ${userId}:`, insertError);
     }
-    allInsights[userId] = insights;
+    allInsights = insights;
     }
 
   return NextResponse.json({
