@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   if (userError || !allUsers) {
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
-
+  const allInsights: Record<string, any[]> = {};
   for (const user of allUsers) {
     const userId = user.user_id;
 
@@ -140,10 +140,12 @@ export async function POST(req: Request) {
     if (insertError) {
       console.error(`Insert failed for user ${userId}:`, insertError);
     }
-  }
+    allInsights[userId] = insights;
+    }
 
   return NextResponse.json({
     ok: true,
     message: "Cron AI run completed for all users",
+    insights: allInsights, // <-- Return all insights per user
   });
 }
