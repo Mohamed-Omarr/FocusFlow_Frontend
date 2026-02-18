@@ -54,100 +54,116 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
   }
 
-  // For returning debug info
-  const debug: Record<string, any> = {};
+  // Master log object
+  const log: Record<string, any> = {};
   const allInsights: Record<string, any[]> = {};
 
   for (const user of allUsers) {
     const userId = user.user_id;
+    log[userId] = { steps: [], errors: {}, insertedRows: 0 };
 
     // 1️⃣ Get snapshot
-    const { data: snapshot, error: snapshotError } = await supabaseAdmin.rpc(
-      "get_ai_user_snapshot",
-      { p_user_id: userId }
-    );
-
-    debug[userId] = { snapshot, errors: {} };
-
-    if (!snapshot || snapshotError) {
-      debug[userId].errors.snapshot = snapshotError || "Snapshot is empty";
-      continue;
-    }
-
-    // 2️⃣ Get Langfuse prompt
-    let promptArray: any[] = [];
-    let config: any = {};
     try {
-      const prompt = await langfuse.getPrompt("ai_coach_v1");
-      if (!Array.isArray(prompt.prompt)) throw new Error("Prompt is not an array");
-      promptArray = prompt.prompt;
-      config = (prompt as any).config || {};
-    } catch (e: any) {
-      debug[userId].errors.prompt = e.message;
-      continue;
-    }
+      const { data: snapshot, error: snapshotError } = await supabaseAdmin.rpc(
+        "get_ai_user_snapshot",
+        { p_user_id: userId }
+      );
 
-    // 3️⃣ Normalize messages
-    let messages: { role: string; content: string }[] = [];
-    try {
-      messages = normalizeLangfuseMessages(promptArray, snapshot);
-      debug[userId].messages = messages;
-    } catch (e: any) {
-      debug[userId].errors.normalization = e.message;
-      continue;
-    }
+      log[userId].steps.push({ step: "snapshot", snapshot });
+      if (snapshotError || !snapshot) {
+        log[userId].errors.snapshot = snapshotError || "Snapshot is empty";
+        continue;
+      }
 
-    // 4️⃣ Call Groq AI
-    let completion: any;
-    try {
-      completion = await groq.chat.completions.create({
-        model: config.model || "llama-3.3-70b-versatile",
-        temperature: config.temperature ?? 0.7,
-        max_tokens: config.max_tokens ?? 500,
-        messages,
-      });
-      debug[userId].groqRaw = completion.choices?.[0]?.message?.content || "";
-    } catch (e: any) {
-      debug[userId].errors.groq = e.message;
-      continue;
-    }
+      // 2️⃣ Get Langfuse prompt
+      let promptArray: any[] = [];
+      let config: any = {};
+      try {
+        const prompt = await langfuse.getPrompt("ai_coach_v1");
+        log[userId].steps.push({ step: "langfusePrompt", prompt });
 
-    const raw = completion.choices?.[0]?.message?.content;
-    if (!raw) {
-      debug[userId].errors.emptyResponse = "Groq returned empty content";
-      continue;
-    }
+        if (!Array.isArray(prompt.prompt)) throw new Error("Prompt is not an array");
+        promptArray = prompt.prompt;
+        config = (prompt as any).config || {};
+      } catch (e: any) {
+        log[userId].errors.prompt = e.message;
+        continue;
+      }
 
-    // 5️⃣ Parse JSON
-    let insights: any[];
-    try {
-      insights = JSON.parse(raw);
-      debug[userId].parsedInsights = insights;
-    } catch (e) {
-      debug[userId].errors.invalidJSON = raw;
-      continue;
-    }
+      // 3️⃣ Normalize messages
+      let messages: { role: string; content: string }[] = [];
+      try {
+        messages = normalizeLangfuseMessages(promptArray, snapshot);
+        log[userId].steps.push({ step: "normalizedMessages", messages });
+        if (!messages || messages.length === 0) throw new Error("No messages to send to Groq");
+      } catch (e: any) {
+        log[userId].errors.normalization = e.message;
+        continue;
+      }
 
-    // 6️⃣ Save to Supabase if there are insights
-    const rows = insights.map((i: any) => ({
-      user_id: userId,
-      type: i.type,
-      message: i.message,
-      confidence: i.confidence,
-      context: i.context?.reason,
-    }));
+      // 4️⃣ Call Groq AI
+      let completion: any;
+      try {
+        completion = await groq.chat.completions.create({
+          model: config.model || "llama-3.3-70b-versatile",
+          temperature: config.temperature ?? 0.7,
+          max_tokens: config.max_tokens ?? 500,
+          messages,
+        });
 
-    if (rows.length > 0) {
-      const { error: insertError } = await supabaseAdmin.from("ai_insights").insert(rows);
-      if (insertError) debug[userId].errors.insert = insertError;
-      allInsights[userId] = insights;
+        log[userId].steps.push({ step: "groqRaw", completion });
+      } catch (e: any) {
+        log[userId].errors.groq = e.message;
+        continue;
+      }
+
+      const raw = completion.choices?.[0]?.message?.content;
+      if (!raw) {
+        log[userId].errors.emptyResponse = "Groq returned empty content";
+        continue;
+      }
+
+      // 5️⃣ Parse JSON
+      let insights: any[];
+      try {
+        insights = JSON.parse(raw);
+        log[userId].steps.push({ step: "parsedInsights", insights });
+      } catch (e) {
+        log[userId].errors.invalidJSON = raw;
+        continue;
+      }
+
+      // 6️⃣ Save to Supabase if there are insights
+      const rows = insights.map((i: any) => ({
+        user_id: userId,
+        type: i.type,
+        message: i.message,
+        confidence: i.confidence,
+        context: i.context?.reason,
+      }));
+
+      if (rows.length > 0) {
+        const { error: insertError } = await supabaseAdmin.from("ai_insights").insert(rows);
+        if (insertError) {
+          log[userId].errors.insert = insertError;
+        } else {
+          log[userId].insertedRows = rows.length;
+          allInsights[userId] = insights;
+        }
+      } else {
+        log[userId].steps.push({ step: "noInsightsToInsert" });
+      }
+
+    } catch (outerError: any) {
+      // Catch-all for any unexpected error per user
+      log[userId].errors.unexpected = outerError.message;
     }
   }
 
   return NextResponse.json({
     ok: true,
-    message: "Cron AI run completed (debug mode)",
+    message: "Cron AI run completed (full debug)",
     insights: allInsights,
-    debug,
+    log, // full detailed log of each step for each user
   });
 }
