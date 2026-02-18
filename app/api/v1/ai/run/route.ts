@@ -40,39 +40,33 @@ function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
 
 export async function POST(req: Request) {
   const supabaseAdmin = await createServerSupabaseClient();
+
+  // Only allow cron calls
   const auth = req.headers.get("authorization");
-
-  const isCron = auth === `Bearer ${process.env.CRON_SECRET_SERVER}`;
-
-  // Get users: all users in cron mode, single user otherwise
-  let users: { user_id: string }[] = [];
-
-  if (isCron) {
-    const { data: allUsers, error } = await supabaseAdmin
-      .from("profile")
-      .select("user_id");
-    if (error || !allUsers) {
-      return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
-    }
-    users = allUsers;
-  } else {
-    const { data } = await supabaseAdmin.auth.getUser();
-    if (!data.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    users = [{ user_id: data.user.id }];
+  if (auth !== `Bearer ${process.env.CRON_SECRET_SERVER}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  for (const user of users) {
+  // Fetch all users
+  const { data: allUsers, error: userError } = await supabaseAdmin
+    .from("profile")
+    .select("user_id");
+
+  if (userError || !allUsers) {
+    return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
+  }
+
+  for (const user of allUsers) {
     const userId = user.user_id;
 
     // 1️⃣ Get snapshot for the user
-    const { data: snapshot, error } = await supabaseAdmin.rpc(
+    const { data: snapshot, error: snapshotError } = await supabaseAdmin.rpc(
       "get_ai_user_snapshot",
       { p_user_id: userId }
     );
-    if (!snapshot || error) {
-      console.error(`Snapshot failed for user ${userId}:`, error);
+
+    if (!snapshot || snapshotError) {
+      console.error(`Snapshot failed for user ${userId}:`, snapshotError);
       continue;
     }
 
@@ -135,8 +129,8 @@ export async function POST(req: Request) {
       user_id: userId,
       type: i.type,
       message: i.message,
-      confidence:i.confidence,
-      context:i.context.reason
+      confidence: i.confidence,
+      context: i.context?.reason,
     }));
 
     const { error: insertError } = await supabaseAdmin
@@ -150,6 +144,6 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     ok: true,
-    message: isCron ? "Cron AI run completed" : "Single user AI run completed",
+    message: "Cron AI run completed for all users",
   });
 }
