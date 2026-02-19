@@ -48,7 +48,7 @@ declare const messages: {
     "demo":{
       "header_part_one": "Watch how FocusFlow",
       "header_part_two": "transforms your focus",
-      "subtitle": "See FocusFlow in action in just 60 seconds",
+      "subtitle": "See FocusFlow in action in just 30 seconds",
       "subtitle_two": "Product Demo",
       "subtitle_three": "See FocusFlow in action",
       "features":{
