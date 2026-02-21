@@ -1,8 +1,10 @@
 type UserProgress = {
     current_streak: number;
     longest_streak: number;
-    targetStars: number,
-    currentStars: number,
+    targetStars: number;
+    currentStars: number;
+    earning_rule:number;
+    total_stars:number;
 };
 
 

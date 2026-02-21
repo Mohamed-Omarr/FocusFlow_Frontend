@@ -11,29 +11,21 @@ export function Features() {
       icon: Timer,
       title: t("focus_sessions.title"),
       description: t("focus_sessions.description"),
-      color: "from-primary to-secondary",
-      emoji: "⏱️",
     },
     {
       icon: TrendingUp,
       title: t("ai_analytics.title"),
       description: t("ai_analytics.description"),
-      color: "from-secondary to-accent",
-      emoji: "📊",
     },
     {
       icon: Flame,
       title: t("habit_streaks.title"),
       description: t("habit_streaks.description"),
-      color: "from-accent to-primary",
-      emoji: "🔥",
     },
     {
       icon: Bell,
       title: t("smart_reminders.title"),
       description: t("smart_reminders.description"),
-      color: "from-primary to-accent",
-      emoji: "🔔",
     },
   ];
 
@@ -73,14 +65,14 @@ export function Features() {
               whileHover={{ y: -8 }}
             >
               {/* Card */}
-              <div className="relative flex flex-col flex-center  h-full bg-card border border-border rounded-2xl p-6 transition-all duration-300 group-hover:border-border/50 group-hover:shadow-xl group-hover:shadow-primary/10">
+              <div className="relative flex flex-col items-center h-full bg-card border border-border rounded-2xl p-6 transition-all duration-300 group-hover:border-border/50 group-hover:shadow-xl group-hover:shadow-primary/10">
                 {/* Icon */}
                 <motion.div
-                  className={`w-16 h-16 rounded-xl bg-gradient-to-br ${feature.color}  flex-center-all mb-4`}
+                  className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-4"
                   whileHover={{ rotate: 5, scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
-                  <span className="text-3xl">{feature.emoji}</span>
+                  <feature.icon className="w-8 h-8 text-primary" />
                 </motion.div>
 
                 {/* Content */}
@@ -92,9 +84,7 @@ export function Features() {
                 </p>
 
                 {/* Hover gradient overlay */}
-                <div
-                  className={`absolute-inset rounded-2xl bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
-                />
+                <div className="absolute inset-0 rounded-2xl bg-primary/5 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
               </div>
             </motion.div>
           ))}

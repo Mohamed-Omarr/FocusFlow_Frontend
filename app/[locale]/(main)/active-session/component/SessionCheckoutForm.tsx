@@ -15,16 +15,16 @@ import { useRouter } from "@/i18n/navigation";
 
 type Step = "extend" | "distraction" | "mood" | "complete";
 
-type DistractionType = "Phone" | "Social Media" | "Noise" | "Environment";
+type DistractionType = "phone" | "social media" | "noise" | "environment";
 
-type EnergyLevel = "Low" | "Medium" | "High";
-type Mood = "Focused" | "Tired" | "Neutral" | "Distracted";
+type EnergyLevel = "low" | "medium" | "high";
+type Mood = "focused" | "tired" | "neutral" | "distracted";
 
 const distractionIcons: Record<DistractionType, any> = {
-  Phone,
-  "Social Media": MessageSquare,
-  Noise: Volume2,
-  Environment: Wind,
+  phone:Phone,
+  "social media": MessageSquare,
+  noise: Volume2,
+  environment: Wind,
   // Other: HelpCircle,
 };
 
@@ -182,7 +182,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
           </h2>
 
           <div className="grid grid-cols-3 gap-3 mb-6">
-            {(["Low", "Medium", "High"] as EnergyLevel[]).map((e) => (
+            {(["low", "medium", "high"] as EnergyLevel[]).map((e) => (
               <button
                 key={e}
                 onClick={() => setEnergy(e)}

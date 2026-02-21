@@ -8,13 +8,15 @@ type NextStarMilestone = {
 
 type StarsEarnedProps = {
   currentStars: number;
+  totalStars: number;
   longestStreak: number;
   nextStarMilestone?: NextStarMilestone;
-  earningRule?: string; // purely informational
+  earningRule: string; // purely informational
 };
 
 export default function StarsEarned({
   currentStars,
+  totalStars,
   longestStreak,
   nextStarMilestone,
   earningRule,
@@ -95,22 +97,26 @@ export default function StarsEarned({
             </span>
           </div>
 
-          {earningRule && (
+          
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <span>{earningRule}</span>
             </div>
-          )}
+          
         </div>
       )}
 
       {/* Longest Streak */}
       <div className="mt-6 pt-6 border-t border-border">
         <div className="flex justify-between items-center">
-          <span className="text-sm text-muted-foreground">
-            Longest Streak
-          </span>
+          <span className="text-sm text-muted-foreground">Longest Streak</span>
           <span className="text-lg font-semibold text-foreground">
             {longestStreak} days 🏆
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">Total Stars</span>
+          <span className="text-lg font-semibold text-foreground">
+            {totalStars} ⭐
           </span>
         </div>
       </div>

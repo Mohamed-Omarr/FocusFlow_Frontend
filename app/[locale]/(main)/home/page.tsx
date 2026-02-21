@@ -5,7 +5,7 @@ import { TaskListSection } from "./component/TaskListSection";
 export default function HomePage() {
   // Array of tips
   const tips = [
-    "Short sessions lead to long-term consistency.",
+    "Short sessions lead to long term consistency.",
     "Eliminate distractions before starting your focus session.",
     "Break tasks into smaller chunks to avoid burnout.",
     "Review your progress at the end of each session.",

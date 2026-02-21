@@ -17,7 +17,7 @@ export async function GET() {
   /* User progress */
   const { data: progress, error: progressError } = await supabase
     .from("user_progress_insights")
-    .select("current_streak, longest_streak")
+    .select("current_streak, longest_streak, total_stars")
     .eq("user_id", user.id)
     .single();
 
@@ -26,9 +26,15 @@ export async function GET() {
   }
 
   /*  Active bridge challenge */
-  const { data: activeChallenge, error: challengeError } = await supabase
+      const { data:activeChallenge, error:challengeError } = await supabase
     .from("bridge_challenges")
-    .select("target_sessions, completed_sessions")
+    .select(`
+      target_sessions,
+      completed_sessions,
+      bridge:bridge_id (
+        target_session_length_minutes
+      )
+    `)
     .eq("user_id", user.id)
     .eq("is_active", true)
     .single();
@@ -46,5 +52,7 @@ export async function GET() {
     longest_streak: progress.longest_streak ?? 0,
     targetStars:activeChallenge.target_sessions ?? 0,
     currentStars:activeChallenge.completed_sessions ?? 0,
+    earning_rule:activeChallenge.bridge.target_session_length_minutes,
+    total_stars:progress.total_stars ?? 0
   });
 }
