@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 import type { Metadata } from "next";
@@ -31,12 +30,7 @@ export default function GlobalNotFound() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-              <Button
-                className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity rounded-xl h-11"
-                onClick={() => {
-                  window.location.href = "/";
-                }}
-              >
+              <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity rounded-xl h-11">
                 <Home className="w-4 h-4 mr-2" />
                 Go Home
               </Button>
