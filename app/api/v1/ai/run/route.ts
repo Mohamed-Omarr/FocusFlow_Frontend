@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Langfuse } from "langfuse";
 import Groq from "groq-sdk";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 const langfuse = new Langfuse({
   publicKey: process.env.LANGFUSE_PUBLIC_KEY!,
@@ -39,14 +39,18 @@ function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
 }
 
 export async function POST(req: Request) {
-  const supabaseAdmin = await createServerSupabaseClient();
+    const adminSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+  
   const auth = req.headers.get("authorization");
 
   if (auth !== `Bearer ${process.env.CRON_SECRET_SERVER}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: allUsers, error: userError } = await supabaseAdmin
+  const { data: allUsers, error: userError } = await adminSupabase
     .from("profile")
     .select("user_id");
 
@@ -64,7 +68,7 @@ export async function POST(req: Request) {
 
     // 1️⃣ Get snapshot
     try {
-      const { data: snapshot, error: snapshotError } = await supabaseAdmin.rpc(
+      const { data: snapshot, error: snapshotError } = await adminSupabase.rpc(
         "get_ai_user_snapshot",
         { p_user_id: userId }
       );
@@ -143,7 +147,7 @@ export async function POST(req: Request) {
       }));
 
       if (rows.length > 0) {
-        const { error: insertError } = await supabaseAdmin.from("ai_insights").insert(rows);
+        const { error: insertError } = await adminSupabase.from("ai_insights").insert(rows);
         if (insertError) {
           log[userId].errors.insert = insertError;
         } else {

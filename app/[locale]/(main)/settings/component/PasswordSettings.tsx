@@ -20,9 +20,10 @@ export default function PasswordSettings() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<PasswordSchemaType>({
     resolver: zodResolver(PasswordSchema),
+    mode: "onChange", //enables live validation
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -91,8 +92,8 @@ export default function PasswordSettings() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="px-6 py-3 bg-primary text-primary-foreground rounded-xl disabled:opacity-50"
+          disabled={!isDirty || !isValid || isSubmitting}
+          className="px-6 py-3 bg-primary text-primary-foreground rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Updating..." : "Update Password"}
         </button>

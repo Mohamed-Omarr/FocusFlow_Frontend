@@ -19,6 +19,7 @@ import { useRouter } from "@/i18n/navigation";
 import { CreateTaskModal } from "../../task-planner/component/CreateTaskModal";
 import { Plus } from "lucide-react";
 import { TipsPopup } from "./TipsPopup";
+import TestAiCron from "@/components/TestAiCron";
 
 type TaskList = Pick<TaskType, "id" | "name" | "category">;
 
@@ -99,6 +100,7 @@ export function TaskListSection() {
       className="w-full bg-card text-card-foreground rounded-3xl p-4 border border-border shadow-lg"
     >
       {/* Header */}
+      {/* <TestAiCron/> */}
       <motion.div
         layout="position"
         className="flex justify-between items-center cursor-pointer select-none"
