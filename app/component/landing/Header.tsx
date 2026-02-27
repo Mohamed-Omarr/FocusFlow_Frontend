@@ -49,7 +49,7 @@ export function Header() {
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase().trim()}`}
-                className="small-muted-text hover:text-foreground transition-colors cursor-pointer"
+                className="small-muted-text hover:text-foreground transition-colors "
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -62,7 +62,7 @@ export function Header() {
               <motion.a
                 key={item}
                 href={`/${item.toLowerCase().trim()}`}
-                className="small-muted-text hover:text-foreground transition-colors cursor-pointer"
+                className="small-muted-text hover:text-foreground transition-colors "
                 whileHover={{ y: -2 }}
               >
                 {item}

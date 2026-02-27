@@ -38,7 +38,7 @@ export function TaskCard({ task }: { task: TaskCardType }) {
 
   const canPostpone = !task.postponed;
 
-  const { mutate } = useAxiosMutation(`/tasks/${task.id}`, "DELETE", {
+  const { mutate,isPending } = useAxiosMutation(`/tasks/${task.id}`, "DELETE", {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["tasks"] });
 
@@ -156,12 +156,14 @@ export function TaskCard({ task }: { task: TaskCardType }) {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
               onClick={() => {
                 mutate(undefined);
                 setOpenDeleteConfirm(false);
               }}
+              disabled={isPending}
             >
-              Delete
+              {isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

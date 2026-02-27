@@ -64,7 +64,7 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
   const { mutate, isPending } = useAxiosMutation("/tasks", "POST", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      toast.success("created successfully")
+      toast.success("created successfully");
       reset();
       setShowCreateForm(false);
     },

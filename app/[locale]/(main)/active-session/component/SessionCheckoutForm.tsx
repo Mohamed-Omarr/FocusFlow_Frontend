@@ -21,7 +21,7 @@ type EnergyLevel = "low" | "medium" | "high";
 type Mood = "focused" | "tired" | "neutral" | "distracted";
 
 const distractionIcons: Record<DistractionType, any> = {
-  phone:Phone,
+  phone: Phone,
   "social media": MessageSquare,
   noise: Volume2,
   environment: Wind,
@@ -35,7 +35,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
   const [selectedDistractions, setSelectedDistractions] = useState<
     DistractionType[]
   >([]);
-  const [distractionNote, setDistractionNote] = useState<string|null>();
+  const [distractionNote, setDistractionNote] = useState<string | null>();
   // const [otherDistractionText, setOtherDistractionText] = useState("");
 
   const [energy, setEnergy] = useState<EnergyLevel>();
@@ -73,7 +73,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
         distractions: selectedDistractions,
         notes: distractionNote,
       };
-      await finish_active_session(id,form);
+      await finish_active_session(id, form);
       router.push("/sessions");
     } catch {
       // keep user on page
@@ -104,7 +104,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
           <div className="flex gap-4 justify-center">
             <button
               onClick={handleExtendSession}
-              className="px-6 py-3 bg-primary text-white rounded-xl cursor-pointer"
+              className="px-6 py-3 bg-primary text-white rounded-xl "
             >
               <Clock className="inline w-5 h-5 mr-1" />
               Extend
@@ -112,7 +112,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
 
             <button
               onClick={handleEndSession}
-              className="px-6 py-3 bg-muted rounded-xl cursor-pointer"
+              className="px-6 py-3 bg-muted rounded-xl "
             >
               Finish & Reflect
             </button>

@@ -9,20 +9,24 @@ import {
   start_manual_break,
 } from "../helper";
 import { useCountdown } from "./UseCountdown";
+import { useRouter } from "@/i18n/navigation";
 
 export function useSessionTimer(
   task: ActiveSessionData | null,
   backendSeconds: number // result of get_active_timer RPC
 ) {
+
+  const router = useRouter()
+  
   /* ----------------------------- focus countdown ----------------------------- */
 
   const isFocusRunning =
     !!task && !task.is_paused && !task.is_on_break;
 
-const timeLeft = useCountdown(
-  backendSeconds,
-  isFocusRunning && backendSeconds > 0
-);
+  const timeLeft = useCountdown(
+    backendSeconds,
+    isFocusRunning && backendSeconds > 0
+  );
   /* ----------------------------- break countdown ----------------------------- */
 
   const breakSeconds =
@@ -99,6 +103,7 @@ const timeLeft = useCountdown(
   const cancel = async (reason: string) => {
     if (!task) return;
     await cancel_session(reason);
+     router.push("/home");
   };
 
   return {

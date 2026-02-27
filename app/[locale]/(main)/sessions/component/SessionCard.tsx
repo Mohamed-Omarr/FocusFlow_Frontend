@@ -49,7 +49,7 @@ export default function SessionCard({ session }: { session: Session }) {
             setIsOpen(true);
           }
         }}
-        className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+        className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary  focus:outline-none focus:ring-2 focus:ring-primary"
       >
         <div className="mb-3">
           <h3 className="font-medium text-base">{session.task_name}</h3>
@@ -140,7 +140,9 @@ export default function SessionCard({ session }: { session: Session }) {
                   <Coffee className="w-4 h-4" />
                   <span>Breaks</span>
                 </div>
-                <p className="font-medium">{session.total_break_minutes} minutes</p>
+                <p className="font-medium">
+                  {session.total_break_minutes} minutes
+                </p>
               </div>
             </div>
 

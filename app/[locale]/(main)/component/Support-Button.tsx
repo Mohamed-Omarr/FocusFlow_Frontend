@@ -51,15 +51,15 @@ export function SupportButton() {
     type === "suggestion"
       ? "Share your idea..."
       : type === "bug"
-      ? "What issue did you find?"
-      : "What do you need help with?";
+        ? "What issue did you find?"
+        : "What do you need help with?";
 
   const placeholderMessage =
     type === "suggestion"
       ? "Tell us more about your suggestion..."
       : type === "bug"
-      ? "Describe the bug in detail. Steps to reproduce are helpful..."
-      : "Describe your issue in detail...";
+        ? "Describe the bug in detail. Steps to reproduce are helpful..."
+        : "Describe your issue in detail...";
 
   return (
     <Dialog
@@ -109,27 +109,20 @@ export function SupportButton() {
             >
               <div className="flex flex-center space-x-2">
                 <RadioGroupItem value="suggestion" id="suggestion" />
-                <Label
-                  htmlFor="suggestion"
-                  className="font-normal cursor-pointer"
-                >
-                  Send a suggestion
-                </Label>
+                <Label htmlFor="suggestion">Send a suggestion</Label>
               </div>
               <div className="flex flex-center space-x-2">
                 <RadioGroupItem value="bug" id="bug" />
                 <Label
                   htmlFor="bug"
-                  className="flex font-normal cursor-pointer flex-center gap-1"
+                  className="flex font-normal  flex-center gap-1"
                 >
                   <Bug className="h-4 w-4" /> Report a bug
                 </Label>
               </div>
               <div className="flex flex-center space-x-2">
                 <RadioGroupItem value="support" id="support" />
-                <Label htmlFor="support" className="font-normal cursor-pointer">
-                  Contact support
-                </Label>
+                <Label htmlFor="support">Contact support</Label>
               </div>
             </RadioGroup>
           </div>
@@ -172,8 +165,8 @@ export function SupportButton() {
             {type === "suggestion"
               ? "Send Suggestion"
               : type === "bug"
-              ? "Submit Bug Report"
-              : "Send Support Request"}
+                ? "Submit Bug Report"
+                : "Send Support Request"}
           </Button>
         </form>
       </DialogContent>

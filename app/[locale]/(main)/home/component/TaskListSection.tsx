@@ -41,7 +41,6 @@ export function TaskListSection() {
 
   const [showTips, setShowTips] = useState(false);
 
-
   const router = useRouter();
 
   const sessionLength =
@@ -68,12 +67,12 @@ export function TaskListSection() {
   //   });
   // };
 
-    const handleStartSession = () => {
+  const handleStartSession = () => {
     if (!selectedTask) return;
     setShowTips(true);
   };
 
-    const handleConfirmStart = () => {
+  const handleConfirmStart = () => {
     const duration =
       timerDuration === "custom"
         ? Number(customMinutes)
@@ -103,7 +102,7 @@ export function TaskListSection() {
       {/* <TestAiCron/> */}
       <motion.div
         layout="position"
-        className="flex justify-between items-center cursor-pointer select-none"
+        className="flex justify-between items-center  select-none"
         onClick={() => setIsOpen((p) => !p)}
       >
         <h2 className="text-2xl font-semibold text-foreground ">
@@ -117,7 +116,7 @@ export function TaskListSection() {
             stiffness: 160,
             damping: 20,
           }}
-          className="text-xl text-foreground cursor-pointer"
+          className="text-xl text-foreground "
         >
           ▼
         </motion.span>
@@ -149,7 +148,7 @@ export function TaskListSection() {
                 </p>
               ) : (
                 <Select value={selectedTask} onValueChange={setSelectedTask}>
-                  <SelectTrigger className="w-full px-4 py-3 bg-input text-foreground border border-border rounded-2xl focus:outline-none cursor-pointer focus:ring-2 focus:ring-ring">
+                  <SelectTrigger className="w-full px-4 py-3 bg-input text-foreground border border-border rounded-2xl focus:outline-none  focus:ring-2 focus:ring-ring">
                     <SelectValue placeholder="Choose a task..." />
                   </SelectTrigger>
 
@@ -203,7 +202,7 @@ export function TaskListSection() {
                         onClick={() =>
                           setTimerDuration(dur as "25" | "60" | "custom")
                         }
-                        className="flex-1 rounded-2xl py-3 cursor-pointer"
+                        className="flex-1 rounded-2xl py-3 "
                       >
                         {dur === "25"
                           ? "25 min"
@@ -256,7 +255,7 @@ export function TaskListSection() {
             {/* START */}
             <motion.div layout className="mt-6">
               <Button
-                className="w-full py-4 rounded-2xl cursor-pointer"
+                className="w-full py-4 rounded-2xl "
                 disabled={
                   !selectedTask || (timerDuration === "custom" && !customValid)
                 }
@@ -277,7 +276,7 @@ export function TaskListSection() {
         )}
       </AnimatePresence>
 
-        {/* Tips Popup */}
+      {/* Tips Popup */}
       <TipsPopup
         open={showTips}
         onOpenChange={setShowTips}

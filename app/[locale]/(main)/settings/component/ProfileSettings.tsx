@@ -77,7 +77,7 @@ export default function ProfileSettings({
 
           <label
             htmlFor="avatar"
-            className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer"
+            className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 "
           >
             <Upload className="text-white" />
           </label>
