@@ -22,7 +22,7 @@ type TaskPage = Omit<TaskType, "completed"> & {
 /* ============================
    Component
 ============================ */
-export default function TaskPlannerClient() {
+export default function TaskPlannerPage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 

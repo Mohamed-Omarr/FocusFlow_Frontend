@@ -11,7 +11,7 @@ type Session = {
     total_break_minutes: number | null;
 
     is_canceled: boolean;
-    cancel_reason: string | null;
+    cancel_reason: string;
 
    created_at: string; // timestamptz (ISO string)
 

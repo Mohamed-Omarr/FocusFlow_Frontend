@@ -138,7 +138,7 @@ export default function SessionCard({ session }: { session: Session }) {
               <div>
                 <div className="flex flex-center gap-1">
                   <Coffee className="w-4 h-4" />
-                  <span>Breaks</span>
+                  <span>Break</span>
                 </div>
                 <p className="font-medium">
                   {session.total_break_minutes} minutes
@@ -152,7 +152,7 @@ export default function SessionCard({ session }: { session: Session }) {
                   <XCircle className="w-4 h-4" />
                   <span>Cancel Reason</span>
                 </div>
-                <p className="text-sm">{session.cancel_reason}</p>
+                <p className="text-sm">{session.cancel_reason.replace("_"," ")}</p>
               </div>
             )}
 
@@ -164,7 +164,7 @@ export default function SessionCard({ session }: { session: Session }) {
                 </div>
                 <div className="text-sm">
                   {session.pauses.map((pause, index) => (
-                    <p key={index}>{pause.reason}</p>
+                    <p key={index}>{pause.reason.replace("_"," ")}</p>
                   ))}
                 </div>
               </div>
