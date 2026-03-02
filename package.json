@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@langfuse/otel": "^4.6.1",
+    "@langfuse/tracing": "^4.6.1",
+    "@opentelemetry/sdk-node": "^0.212.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
