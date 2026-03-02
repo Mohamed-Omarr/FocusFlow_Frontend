@@ -3,6 +3,7 @@ import { Langfuse } from "langfuse";
 import Groq from "groq-sdk";
 import { createClient } from "@supabase/supabase-js";
 import { startActiveObservation } from "@langfuse/tracing";
+import { langfuseSpanProcessor } from "@/instrumentation";  
 
 const langfuse = new Langfuse({
   publicKey: process.env.LANGFUSE_PUBLIC_KEY!,
@@ -245,6 +246,8 @@ export async function POST(req: Request) {
         totalInsights: Object.keys(allInsights).length,
       }
     });
+    
+    await langfuseSpanProcessor.forceFlush()
 
     return NextResponse.json({
       ok: true,
