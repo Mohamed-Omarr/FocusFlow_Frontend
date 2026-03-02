@@ -16,50 +16,57 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { HelpCircle, MessageSquare, Send, Bug } from "lucide-react";
+import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
+import { toast } from "sonner";
 
 export function SupportButton() {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("suggestion");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [email, setEmail] = useState("");
+
+  // Mutation to POST the support form
+  const { mutate: sendSupport, isPending } = useAxiosMutation(
+    "/support",
+    "POST",
+    {
+      onSuccess: () => {
+        toast.success("Thank you! We'll get back to you soon.");
+        setType("suggestion");
+        setSubject("");
+        setMessage("");
+        setOpen(false);
+      },
+      onError: () => {
+        toast.error("Something went wrong. Please try again.");
+      },
+    }
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // // Save to storage or send to backend
-    // storage.addSupportRequest({
-    //   id: crypto.randomUUID(),
-    //   type,
-    //   subject,
-    //   message,
-    //   email: email || undefined,
-    //   createdAt: new Date().toISOString(),
-    // });
-
-    // Reset form
-    setType("suggestion");
-    setSubject("");
-    setMessage("");
-    setEmail("");
-    setOpen(false);
-
-    alert("Thank you! We'll get back to you soon.");
+    // Only send the form fields; user info is fetched server-side
+    sendSupport({
+      type,
+      subject,
+      message,
+    });
   };
 
   const placeholderSubject =
     type === "suggestion"
       ? "Share your idea..."
       : type === "bug"
-        ? "What issue did you find?"
-        : "What do you need help with?";
+      ? "What issue did you find?"
+      : "What do you need help with?";
 
   const placeholderMessage =
     type === "suggestion"
       ? "Tell us more about your suggestion..."
       : type === "bug"
-        ? "Describe the bug in detail. Steps to reproduce are helpful..."
-        : "Describe your issue in detail...";
+      ? "Describe the bug in detail. Steps to reproduce are helpful..."
+      : "Describe your issue in detail...";
 
   return (
     <Dialog
@@ -67,11 +74,9 @@ export function SupportButton() {
       onOpenChange={(value) => {
         setOpen(value);
         if (!value) {
-          // Reset form when dialog closes
           setType("suggestion");
           setSubject("");
           setMessage("");
-          setEmail("");
         }
       }}
     >
@@ -113,10 +118,7 @@ export function SupportButton() {
               </div>
               <div className="flex flex-center space-x-2">
                 <RadioGroupItem value="bug" id="bug" />
-                <Label
-                  htmlFor="bug"
-                  className="flex font-normal  flex-center gap-1"
-                >
+                <Label htmlFor="bug" className="flex font-normal flex-center gap-1">
                   <Bug className="h-4 w-4" /> Report a bug
                 </Label>
               </div>
@@ -159,14 +161,16 @@ export function SupportButton() {
             type="submit"
             className="w-full"
             size="lg"
-            disabled={!subject || !message}
+            disabled={!subject || !message || isPending}
           >
             <Send className="h-4 w-4 mr-2" />
-            {type === "suggestion"
+            {isPending
+              ? "Sending..."
+              : type === "suggestion"
               ? "Send Suggestion"
               : type === "bug"
-                ? "Submit Bug Report"
-                : "Send Support Request"}
+              ? "Submit Bug Report"
+              : "Send Support Request"}
           </Button>
         </form>
       </DialogContent>

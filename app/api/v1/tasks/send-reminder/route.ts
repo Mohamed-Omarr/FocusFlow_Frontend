@@ -64,7 +64,7 @@ if (authError || !user.user.email) {
     "https://app.loops.so/api/v1/transactional",
     {
       email: userEmail,
-      transactionalId: "cmldv15o77a990izbpq8dbost", // exact template ID
+      transactionalId: process.env.Reminder_TransactionalId, // exact template ID
       dataVariables: {
         taskName: task.name, // must match placeholders in template
       },
