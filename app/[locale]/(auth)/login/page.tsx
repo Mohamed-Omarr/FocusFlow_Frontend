@@ -45,7 +45,7 @@ export default function LoginPage() {
         toasting.success(res.data.message, () => router.push("/home"));
       }
     } catch (err: any) {
-      toasting.error(err.response.data.message || `Login error:${err}`);
+      toasting.error(err.response.data.message || `Login error`);
     } finally {
       reset();
     }

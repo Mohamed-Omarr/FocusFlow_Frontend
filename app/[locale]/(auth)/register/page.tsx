@@ -42,7 +42,7 @@ export default function RegisterPage() {
       });
 
       if (res.data) {
-        toasting.success(res.data.message);
+        toasting.success("Account created! Check your inbox (or spam) to confirm your email.");
       }
     } catch (err: any) {
       toasting.error(err.response.data.message || `Register error:${err}`);
