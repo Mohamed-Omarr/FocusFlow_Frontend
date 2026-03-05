@@ -1,10 +1,8 @@
 import { toast } from "sonner";
 
 export const toasting = {
-  success: (message: string,fn:()=>void) => {
-    toast(message,{onAutoClose() {
-        fn();
-    },duration:1200});
+  success: (message: string) => {
+    toast(message);
   },
   error: (message: string) => {
     toast(message);

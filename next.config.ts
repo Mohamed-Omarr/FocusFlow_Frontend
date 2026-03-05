@@ -12,6 +12,9 @@ const config: NextConfig = {
     typescript:{
       ignoreBuildErrors:true
     },
+      experimental: {
+    globalNotFound: true,
+  },
      images: {
     remotePatterns: [
       {

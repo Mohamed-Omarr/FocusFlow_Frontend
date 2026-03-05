@@ -1,9 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
-export const base_url =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_PRODUCTION_URL
-    : process.env.NEXT_PUBLIC_BASE_URL;
+export const base_url = process.env.NEXT_PUBLIC_SITE_URL!;
 
 const axiosClient = axios.create({
   baseURL: `${base_url}/api/v1`,

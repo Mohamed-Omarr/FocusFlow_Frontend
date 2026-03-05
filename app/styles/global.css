@@ -135,6 +135,14 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* global button cursor */
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
 /* ------------------------------------------------------
    TAILWIND THEME MAP
 ------------------------------------------------------ */

@@ -24,19 +24,18 @@ export default function SessionCard({ session }: { session: Session }) {
     });
   }
 
- function formatDateUTC(value?: string | Date) {
-  if (!value) return "--";
+  function formatDateUTC(value?: string | Date) {
+    if (!value) return "--";
 
-  const date = typeof value === "string" ? new Date(value) : value;
+    const date = typeof value === "string" ? new Date(value) : value;
 
-  return date.toLocaleDateString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    timeZone: "UTC",
-  });
-}
-
+    return date.toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      timeZone: "UTC",
+    });
+  }
 
   return (
     <>
@@ -50,24 +49,25 @@ export default function SessionCard({ session }: { session: Session }) {
             setIsOpen(true);
           }
         }}
-        className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+        className="p-5 rounded-2xl border shadow-sm transition hover:shadow-md hover:border-primary  focus:outline-none focus:ring-2 focus:ring-primary"
       >
         <div className="mb-3">
           <h3 className="font-medium text-base">{session.task_name}</h3>
         </div>
 
-        {(session.is_canceled || session.pauses) && (
+        {(session.is_canceled ||
+          (session.pauses && session.pauses.length > 0)) && (
           <div className="mb-3 flex flex-wrap gap-2">
             {session.cancel_reason && (
-              <div className="flex flex-center gap-1 text-xs px-2 py-1 rounded bg-red-500/10 text-red-500">
+              <div className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-red-500/10 text-red-500">
                 <XCircle className="w-3 h-3" />
                 <span>Canceled</span>
               </div>
             )}
             {session.pauses && (
-              <div className="flex flex-center gap-1 text-xs px-2 py-1 rounded bg-orange-500/10 text-orange-500">
+              <div className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-orange-500/10 text-orange-500">
                 <PauseCircle className="w-3 h-3" />
-                <span>Paused</span>
+                <span>Pauses</span>
               </div>
             )}
           </div>
@@ -108,7 +108,10 @@ export default function SessionCard({ session }: { session: Session }) {
                   <Calendar className="w-4 h-4" />
                   <span>Date</span>
                 </div>
-                <p className="font-medium"> {formatDateUTC(session.created_at)}</p>
+                <p className="font-medium">
+                  {" "}
+                  {formatDateUTC(session.created_at)}
+                </p>
               </div>
               <div>
                 <div className="flex flex-center gap-1">
@@ -135,9 +138,11 @@ export default function SessionCard({ session }: { session: Session }) {
               <div>
                 <div className="flex flex-center gap-1">
                   <Coffee className="w-4 h-4" />
-                  <span>Breaks</span>
+                  <span>Break</span>
                 </div>
-                <p className="font-medium">{session.total_break_minutes}</p>
+                <p className="font-medium">
+                  {session.total_break_minutes} minutes
+                </p>
               </div>
             </div>
 
@@ -147,17 +152,21 @@ export default function SessionCard({ session }: { session: Session }) {
                   <XCircle className="w-4 h-4" />
                   <span>Cancel Reason</span>
                 </div>
-                <p className="text-sm">{session.cancel_reason}</p>
+                <p className="text-sm">{session.cancel_reason.replace("_"," ")}</p>
               </div>
             )}
 
-            {session.pauses && (
+            {session.pauses && session.pauses.length > 0 && (
               <div className="mb-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                <div className="flex flex-center gap-2 text-sm font-medium text-orange-500 mb-1">
+                <div className="flex items-center gap-2 text-sm font-medium text-orange-500 mb-1">
                   <PauseCircle className="w-4 h-4" />
                   <span>Pause Reason</span>
                 </div>
-                <p className="text-sm">{session.pauses.map((x) => x.reason)}</p>
+                <div className="text-sm">
+                  {session.pauses.map((pause, index) => (
+                    <p key={index}>{pause.reason.replace("_"," ")}</p>
+                  ))}
+                </div>
               </div>
             )}
           </div>

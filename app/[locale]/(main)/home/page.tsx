@@ -3,6 +3,20 @@
 import { TaskListSection } from "./component/TaskListSection";
 
 export default function HomePage() {
+  // Array of tips
+  const tips = [
+    "Short sessions lead to long term consistency.",
+    "Eliminate distractions before starting your focus session.",
+    "Break tasks into smaller chunks to avoid burnout.",
+    "Review your progress at the end of each session.",
+    "Stay hydrated to maintain concentration."
+  ];
+
+  // Compute tip index based on current hour
+  const currentHour = new Date().getHours(); // 0–23
+  const tipIndex = currentHour % tips.length;
+  const currentTip = tips[tipIndex];
+
   return (
     <div className="flex flex-col min-h-screen px-6 py-12 max-w-3xl mx-auto gap-8">
       {/* Greeting */}
@@ -19,15 +33,15 @@ export default function HomePage() {
       {/* Task List Section */}
       <div className="w-full">
         <TaskListSection />
-      </div> 
+      </div>
 
       {/* Tip of the Day */}
       <div className="w-full bg-card rounded-3xl p-8 border border-border shadow-sm">
         <h3 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-          Tip of the day
+          Tip of the hour
         </h3>
         <p className="text-lg text-foreground leading-relaxed">
-          Short sessions lead to long term consistency.
+          {currentTip}
         </p>
       </div>
     </div>

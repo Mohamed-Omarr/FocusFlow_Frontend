@@ -19,7 +19,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("session_history")
-    .select("created_at")
+    .select("created_at::date")
     .eq("user_id", user.id)
     .eq("is_canceled", false)
     .gte("created_at", sevenDaysAgo.toISOString());

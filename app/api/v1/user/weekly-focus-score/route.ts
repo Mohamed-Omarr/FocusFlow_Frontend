@@ -20,5 +20,5 @@ export async function GET() {
   }
 
   // data is already shaped for the chart
-  return NextResponse.json(data);
+  return NextResponse.json(Array.isArray(data) ? data : []);
 }

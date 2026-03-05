@@ -16,6 +16,10 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useRouter } from "@/i18n/navigation";
+import { CreateTaskModal } from "../../task-planner/component/CreateTaskModal";
+import { Plus } from "lucide-react";
+import { TipsPopup } from "./TipsPopup";
+import TestAiCron from "@/components/TestAiCron";
 
 type TaskList = Pick<TaskType, "id" | "name" | "category">;
 
@@ -24,6 +28,7 @@ export function TaskListSection() {
     ["tasks"],
     "/tasks/daily",
   );
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const [timerDuration, setTimerDuration] = useState<"25" | "60" | "custom">(
     "25",
@@ -34,21 +39,40 @@ export function TaskListSection() {
   const [breakMode, setBreakMode] = useState<"auto" | "manual">("auto");
   const [isOpen, setIsOpen] = useState(false);
 
+  const [showTips, setShowTips] = useState(false);
+
   const router = useRouter();
 
   const sessionLength =
     timerDuration === "custom" ? Number(customMinutes) : Number(timerDuration);
 
-  const { mutate } = useAxiosMutation("/sessions/active", "POST",{
+  const { mutate } = useAxiosMutation("/sessions/active", "POST", {
     onSuccess: () => {
-        console.log("SUCCESS");
       router.push("/active-session");
     },
   });
 
+  // const handleStartSession = () => {
+  //   if (!selectedTask) return;
+
+  //   const duration =
+  //     timerDuration === "custom"
+  //       ? Number(customMinutes)
+  //       : Number(timerDuration);
+
+  //   mutate({
+  //     id: selectedTask,
+  //     duration,
+  //     breaktime_type: breakMode,
+  //   });
+  // };
+
   const handleStartSession = () => {
     if (!selectedTask) return;
+    setShowTips(true);
+  };
 
+  const handleConfirmStart = () => {
     const duration =
       timerDuration === "custom"
         ? Number(customMinutes)
@@ -75,9 +99,10 @@ export function TaskListSection() {
       className="w-full bg-card text-card-foreground rounded-3xl p-4 border border-border shadow-lg"
     >
       {/* Header */}
+      {/* <TestAiCron/> */}
       <motion.div
         layout="position"
-        className="flex justify-between items-center cursor-pointer select-none"
+        className="flex justify-between items-center  select-none"
         onClick={() => setIsOpen((p) => !p)}
       >
         <h2 className="text-2xl font-semibold text-foreground ">
@@ -91,7 +116,7 @@ export function TaskListSection() {
             stiffness: 160,
             damping: 20,
           }}
-          className="text-xl text-foreground cursor-pointer"
+          className="text-xl text-foreground "
         >
           ▼
         </motion.span>
@@ -123,7 +148,7 @@ export function TaskListSection() {
                 </p>
               ) : (
                 <Select value={selectedTask} onValueChange={setSelectedTask}>
-                  <SelectTrigger className="w-full px-4 py-3 bg-input text-foreground border border-border rounded-2xl focus:outline-none cursor-pointer focus:ring-2 focus:ring-ring">
+                  <SelectTrigger className="w-full px-4 py-3 bg-input text-foreground border border-border rounded-2xl focus:outline-none  focus:ring-2 focus:ring-ring">
                     <SelectValue placeholder="Choose a task..." />
                   </SelectTrigger>
 
@@ -141,6 +166,17 @@ export function TaskListSection() {
                   </SelectContent>
                 </Select>
               )}
+            </motion.div>
+
+            {/* Create Task Button */}
+            <motion.div layout className="mb-5">
+              <Button
+                onClick={() => setShowCreateForm(true)}
+                className="flex flex-center gap-2 px-4 py-2 bg-primary btn-text rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 text-sm shadow-sm hover:shadow-md"
+              >
+                <Plus className="w-4 h-4" />
+                Create Task
+              </Button>
             </motion.div>
 
             {/* TIMER */}
@@ -166,7 +202,7 @@ export function TaskListSection() {
                         onClick={() =>
                           setTimerDuration(dur as "25" | "60" | "custom")
                         }
-                        className="flex-1 rounded-2xl py-3 cursor-pointer"
+                        className="flex-1 rounded-2xl py-3 "
                       >
                         {dur === "25"
                           ? "25 min"
@@ -219,18 +255,33 @@ export function TaskListSection() {
             {/* START */}
             <motion.div layout className="mt-6">
               <Button
-                className="w-full py-4 rounded-2xl cursor-pointer"
+                className="w-full py-4 rounded-2xl "
                 disabled={
                   !selectedTask || (timerDuration === "custom" && !customValid)
                 }
                 onClick={handleStartSession}
               >
-                Start
+                continue
               </Button>
             </motion.div>
+
+            {/* Create Task Modal */}
+            {showCreateForm && (
+              <CreateTaskModal
+                show={showCreateForm}
+                setShowCreateForm={setShowCreateForm}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Tips Popup */}
+      <TipsPopup
+        open={showTips}
+        onOpenChange={setShowTips}
+        onConfirmStart={handleConfirmStart}
+      />
     </motion.div>
   );
 }

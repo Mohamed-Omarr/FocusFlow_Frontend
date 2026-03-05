@@ -38,7 +38,7 @@ export default function WeeklyProgress() {
   /* ---------------- SESSION DAY SET ---------------- */
 
   const sessionDaySet = new Set(
-    sessions.map((s) => s.created_at.split("T")[0]),
+    sessions.map((s) => toISODate(new Date(s.created_at))),
   );
 
   /* ---------------- STATES ---------------- */
@@ -78,7 +78,7 @@ export default function WeeklyProgress() {
               <div className="text-sm text-muted-foreground">{day.label}</div>
 
               <div
-                title={isActive ? "Active" : "Rest day"}
+                title={isActive ? "Active Day" : "Inactive Day"}
                 className={`w-full h-24 rounded-xl transition-all ${
                   isActive
                     ? "bg-gradient-to-br from-primary to-accent hover:scale-105"

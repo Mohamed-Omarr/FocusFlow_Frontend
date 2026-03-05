@@ -41,7 +41,7 @@ export function BreakTimeSelector({
     }
 
     const breakTimes = Array.from({ length: numBreaks }, (_, i) =>
-      Math.round(((i + 1) / (numBreaks + 1)) * duration)
+      Math.round(((i + 1) / (numBreaks + 1)) * duration),
     );
 
     return { breakDuration, numBreaks, breakTimes };
@@ -60,14 +60,14 @@ export function BreakTimeSelector({
         <Button
           variant={breakMode === "auto" ? "default" : "outline"}
           onClick={() => setBreakMode("auto")}
-          className="flex-1 cursor-pointer"
+          className="flex-1 "
         >
           Auto Break
         </Button>
         <Button
           variant={breakMode === "manual" ? "default" : "outline"}
           onClick={() => setBreakMode("manual")}
-          className="flex-1 cursor-pointer"
+          className="flex-1 "
         >
           Manual Break
         </Button>

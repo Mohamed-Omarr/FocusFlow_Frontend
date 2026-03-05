@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,12 +12,10 @@ import {
 } from "@/lib/zod/auth/validation/auth";
 import { toasting } from "@/lib/toast/toast";
 import axios from "axios";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { RegisterResponse } from "../types";
 
 export default function RegisterPage() {
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -43,10 +40,12 @@ export default function RegisterPage() {
         password: data.password,
         confirmPassword: data.confirmPassword,
       });
-      console.log(res.data);
+
+      if (res.data) {
+        toasting.success(res.data.message);
+      }
     } catch (err: any) {
-      console.log(err);
-      // toasting.error(err.response.data.message || `Register error:${err}`);
+      toasting.error(err.response.data.message || `Register error:${err}`);
     } finally {
       reset();
     }
@@ -173,7 +172,7 @@ export default function RegisterPage() {
         </form>
 
         {/* Divider */}
-        <div className="relative my-6">
+        {/* <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border/50"></div>
           </div>
@@ -182,10 +181,10 @@ export default function RegisterPage() {
               Or continue with
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* GOOGLE BUTTON */}
-        <Button
+        {/* <Button
           type="button"
           variant="outline"
           className="w-full h-12 rounded-xl border-border/50 hover:bg-muted/50 hover:border-primary/20 transition-all bg-transparent"
@@ -209,7 +208,7 @@ export default function RegisterPage() {
             />
           </svg>
           Continue with Google
-        </Button>
+        </Button> */}
 
         {/* FOOTER */}
         <p className="text-center text-sm text-muted-foreground mt-6">

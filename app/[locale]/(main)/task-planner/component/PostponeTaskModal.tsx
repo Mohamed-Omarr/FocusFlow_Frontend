@@ -245,7 +245,7 @@ export function PostponeTaskModal({
           <div className="space-y-2">
             <Label>Date Type</Label>
             <div className="flex gap-2">
-              {(["no_date", "single", "range"] as DateType[]).map((type) => (
+              {(["no_date", "single"] as DateType[]).map((type) => (
                 <Button
                   key={type}
                   type="button"

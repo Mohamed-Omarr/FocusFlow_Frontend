@@ -45,7 +45,6 @@ export default function LoginPage() {
         toasting.success(res.data.message, () => router.push("/home"));
       }
     } catch (err: any) {
-      console.log(err);
       toasting.error(err.response.data.message || `Login error:${err}`);
     } finally {
       reset();
@@ -140,7 +139,7 @@ export default function LoginPage() {
         </form>
 
         {/* Divider */}
-        <div className="relative my-6">
+        {/* <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border/50"></div>
           </div>
@@ -149,10 +148,10 @@ export default function LoginPage() {
               Or continue with
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Google Button */}
-        <Button
+        {/* <Button
           type="button"
           variant="outline"
           className="w-full h-12 rounded-xl border-border/50 hover:bg-muted/50"
@@ -177,7 +176,7 @@ export default function LoginPage() {
             />
           </svg>
           Continue with Google
-        </Button>
+        </Button> */}
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           Don't have an account?{" "}

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, CheckCircle2, Mail } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { requestPasswordReset } from "@/lib/actions/forgot-password";
+import { requestPasswordReset } from "@/lib/actions/profile/forgot-password";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

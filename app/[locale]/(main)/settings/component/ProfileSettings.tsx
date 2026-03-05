@@ -7,12 +7,12 @@ import { Upload } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateProfile } from "@/lib/actions/update-profile";
 import {
   profileSchema,
   ProfileSchema,
 } from "@/lib/zod/settings/validation/profile";
 import Image from "next/image";
+import { updateProfile } from "@/lib/actions/profile/update-profile";
 
 interface Props {
   avatarUrl: string;
@@ -77,7 +77,7 @@ export default function ProfileSettings({
 
           <label
             htmlFor="avatar"
-            className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer"
+            className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 "
           >
             <Upload className="text-white" />
           </label>

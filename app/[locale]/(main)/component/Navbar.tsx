@@ -8,6 +8,8 @@ import LangSwitcher from "@/app/component/LangSwitcher";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { ModeToggle } from "@/components/theme-mode/ModeToggle";
+import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/actions/profile/logout";
 
 const BASE_NAV_LINKS = [
   { href: "/home", label: "Home" },
@@ -72,8 +74,8 @@ export function Navbar() {
             !isSessionActive
               ? { width: "auto", opacity: 1, gap: "1.5rem" }
               : isExpanded
-              ? { width: "auto", opacity: 1, gap: "1.5rem" }
-              : { width: 0, opacity: 0, gap: 0 }
+                ? { width: "auto", opacity: 1, gap: "1.5rem" }
+                : { width: 0, opacity: 0, gap: 0 }
           }
           transition={{ duration: 0.45, ease: "easeInOut" }}
         >
@@ -98,12 +100,12 @@ export function Navbar() {
           <LangSwitcher />
           <ModeToggle />
           <div className="relative" ref={profileRef}>
-            <button
+            <Button
               onClick={() => setProfileOpen(!profileOpen)}
               className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center"
             >
               <User className="w-5 h-5 text-white" />
-            </button>
+            </Button>
 
             {profileOpen && (
               <motion.div
@@ -118,7 +120,12 @@ export function Navbar() {
                   Settings
                 </Link>
 
-                <button className="px-4 py-2 text-sm hover:bg-primary/5 w-full text-left">
+                <button
+                  onClick={async () => {
+                    await logout(locale);
+                  }}
+                  className="px-4 py-2 text-sm hover:bg-primary/5 w-full text-left"
+                >
                   Logout
                 </button>
               </motion.div>

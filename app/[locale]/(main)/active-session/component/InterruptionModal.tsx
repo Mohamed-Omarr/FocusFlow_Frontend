@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { storage } from "@/lib/storage";
 import { Coffee, Phone, Users, Brain, Clock, HelpCircle } from "lucide-react";
 
 type InterruptionType = "pause" | "cancel";
@@ -23,7 +22,7 @@ interface InterruptionDialogProps {
   onOpenChange: (open: boolean) => void;
   type: InterruptionType;
   sessionId: string;
-  onConfirm: (r:string) => void;
+  onConfirm: (r: string) => void;
   onCancel: () => void;
 }
 
@@ -48,7 +47,6 @@ export function InterruptionModal({
   open,
   onOpenChange,
   type,
-  sessionId,
   onConfirm,
   onCancel,
 }: InterruptionDialogProps) {
@@ -96,7 +94,7 @@ export function InterruptionModal({
                 <RadioGroupItem value={value} id={value} />
                 <Label
                   htmlFor={value}
-                  className="flex flex-center gap-3 cursor-pointer flex-1 p-3 rounded-lg hover:bg-muted transition-colors"
+                  className="flex flex-center gap-3  flex-1 p-3 rounded-lg hover:bg-muted transition-colors"
                 >
                   <Icon className="h-4 w-4 text-muted-foreground" />
                   <span>{label}</span>
@@ -127,7 +125,7 @@ export function InterruptionModal({
             disabled={
               !selectedReason || (selectedReason === "other" && !customReason)
             }
-            className="bg-primary btn-text"
+            variant={type === "cancel" ? "destructive" : "default"}
           >
             {type === "pause" ? "Pause Session" : "Stop Session"}
           </Button>

@@ -11,7 +11,7 @@ import AccountSettings from "./component/AccountSettings";
 import PasswordModal from "./component/PasswordModal";
 import DeleteAccountModal from "./component/DeleteAccountModal";
 
-import { deleteAccount } from "@/lib/actions/delete-account";
+import { deleteAccount } from "@/lib/actions/profile/delete-account";
 import { useRouter } from "@/i18n/navigation";
 
 interface UserInformation {
@@ -27,7 +27,7 @@ export default function SettingsClient({ user }: { user: UserInformation }) {
         Local editable state
      ============================ */
   const [profileName, setProfileName] = useState(user.username);
-  
+
   const [avatarUrl, setAvatarUrl] = useState(user.avatar);
 
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
@@ -64,17 +64,29 @@ export default function SettingsClient({ user }: { user: UserInformation }) {
           defaultValue="profile"
           className="flex flex-col lg:flex-row gap-6"
         >
-          <TabsList className="flex lg:flex-col lg:w-64 gap-2 p-3 rounded-2xl bg-card/50 border">
-            <TabsTrigger value="profile">
+          <TabsList
+            className="flex
+    lg:flex-col
+    lg:w-64
+    gap-2
+    p-3
+    rounded-2xl
+    bg-card/50
+    border
+    h-auto
+    lg:h-full
+    lg:min-h-full"
+          >
+            <TabsTrigger value="profile" className="w-full">
               <User /> Profile
-            </TabsTrigger>
-            <TabsTrigger value="general">
+            </TabsTrigger >
+            <TabsTrigger value="general"  className="w-full">
               <SettingsIcon /> General
             </TabsTrigger>
-            <TabsTrigger value="password">
+            <TabsTrigger value="password"  className="w-full">
               <Lock /> Password
             </TabsTrigger>
-            <TabsTrigger value="account">
+            <TabsTrigger value="account"  className="w-full">
               <Shield /> Account
             </TabsTrigger>
           </TabsList>

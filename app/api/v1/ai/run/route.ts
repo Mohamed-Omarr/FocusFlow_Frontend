@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { Langfuse } from "langfuse";
 import Groq from "groq-sdk";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+import { startActiveObservation } from "@langfuse/tracing";
 
 const langfuse = new Langfuse({
   publicKey: process.env.LANGFUSE_PUBLIC_KEY!,
@@ -13,7 +14,6 @@ const groq = new Groq({
   apiKey: process.env.Groq_SECRET_KEY!,
 });
 
-// Helper: normalize Langfuse prompt messages to Groq
 function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
   return promptArray.map((msg: any) => {
     let content = "";
@@ -29,7 +29,6 @@ function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
       throw new Error(`Invalid content for role ${msg.role}`);
     }
 
-    // Replace snapshot placeholder for user role
     if (msg.role === "user") {
       content = JSON.stringify(snapshot);
     }
@@ -39,117 +38,219 @@ function normalizeLangfuseMessages(promptArray: any[], snapshot: any) {
 }
 
 export async function POST(req: Request) {
-  const supabaseAdmin = await createServerSupabaseClient();
-  const auth = req.headers.get("authorization");
+  return await startActiveObservation("ai-insights-cron", async (rootSpan) => {
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
-  const isCron = auth === `Bearer ${process.env.CRON_SECRET_SERVER}`;
+    const auth = req.headers.get("authorization");
 
-  // Get users: all users in cron mode, single user otherwise
-  let users: { user_id: string }[] = [];
-
-  if (isCron) {
-    const { data: allUsers, error } = await supabaseAdmin
-      .from("profile")
-      .select("user_id");
-    if (error || !allUsers) {
-      return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
-    }
-    users = allUsers;
-  } else {
-    const { data } = await supabaseAdmin.auth.getUser();
-    if (!data.user) {
+    if (auth !== `Bearer ${process.env.CRON_SECRET_SERVER}`) {
+      rootSpan.update({
+        level: "ERROR",
+        output: "Unauthorized",
+      });
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    users = [{ user_id: data.user.id }];
-  }
 
-  for (const user of users) {
-    const userId = user.user_id;
+    const { data: allUsers, error: userError } = await adminSupabase
+      .from("profile")
+      .select("user_id");
 
-    // 1️⃣ Get snapshot for the user
-    const { data: snapshot, error } = await supabaseAdmin.rpc(
-      "get_ai_user_snapshot",
-      { p_user_id: userId }
-    );
-    if (!snapshot || error) {
-      console.error(`Snapshot failed for user ${userId}:`, error);
-      continue;
-    }
-
-    // 2️⃣ Get Langfuse prompt
-    let promptArray: any[] = [];
-    let config: any = {};
-
-    try {
-      const prompt = await langfuse.getPrompt("ai_coach_v1");
-      if (!Array.isArray(prompt.prompt)) {
-        throw new Error("Prompt is not an array");
-      }
-      promptArray = prompt.prompt;
-      config = (prompt as any).config || {};
-    } catch (e: any) {
-      console.error(`Failed to get prompt for user ${userId}:`, e.message);
-      continue;
-    }
-
-    // 3️⃣ Normalize messages for Groq
-    let messages: { role: string; content: string }[];
-    try {
-      messages = normalizeLangfuseMessages(promptArray, snapshot);
-    } catch (e: any) {
-      console.error(`Invalid Langfuse messages for user ${userId}:`, e.message);
-      continue;
-    }
-
-    // 4️⃣ Call Groq AI
-    let completion: any;
-    try {
-      completion = await groq.chat.completions.create({
-        model: config.model || "llama-3.3-70b-versatile",
-        temperature: config.temperature ?? 0.7,
-        max_tokens: config.max_tokens ?? 500,
-        messages,
+    if (userError || !allUsers) {
+      rootSpan.update({
+        level: "ERROR",
+        output: "Failed to fetch users",
       });
-    } catch (e: any) {
-      console.error(`Groq completion failed for user ${userId}:`, e.message);
-      continue;
+      return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
     }
 
-    const raw = completion.choices?.[0]?.message?.content;
-    if (!raw) {
-      console.error(`Empty completion for user ${userId}`);
-      continue;
+    rootSpan.update({
+      metadata: {
+        totalUsers: String(allUsers.length),
+      }
+    });
+
+    const log: Record<string, any> = {};
+    const allInsights: Record<string, any[]> = {};
+
+    for (const user of allUsers) {
+      const userId = user.user_id;
+      
+      // Create a span for each user's processing
+      await startActiveObservation(`process-user-${userId}`, async (userSpan) => {
+        log[userId] = { steps: [], errors: {}, insertedRows: 0 };
+
+        try {
+          // 1️⃣ Get snapshot
+          const { data: snapshot, error: snapshotError } = await adminSupabase.rpc(
+            "get_ai_user_snapshot",
+            { p_user_id: userId }
+          );
+
+          log[userId].steps.push({ step: "snapshot", snapshot });
+          
+          if (snapshotError || !snapshot) {
+            log[userId].errors.snapshot = snapshotError || "Snapshot is empty";
+            userSpan.update({
+              level: "WARNING",
+              output: "No snapshot available",
+            });
+            return;
+          }
+
+          // 2️⃣ Get Langfuse prompt
+          let promptArray: any[] = [];
+          let config: any = {};
+          try {
+            const prompt = await langfuse.getPrompt("ai_coach_v1");
+            log[userId].steps.push({ step: "langfusePrompt", prompt });
+
+            if (!Array.isArray(prompt.prompt)) throw new Error("Prompt is not an array");
+            promptArray = prompt.prompt;
+            config = (prompt as any).config || {};
+          } catch (e: any) {
+            log[userId].errors.prompt = e.message;
+            userSpan.update({
+              level: "ERROR",
+              output: `Prompt error: ${e.message}`,
+            });
+            return;
+          }
+
+          // 3️⃣ Normalize messages
+          let messages: { role: string; content: string }[] = [];
+          try {
+            messages = normalizeLangfuseMessages(promptArray, snapshot);
+            log[userId].steps.push({ step: "normalizedMessages", messages });
+            if (!messages || messages.length === 0) throw new Error("No messages to send to Groq");
+          } catch (e: any) {
+            log[userId].errors.normalization = e.message;
+            userSpan.update({
+              level: "ERROR",
+              output: `Normalization error: ${e.message}`,
+            });
+            return;
+          }
+
+          // 4️⃣ Call Groq AI with nested generation
+          await startActiveObservation("groq-ai-call", async (generation) => {
+            generation.update({
+              input: messages,
+              model: config.model || "llama-3.3-70b-versatile",
+              metadata: {
+                temperature: String(config.temperature ?? 0.7),
+                max_tokens: String(config.max_tokens ?? 500),
+              }
+            });
+
+            let completion: any;
+            try {
+              completion = await groq.chat.completions.create({
+                model: config.model || "llama-3.3-70b-versatile",
+                temperature: config.temperature ?? 0.7,
+                max_tokens: config.max_tokens ?? 500,
+                messages,
+              });
+
+              log[userId].steps.push({ step: "groqRaw", completion });
+            } catch (e: any) {
+              log[userId].errors.groq = e.message;
+              generation.update({
+                level: "ERROR",
+                output: `Groq error: ${e.message}`,
+              });
+              return;
+            }
+
+            const raw = completion.choices?.[0]?.message?.content;
+            
+            if (!raw) {
+              log[userId].errors.emptyResponse = "Groq returned empty content";
+              generation.update({
+                level: "ERROR",
+                output: "Empty response from Groq",
+              });
+              return;
+            }
+
+            generation.update({
+              output: raw,
+            });
+
+            // 5️⃣ Parse JSON
+            let insights: any[];
+            try {
+              insights = JSON.parse(raw);
+              log[userId].steps.push({ step: "parsedInsights", insights });
+            } catch (e) {
+              log[userId].errors.invalidJSON = raw;
+              generation.update({
+                level: "ERROR",
+                output: "Invalid JSON from Groq",
+              });
+              return;
+            }
+
+            // 6️⃣ Save to Supabase
+            const rows = insights.map((i: any) => ({
+              user_id: userId,
+              type: i.type,
+              message: i.message,
+              confidence: i.confidence,
+              context: i.context?.reason,
+            }));
+
+            if (rows.length > 0) {
+              const { error: insertError } = await adminSupabase.from("ai_insights").insert(rows);
+              if (insertError) {
+                log[userId].errors.insert = insertError;
+                generation.update({
+                  level: "ERROR",
+                  output: `Insert error: ${insertError.message}`,
+                });
+              } else {
+                log[userId].insertedRows = rows.length;
+                allInsights[userId] = insights;
+                generation.update({
+                  metadata: {
+                    insertedRows: String(rows.length),
+                  }
+                });
+              }
+            } else {
+              log[userId].steps.push({ step: "noInsightsToInsert" });
+            }
+
+          }, { asType: "generation" });
+
+          userSpan.update({
+            output: `Processed ${log[userId].insertedRows} insights`,
+          });
+
+        } catch (outerError: any) {
+          log[userId].errors.unexpected = outerError.message;
+          userSpan.update({
+            level: "ERROR",
+            output: `Unexpected error: ${outerError.message}`,
+          });
+        }
+      });
     }
 
-    // 5️⃣ Parse JSON insights
-    let insights: any[];
-    try {
-      insights = JSON.parse(raw);
-    } catch {
-      console.error(`Invalid JSON from Groq for user ${userId}:`, raw);
-      continue;
-    }
+    rootSpan.update({
+      output: {
+        totalUsers: allUsers.length,
+        totalInsights: Object.keys(allInsights).length,
+      }
+    });
 
-    // 6️⃣ Save insights to Supabase
-    const rows = insights.map((i: any) => ({
-      user_id: userId,
-      type: i.type,
-      message: i.message,
-      confidence:i.confidence,
-      context:i.context.reason
-    }));
-
-    const { error: insertError } = await supabaseAdmin
-      .from("ai_insights")
-      .insert(rows);
-
-    if (insertError) {
-      console.error(`Insert failed for user ${userId}:`, insertError);
-    }
-  }
-
-  return NextResponse.json({
-    ok: true,
-    message: isCron ? "Cron AI run completed" : "Single user AI run completed",
+    return NextResponse.json({
+      ok: true,
+      message: "Cron AI run completed (full debug)",
+      insights: allInsights,
+      log,
+    });
   });
 }

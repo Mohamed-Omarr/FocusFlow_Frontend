@@ -1,3 +1,4 @@
+import { base_url } from "@/lib/axios/axiosClient";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { qstash } from "@/lib/upstash/qstash";
 import { NextResponse } from "next/server";
@@ -36,13 +37,8 @@ export async function GET() {
  * POST /api/tasks
  * Create a new task
  */
-// const SEVEN_DAYS = 60 * 60 * 24 * 7;
 
-// function canSchedule(unix: number) {
-//   const now = Math.floor(Date.now() / 1000);
-//   return unix - now <= SEVEN_DAYS;
-// }
-// ✅ Helper: combine DATE + TIME safely (local time)
+
 function combineDateAndTime(date: string, time: string) {
   const [year, month, day] = date.split("-").map(Number);
   const [hour, minute] = time.split(":").map(Number);
@@ -53,6 +49,8 @@ function combineDateAndTime(date: string, time: string) {
  * POST /api/tasks
  * Create a new task
  */
+
+
 export async function POST(req: Request) {
   const supabase = await createServerSupabaseClient();
   const body = await req.json();
@@ -97,7 +95,7 @@ export async function POST(req: Request) {
       const unixTime = Math.floor(reminderDate.getTime() / 1000);
 
       const res = await qstash.publish({
-        url: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/api/v1/tasks/send-reminder`,
+        url: `${base_url}/api/v1/tasks/send-reminder`,
         body: JSON.stringify({ taskId: data.id }),
         notBefore: unixTime,
       });
@@ -124,7 +122,7 @@ export async function POST(req: Request) {
         const unixTime = Math.floor(reminderDate.getTime() / 1000);
 
         await qstash.publish({
-          url: `${process.env.NEXT_PUBLIC_PRODUCTION_URL}/api/v1/tasks/send-reminder`,
+          url: `${base_url}/api/v1/tasks/send-reminder`,
           body: JSON.stringify({ taskId: data.id }),
           notBefore: unixTime,
         });

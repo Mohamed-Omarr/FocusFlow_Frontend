@@ -107,7 +107,17 @@ export default function WeeklyFocusScore() {
     );
   }
 
-  const latestData = weeklyScoreData[weeklyScoreData.length - 1];
+  // const latestData = weeklyScoreData[weeklyScoreData.length - 1];
+  const latestData =
+    weeklyScoreData.length > 0
+      ? weeklyScoreData[weeklyScoreData.length - 1]
+      : {
+          day: "",
+          score: 0,
+          sessionLength: 0,
+          distractions: 0,
+          energy: 0,
+        };
 
   const breakdownItems = [
     {
