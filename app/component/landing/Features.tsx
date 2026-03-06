@@ -30,10 +30,8 @@ export function Features() {
   ];
 
   return (
-    <section id="features" className="section-wrapper">
+    <section id="features" className="section-wrapper border-t border-border">
       {/* Background decoration */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary/5 rounded-full blur-[150px]" />
-
       <div className="container-wrapper">
         <motion.div
           className="text-center mb-16"
@@ -65,10 +63,10 @@ export function Features() {
               whileHover={{ y: -8 }}
             >
               {/* Card */}
-              <div className="relative flex flex-col items-center h-full bg-card border border-border rounded-2xl p-6 transition-all duration-300 group-hover:border-border/50 group-hover:shadow-xl group-hover:shadow-primary/10">
+              <div className="relative flex flex-col items-center h-full bg-card border border-border rounded-2xl p-6 transition-all duration-300 group-hover:border-border/50 group-hover:shadow-xl hover:shadow-lg">
                 {/* Icon */}
                 <motion.div
-                  className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-4"
+                  className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center mb-4"
                   whileHover={{ rotate: 5, scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
@@ -83,8 +81,6 @@ export function Features() {
                   {feature.description}
                 </p>
 
-                {/* Hover gradient overlay */}
-                <div className="absolute inset-0 rounded-2xl bg-primary/5 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
               </div>
             </motion.div>
           ))}
