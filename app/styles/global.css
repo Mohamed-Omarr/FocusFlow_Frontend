@@ -233,9 +233,7 @@ button:disabled {
   }
 
   /* Layout structure */
-  /* .structure-layout-style {
-    @apply pt-24 px-6 max-w-7xl mx-auto w-full min-h-screen flex flex-col gap-8;
-  } */
+ 
   .structure-layout-style {
   @apply
     pt-20 sm:pt-24 lg:pt-28
@@ -246,7 +244,8 @@ button:disabled {
     min-h-screen
     flex
     flex-col
-    gap-12 sm:gap-16 lg:gap-24;
+    gap-8
+    ;
 }
 
   .structure-layout-auth-style {
@@ -255,17 +254,14 @@ button:disabled {
 
   /* Section wrapper */
   .section-wrapper {
-    @apply py-24 px-6 relative overflow-hidden;
+    @apply  pt-8 relative overflow-hidden;
   }
-  /* .hero-section {
-    @apply  rounded-xl items-center justify-center py-10 px-8 overflow-hidden;
-  } */
+  
 
   .hero-section {
   @apply
     rounded-xl
-    py-12 sm:py-16 lg:py-24
-    px-4 sm:px-6 lg:px-8
+    py-4
     overflow-hidden;
 }
 

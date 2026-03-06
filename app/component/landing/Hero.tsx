@@ -9,25 +9,6 @@ export function Hero() {
 
   return (
     <section id="home" className="hero-section relative overflow-hidden">
-      {/* Gradient Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          className="absolute top-1/4 -left-48 w-96 h-96 bg-primary/20 rounded-full blur-[120px]"
-          animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.4, 0.25] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-1/3 -right-48 w-96 h-96 bg-secondary/20 rounded-full blur-[120px]"
-          animate={{ scale: [1.15, 1, 1.15], opacity: [0.25, 0.4, 0.25] }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-        />
-      </div>
-
       {/* Main layout */}
       <div className="relative flex flex-col lg:flex-row gap-16 lg:justify-center lg:gap-0">
         {/* LEFT — Main content */}
@@ -42,7 +23,7 @@ export function Hero() {
             <br />
             {t("title_line2")}
             <br />
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            <span className="text-primary">
               {t("title_line3")}
             </span>
           </motion.h1>
@@ -62,7 +43,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <motion.button
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-xl shadow-lg shadow-primary/30"
+              className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/30"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >

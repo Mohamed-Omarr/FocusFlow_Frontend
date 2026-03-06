@@ -9,8 +9,8 @@ function LandingPage() {
       <div className="structure-layout-style ">
         <Header />
         <Hero />
+        <VideoSection  />
         <Features />
-        <VideoSection />
       </div>
       <Footer />
     </main>
