@@ -21,6 +21,7 @@ export type ActiveSessionData = {
 export type ActiveSessionResponse = {
   session: ActiveSessionData | null;
   remaining_seconds: number;
+  break_remaining_seconds:number;
 };
 
 // --- Helper: Heal Redis from Postgres ---
@@ -34,7 +35,7 @@ async function handleRedisMiss(userId: string, supabase: any, cacheKey: string):
     .single();
 
   if (!session) {
-    return { session: session, remaining_seconds: 0 };
+    return { session: session, remaining_seconds: 0,break_remaining_seconds: 0 };
   }
 
   const { data: dbRemaining } = await supabase.rpc("get_active_timer");
@@ -48,6 +49,20 @@ async function handleRedisMiss(userId: string, supabase: any, cacheKey: string):
   };
 
   await redis.set(cacheKey, newState, { ex: 86400 });
+
+
+   // Compute remaining break time if a break is active
+  const break_remaining_seconds =
+    session.is_on_break && session.break_started_at
+      ? Math.max(
+          0,
+          Math.floor(
+            new Date(session.break_started_at).getTime() +
+              (session.break_duration_minutes || 0) * 60 * 1000 -
+              now
+          ) / 1000
+        )
+      : 0;
 
   return {
     session: {
@@ -64,6 +79,7 @@ async function handleRedisMiss(userId: string, supabase: any, cacheKey: string):
       extended_time_minutes: session.extended_time_minutes || 0,
     },
     remaining_seconds: dbRemaining,
+    break_remaining_seconds
   };
 }
 
@@ -112,7 +128,7 @@ export async function GET(req: Request) {
             //  Redis is stale now
             await redis.del(cacheKey);
 
-            // 🔁 Rehydrate immediately and respond
+            //  Rehydrate immediately and respond
             const freshResponse = await handleRedisMiss(
               user.id,
               supabase,
@@ -137,7 +153,7 @@ export async function GET(req: Request) {
               //  Redis snapshot is now invalid
               await redis.del(cacheKey);
 
-              // 🔁Immediately rehydrate from DB and respond
+              // Immediately rehydrate from DB and respond
               const freshResponse = await handleRedisMiss(
                 user.id,
                 supabase,
@@ -186,6 +202,15 @@ export async function GET(req: Request) {
       remaining = 0;
     }
 
+
+     // --------------------------
+    // Compute remaining break time
+    // --------------------------
+    const break_remaining_seconds =
+      cached.is_on_break && cached.break_started_at
+        ? Math.max(0, Math.floor(new Date(cached.break_started_at).getTime() + cached.break_duration_minutes * 60 * 1000 - now) / 1000)
+        : 0;
+
     // 4. Return the standard response
     const response: ActiveSessionResponse = {
       session: {
@@ -201,7 +226,8 @@ export async function GET(req: Request) {
         is_paused: cached.is_paused,
         extended_time_minutes: cached.extended_time_minutes || 0,
       },
-      remaining_seconds: remaining
+      remaining_seconds: remaining,
+      break_remaining_seconds
     };
 
     return NextResponse.json(response);

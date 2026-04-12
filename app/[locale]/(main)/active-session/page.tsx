@@ -8,6 +8,7 @@ import { createSupabaseClient } from "@/lib/supabase/client";
 import { SessionCheckoutForm } from "./component/SessionCheckoutForm";
 import { ActiveSessionResponse, InterruptionType } from "./types";
 import { queryClient } from "@/lib/utils";
+import { useRouter } from "@/i18n/navigation";
 
 export default function ActiveSessionPage() {
   const { data, isLoading } = useAxiosGet<ActiveSessionResponse>(
@@ -25,12 +26,18 @@ export default function ActiveSessionPage() {
     cancel,
     startManualBreak,
     finishBreak,
-  } = useSessionTimer(data?.session ?? null, data?.remaining_seconds);
+  } = useSessionTimer(
+    data?.session ?? null,
+    data?.remaining_seconds,
+    data?.break_remaining_seconds,
+  );
 
   const [interruptionOpen, setInterruptionOpen] = useState(false);
   const [interruptionType, setInterruptionType] =
     useState<InterruptionType>("pause");
   const [manualConfirmOpen, setManualConfirmOpen] = useState(false);
+
+  const router = useRouter();
 
   /* ----------------------------- Handlers ----------------------------- */
 
@@ -45,7 +52,10 @@ export default function ActiveSessionPage() {
   const handleInterruptionConfirm = async (reason: string) => {
     setInterruptionOpen(false);
     if (interruptionType === "pause") await pause(reason);
-    if (interruptionType === "cancel") await cancel(reason);
+    if (interruptionType === "cancel") {
+      await cancel(reason);
+      router.push("/home");
+    }
   };
 
   /* ----------------------------- Supabase Realtime ----------------------------- */
@@ -55,11 +65,13 @@ export default function ActiveSessionPage() {
       .channel("active_sessions")
       .on(
         "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "active_sessions" },
+        { event: "*", schema: "public", table: "active_sessions" },
         async (payload) => {
-          queryClient.invalidateQueries({
-            queryKey: ["active_session"],
-          });
+          if (payload.eventType === "UPDATE") {
+            queryClient.invalidateQueries({
+              queryKey: ["active_session"],
+            });
+          }
         },
       )
       .subscribe();

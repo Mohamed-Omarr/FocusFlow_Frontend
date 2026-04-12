@@ -7,10 +7,8 @@ import { Link } from "@/i18n/navigation";
 
 export default function Error({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   useEffect(() => {
     console.error("[v0] Error occurred:", error);
@@ -36,22 +34,7 @@ export default function Error({
           </p>
         </div>
 
-        {error.message && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4">
-            <p className="text-sm text-destructive font-mono text-left">
-              {error.message}
-            </p>
-          </div>
-        )}
-
-        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-          <Button
-            onClick={reset}
-            className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity rounded-xl h-11"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Try Again
-          </Button>
+        <div className="pt-4">
           <Button
             asChild
             variant="outline"
@@ -62,18 +45,6 @@ export default function Error({
               Go Home
             </Link>
           </Button>
-        </div>
-
-        <div className="pt-8">
-          <p className="text-sm text-muted-foreground">
-            Error persists?{" "}
-            <Link
-              href="/"
-              className="text-primary hover:text-primary/80 transition-colors font-medium"
-            >
-              Contact support
-            </Link>
-          </p>
         </div>
       </div>
     </div>

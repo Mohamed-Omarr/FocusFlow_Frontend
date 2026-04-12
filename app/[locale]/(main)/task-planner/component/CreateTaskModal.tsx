@@ -149,7 +149,8 @@ export function CreateTaskModal({ show, setShowCreateForm }: CreateTaskProps) {
           </div>
 
           {/* Date Type */}
-          <div className="flex gap-2 ">
+          <div className="flex flex-row gap-2 ">
+            <Label> Date Type</Label>
             {(["no_date", "single"] as DateType[]).map((type) => (
               <Button
                 key={type}

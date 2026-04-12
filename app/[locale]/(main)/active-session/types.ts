@@ -16,6 +16,7 @@ export type ActiveSessionData = {
 export type ActiveSessionResponse = {
   session: ActiveSessionData;
   remaining_seconds: number;
+  break_remaining_seconds:number;
 };
 
 export type InterruptionType = "pause" | "cancel";
