@@ -1,0 +1,14 @@
+---
+description: Standard patterns for Next.js API routes in app/api/v1
+globs: app/api/v1/**/*.ts
+alwaysApply: false
+---
+
+# Next API Route Patterns
+
+- Start with authentication when endpoint is user-scoped (`createServerSupabaseClient` then `auth.getUser()`).
+- Validate request body/query with Zod before write operations or branching logic.
+- Return consistent JSON shapes: `{ error: string }` for failures, data object/array for success.
+- Use meaningful status codes (`401`, `400`, `404`, `500`) and avoid leaking internal details.
+- Keep side effects explicit and ordered (DB write, queue/scheduler call, follow-up updates).
+- Keep shared endpoint logic in `lib/**` helpers when reused across routes.

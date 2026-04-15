@@ -1,0 +1,14 @@
+---
+description: next-intl translation key and locale consistency discipline
+globs: app/**/*.{ts,tsx},messages/*.json,i18n/**/*.ts
+alwaysApply: false
+---
+
+# i18n Message Discipline
+
+- Do not hardcode user-facing strings in localized UI when translation keys should be used.
+- Add new keys to `messages/en.json` first, then mirror keys in `messages/tr.json` and `messages/ar.json`.
+- Keep key names stable and hierarchical; avoid churn/renames without clear need.
+- When adding locale-dependent routes or links, follow established `i18n/routing.ts` patterns.
+- Avoid editing generated declaration files unless intentionally regenerated as part of the change.
+- For partial translations, use explicit placeholders and note follow-up translation work.
