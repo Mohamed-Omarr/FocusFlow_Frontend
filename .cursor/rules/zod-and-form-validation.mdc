@@ -1,0 +1,14 @@
+---
+description: Validation standards for forms, actions, and API payloads
+globs: lib/zod/**/*.ts,app/**/*.{ts,tsx},lib/actions/**/*.ts
+alwaysApply: false
+---
+
+# Zod and Form Validation
+
+- Centralize reusable schemas in `lib/zod/**` and import them where needed.
+- Keep cross-field and business rules in `superRefine`/schema-level validation, not scattered in UI handlers.
+- Validate incoming API/action payloads before DB calls or third-party service calls.
+- Return user-safe validation feedback; avoid exposing internal schema or stack details.
+- Keep schema names task-specific and aligned with route/action intent.
+- When updating a schema, review affected form defaults and submission payload mappings.
