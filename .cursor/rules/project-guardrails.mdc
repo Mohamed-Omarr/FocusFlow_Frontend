@@ -1,0 +1,13 @@
+---
+description: Baseline guardrails for safe, low-risk repository changes
+alwaysApply: true
+---
+
+# Project Guardrails
+
+- Keep edits minimal and localized to the requested scope.
+- Do not edit generated outputs (`.next/**`, build logs, temporary files).
+- Do not commit or modify sensitive files (`.env*`, credentials, private keys).
+- Prefer preserving local style of touched files over broad style rewrites.
+- Avoid destructive git operations unless explicitly requested.
+- If a change may break existing behavior, call out the risk and add a verification step.

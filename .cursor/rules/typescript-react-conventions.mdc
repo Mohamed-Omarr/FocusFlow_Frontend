@@ -1,0 +1,14 @@
+---
+description: TypeScript and React conventions for app and shared components
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript and React Conventions
+
+- Use explicit, narrow types for props, return values, and API payloads.
+- Avoid `any`; prefer `unknown` + narrowing when type certainty is not immediate.
+- Keep hooks at top level and move reusable async/data logic into custom hooks.
+- Keep components focused: view rendering in components, logic in helpers/hooks.
+- Prefer existing path alias imports (`@/...`) where they improve readability.
+- Match existing naming and file-local formatting conventions in the touched module.
