@@ -11,6 +11,7 @@ import {
   PasswordSchemaType,
 } from "@/lib/zod/settings/validation/password";
 import { updatePasswordAction } from "@/lib/actions/profile/update-password";
+import { Button } from "@/components/ui/button";
 
 export default function PasswordSettings() {
   const [success, setSuccess] = useState(false);
@@ -90,13 +91,13 @@ export default function PasswordSettings() {
           </p>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={!isDirty || !isValid || isSubmitting}
           className="px-6 py-3 bg-primary text-primary-foreground rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Updating..." : "Update Password"}
-        </button>
+        </Button>
       </div>
     </form>
   );

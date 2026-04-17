@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { extend_session, finish_active_session } from "../helper";
 import { useRouter } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
 
 type Step = "extend" | "distraction" | "mood" | "complete";
 
@@ -102,20 +103,20 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
           </div>
 
           <div className="flex gap-4 justify-center">
-            <button
+            <Button
               onClick={handleExtendSession}
               className="px-6 py-3 bg-primary text-white rounded-xl "
             >
               <Clock className="inline w-5 h-5 mr-1" />
               Extend
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={handleEndSession}
               className="px-6 py-3 bg-muted rounded-xl "
             >
               Finish & Reflect
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -134,7 +135,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
                 const active = selectedDistractions.includes(type);
 
                 return (
-                  <button
+                  <Button
                     key={type}
                     onClick={() => toggleDistraction(type)}
                     className={`p-3 rounded-xl border ${
@@ -143,7 +144,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
                   >
                     <Icon className="w-5 h-5 mx-auto mb-1" />
                     {type}
-                  </button>
+                  </Button>
                 );
               },
             )}
@@ -165,12 +166,12 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
             placeholder="Notes (optional)"
           />
 
-          <button
+          <Button
             onClick={() => setCurrentStep("mood")}
             className="w-full py-3 bg-primary text-white rounded-xl"
           >
             Continue
-          </button>
+          </Button>
         </div>
       )}
 
@@ -183,7 +184,7 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
 
           <div className="grid grid-cols-3 gap-3 mb-6">
             {(["low", "medium", "high"] as EnergyLevel[]).map((e) => (
-              <button
+              <Button
                 key={e}
                 onClick={() => setEnergy(e)}
                 className={`py-3 rounded-xl ${
@@ -191,13 +192,13 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
                 }`}
               >
                 {e}
-              </button>
+              </Button>
             ))}
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
             {(Object.keys(moodEmojis) as Mood[]).map((m) => (
-              <button
+              <Button
                 key={m}
                 onClick={() => setMood(m)}
                 className={`py-3 rounded-xl ${
@@ -205,17 +206,17 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
                 }`}
               >
                 {moodEmojis[m]} {m}
-              </button>
+              </Button>
             ))}
           </div>
 
-          <button
+          <Button
             onClick={() => setCurrentStep("complete")}
             disabled={!mood || !energy}
             className="w-full py-3 bg-primary text-white rounded-xl disabled:opacity-50"
           >
             Submit
-          </button>
+          </Button>
         </div>
       )}
 
@@ -224,12 +225,12 @@ export function SessionCheckoutForm({ sessionId }: { sessionId: string }) {
         <div className="w-full max-w-lg bg-card rounded-3xl p-8 text-center border">
           <Sparkles className="w-12 h-12 mx-auto mb-4 text-emerald-500" />
           <h2 className="text-3xl font-bold mb-2">All Done!</h2>
-          <button
+          <Button
             onClick={() => handleFinishSession(sessionId)}
             className="px-6 py-3 bg-primary text-white rounded-xl"
           >
             Finish
-          </button>
+          </Button>
         </div>
       )}
     </div>

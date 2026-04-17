@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function AccountSettings({
   setShowDeletePopup,
@@ -22,13 +23,13 @@ export default function AccountSettings({
           Permanently delete your account and all data. This cannot be undone.
         </p>
 
-        <button
+        <Button
           onClick={() => setShowDeletePopup(true)}
           className="px-5 py-2 bg-destructive text-destructive-foreground rounded-lg inline-flex items-center gap-2"
         >
           <Trash2 className="w-4 h-4" />
           Delete Account
-        </button>
+        </Button>
       </div>
     </div>
   );

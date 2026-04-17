@@ -10,6 +10,7 @@ import {
   Gift,
 } from "lucide-react";
 import { completeOnBoarding } from "../active-session/helper";
+import { Button } from "@/components/ui/button";
 
 const questions = [
   {
@@ -171,13 +172,13 @@ export function OnboardingModal() {
         </span>
       </div>
 
-      <button
+      <Button
         onClick={handleNext}
         className="mt-8 w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-semibold bg-gradient-to-r from-[oklch(0.6_0.18_250)] to-[oklch(0.68_0.15_280)] text-white hover:opacity-90 transition-all"
       >
         Start personalization
         <ChevronRight className="w-5 h-5" />
-      </button>
+      </Button>
     </div>
   );
 
@@ -241,21 +242,21 @@ export function OnboardingModal() {
       </div>
 
       <div className="flex items-center justify-between gap-4">
-        <button
+        <Button
           onClick={handleBack}
           className="flex items-center gap-2 px-5 py-3 rounded-xl font-medium text-muted-foreground hover:text-foreground hover:bg-background transition-all"
         >
           <ChevronLeft className="w-4 h-4" />
           Back
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={handleNext}
           className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium bg-gradient-to-r from-[oklch(0.6_0.18_250)] to-[oklch(0.68_0.15_280)] text-white hover:opacity-90 transition-all"
         >
           Let's begin
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -275,7 +276,7 @@ export function OnboardingModal() {
       {/* Options */}
       <div className="flex flex-col gap-3 mb-8">
         {currentQuestion!.options.map((option) => (
-          <button
+          <Button
             key={option}
             onClick={() => handleSelectOption(option)}
             className={`w-full text-left px-5 py-4 rounded-2xl border transition-all duration-200 ${
@@ -285,21 +286,21 @@ export function OnboardingModal() {
             }`}
           >
             <span className="font-medium">{option}</span>
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Navigation */}
       <div className="flex items-center justify-between gap-4">
-        <button
+        <Button
           onClick={handleBack}
           className="flex items-center gap-2 px-5 py-3 rounded-xl font-medium text-muted-foreground hover:text-foreground hover:bg-background transition-all"
         >
           <ChevronLeft className="w-4 h-4" />
           Back
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={handleNext}
           disabled={!selectedOption}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
@@ -310,7 +311,7 @@ export function OnboardingModal() {
         >
           {isLastStep ? "Complete" : "Continue"}
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );

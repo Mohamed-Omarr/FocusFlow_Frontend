@@ -1,6 +1,7 @@
 "use client";
 
 import { Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function PasswordModal({ open, setOpen, onConfirm }) {
   if (!open) return null;
@@ -18,11 +19,11 @@ export default function PasswordModal({ open, setOpen, onConfirm }) {
         </p>
 
         <div className="flex justify-end gap-3">
-          <button className="px-5 py-2 bg-muted rounded-xl" onClick={() => setOpen(false)}>
+          <Button className="px-5 py-2 bg-muted rounded-xl" onClick={() => setOpen(false)}>
             Cancel
-          </button>
+          </Button>
 
-          <button
+          <Button
             className="px-5 py-2 bg-primary text-primary-foreground rounded-xl"
             onClick={() => {
               onConfirm();
@@ -30,7 +31,7 @@ export default function PasswordModal({ open, setOpen, onConfirm }) {
             }}
           >
             Confirm
-          </button>
+          </Button>
         </div>
       </div>
     </div>

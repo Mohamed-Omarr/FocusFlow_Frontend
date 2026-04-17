@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function DeleteAccountModal({
   open,
@@ -30,21 +31,21 @@ export default function DeleteAccountModal({
         </p>
 
         <div className="flex justify-end gap-3">
-          <button
+          <Button
             onClick={onCancel}
             disabled={loading}
             className="px-5 py-2 bg-muted rounded-xl"
           >
             Cancel
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={onConfirm}
             disabled={loading}
             className="px-5 py-2 bg-destructive text-destructive-foreground rounded-xl"
           >
             {loading ? "Deleting..." : "Yes, delete my account"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

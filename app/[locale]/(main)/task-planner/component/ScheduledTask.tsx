@@ -16,6 +16,7 @@ import {
 import { TaskType } from "../types";
 import { queryClient } from "@/lib/utils";
 import { useAxiosMutation } from "@/lib/axios/useAxiosQuery";
+import { Button } from "@/components/ui/button";
 
 type ScheduledTask = Omit<TaskType, "completed" | "date_type" | "reminder"> & {
   date_type: "single" | "range";
@@ -120,12 +121,12 @@ export default function ScheduledTask({
               </div>
 
               {/* DELETE BUTTON */}
-              <button
+              <Button
                 onClick={() => confirmDelete(task.id)}
                 className="text-muted-foreground hover:text-destructive transition-colors ml-2"
               >
                 <X className="w-3.5 h-3.5" />
-              </button>
+              </Button>
             </div>
           ))
         )}

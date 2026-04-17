@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CalendarDay } from "./CalendarDay";
 import { TaskType } from "../types";
+import { Button } from "@/components/ui/button";
 
 interface CalendarProps {
   tasks: Omit<TaskType, "completed">[];
@@ -63,24 +64,24 @@ const Calendar = ({ tasks, selectedDate, setSelectedDate }: CalendarProps) => {
   return (
     <div className="lg:col-span-2 bg-card rounded-2xl p-5 border border-border shadow-sm">
       <div className="flex-center-between mb-4">
-        <button
+        <Button
           onClick={previousMonth}
           className="p-2 hover:bg-elevated rounded-xl transition-colors"
         >
           <ChevronLeft className="w-5 h-5 text-foreground" />
-        </button>
+        </Button>
         <h2 className="text-lg font-semibold text-foreground">
           {currentDate.toLocaleDateString("en-US", {
             month: "long",
             year: "numeric",
           })}
         </h2>
-        <button
+        <Button
           onClick={nextMonth}
           className="p-2 hover:bg-elevated rounded-xl transition-colors"
         >
           <ChevronRight className="w-5 h-5 text-foreground" />
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-7 gap-2">

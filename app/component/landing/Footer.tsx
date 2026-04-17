@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { PrivacyPolicy } from "./PrivacyPolicy";
 import { TermsOfService } from "./TermsOfService";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 
 export function Footer() {
   const t = useTranslations("landing.footer"); // i18n namespace for footer
@@ -79,14 +80,14 @@ export function Footer() {
                 {links.map((result, index) => (
                   <li key={index}>
                     {result.type === "modal" ? (
-                      <button
+                      <Button
                         onClick={() =>
                           setModalContent(result.href === "privacy" ? "privacy" : "terms")
                         }
                         className="text-[#A7A7B0] hover:text-white transition-colors"
                       >
                         {result.label}
-                      </button>
+                      </Button>
                     ) : (
                       <Link
                         href={result.href}
@@ -118,12 +119,12 @@ export function Footer() {
             ref={modalRef}
             className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg w-full max-w-3xl max-h-[70vh] overflow-y-auto p-6 relative"
           >
-            <button
+            <Button
               onClick={() => setModalContent(null)}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             >
               ✕
-            </button>
+            </Button>
 
             {modalContent === "privacy" && <PrivacyPolicy />}
             {modalContent === "terms" && <TermsOfService />}

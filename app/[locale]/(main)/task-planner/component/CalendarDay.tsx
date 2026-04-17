@@ -1,6 +1,7 @@
 "use client";
 
 import { TaskType } from "../types";
+import { Button } from "@/components/ui/button";
 
 export function CalendarDay({
   day,
@@ -26,7 +27,7 @@ export function CalendarDay({
     ? "bg-primary/10 text-primary border-2 border-primary"
     : "bg-elevated text-foreground hover:bg-elevated/80 hover:scale-105";
   return (
-    <button
+    <Button
       onClick={() => onSelect(dateStr)}
       className={`h-12 rounded-xl p-2 text-center transition-all relative flex-col flex-center-all ${classes}`}
     >
@@ -43,6 +44,6 @@ export function CalendarDay({
           ))}
         </div>
       )}
-    </button>
+    </Button>
   );
 }

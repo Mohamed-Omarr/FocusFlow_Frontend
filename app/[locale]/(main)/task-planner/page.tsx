@@ -8,6 +8,7 @@ import ScheduledTask from "./component/ScheduledTask";
 import NonScheduledTask from "./component/NonScheduledTask";
 import { CreateTaskModal } from "./component/CreateTaskModal";
 import { TaskCard } from "./component/TaskCard";
+import { Button } from "@/components/ui/button";
 
 import { TaskType } from "./types";
 import { useAxiosGet } from "@/lib/axios/useAxiosQuery";
@@ -86,13 +87,13 @@ export default function TaskPlannerPage() {
       <div className="flex-center-between mb-6 border border-border/50 backdrop-blur-xl bg-background/60 rounded-full px-6 py-3">
         <h1 className="text-2xl font-bold text-foreground">Task Planner</h1>
 
-        <button
+        <Button
           onClick={() => setShowCreateForm(true)}
           className="flex flex-center gap-2 px-4 py-2 bg-primary btn-text rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 text-sm shadow-sm hover:shadow-md"
         >
           <Plus className="w-4 h-4" />
           Create Task
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

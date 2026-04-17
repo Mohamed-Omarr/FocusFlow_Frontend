@@ -13,6 +13,7 @@ import {
 } from "@/lib/zod/settings/validation/profile";
 import Image from "next/image";
 import { updateProfile } from "@/lib/actions/profile/update-profile";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   avatarUrl: string;
@@ -107,7 +108,7 @@ export default function ProfileSettings({
           <Input value={profileEmail} disabled />
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={!hasChanges || isSubmitting}
           className={`px-6 py-3 rounded-xl ${
@@ -117,7 +118,7 @@ export default function ProfileSettings({
           }`}
         >
           {isSubmitting ? "Saving..." : "Save Changes"}
-        </button>
+        </Button>
       </div>
     </form>
   );

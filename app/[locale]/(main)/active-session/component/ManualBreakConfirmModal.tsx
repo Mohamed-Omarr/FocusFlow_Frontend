@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 interface ManualBreakConfirmDialogProps {
   open: boolean;
   breakDuration: number;
@@ -23,18 +25,18 @@ export function ManualBreakConfirmModal({
           Duration: {breakDuration} min
         </p>
         <div className="flex justify-center gap-4">
-          <button
+          <Button
             className="px-4 py-2 rounded-xl bg-primary text-white"
             onClick={onConfirm}
           >
             Sure
-          </button>
-          <button
+          </Button>
+          <Button
             className="px-4 py-2 rounded-xl bg-gray-300 text-black"
             onClick={onCancel}
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>

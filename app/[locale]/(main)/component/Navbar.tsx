@@ -120,14 +120,14 @@ export function Navbar() {
                   Settings
                 </Link>
 
-                <button
+                <Button
                   onClick={async () => {
                     await logout(locale);
                   }}
                   className="px-4 py-2 text-sm hover:bg-primary/5 w-full text-left"
                 >
                   Logout
-                </button>
+                </Button>
               </motion.div>
             )}
           </div>

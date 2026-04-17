@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const moods = [
   { emoji: "😊", label: "Great" },
@@ -19,7 +20,7 @@ export function MoodSelector() {
         const isSelected = selectedMood === index;
 
         return (
-          <button
+          <Button
             key={index}
             onClick={() => setSelectedMood(index)}
             aria-label={mood.label}
@@ -27,7 +28,7 @@ export function MoodSelector() {
                         ${isSelected ? "scale-125" : "scale-100 opacity-60 hover:scale-110 hover:opacity-100"}`}
           >
             {mood.emoji}
-          </button>
+          </Button>
         );
       })}
     </div>

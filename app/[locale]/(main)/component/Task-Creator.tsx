@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function TaskCreator() {
   const router = useRouter();
@@ -60,7 +61,7 @@ export function TaskCreator() {
           Timer Duration (optional)
         </label>
         <div className="flex gap-2 mb-3">
-          <button
+          <Button
             onClick={() => setTimerDuration("30")}
             className={`flex-1 px-4 py-3 rounded-2xl border transition-all ${
               timerDuration === "30"
@@ -69,8 +70,8 @@ export function TaskCreator() {
             }`}
           >
             30 min
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setTimerDuration("60")}
             className={`flex-1 px-4 py-3 rounded-2xl border transition-all ${
               timerDuration === "60"
@@ -79,8 +80,8 @@ export function TaskCreator() {
             }`}
           >
             1 hr
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setTimerDuration("custom")}
             className={`flex-1 px-4 py-3 rounded-2xl border transition-all ${
               timerDuration === "custom"
@@ -89,7 +90,7 @@ export function TaskCreator() {
             }`}
           >
             Custom
-          </button>
+          </Button>
         </div>
         {timerDuration === "custom" && (
           <input
@@ -128,12 +129,12 @@ export function TaskCreator() {
       </div>
 
       {/* Start Button */}
-      <button
+      <Button
         onClick={handleStartSession}
         className="w-full px-6 py-4 bg-primary rounded-2xl font-semibold hover:bg-primary/90 transition-all duration-300 glow-primary"
       >
         Start Focus Session
-      </button>
+      </Button>
     </div>
   );
 }

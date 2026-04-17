@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function TestAiCron() {
   const [loading, setLoading] = useState(false);
@@ -25,9 +26,9 @@ export default function TestAiCron() {
 
   return (
     <div>
-      <button onClick={runTest} disabled={loading}>
+      <Button onClick={runTest} disabled={loading}>
         {loading ? "Running..." : "Run AI Cron Test"}
-      </button>
+      </Button>
 
       <pre>{JSON.stringify(result, null, 2)}</pre>
     </div>
